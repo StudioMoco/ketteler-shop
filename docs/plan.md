@@ -371,7 +371,7 @@ Beim Anbinden die Liste erzeugen und an Ketteler geben.
 
 - **Server:** gemeinsamer Staging-Server `ketteler-01` (CPX32, 8 GB, 2 GB Swap), Regeln in `docs/staging-server.md` des
   Redaktions-Repositorys. Shop als eigener Stack `ketteler-shop-stg` unter `/opt/ketteler-shop`, Speichergrenzen zusammen
-  2 400 MiB (erlaubt 2,5 GB), MySQL 8.4 wie lokal und Live, ohne OpenSearch.
+  2 328 MiB (erlaubt 2,5 GB), MySQL 8.4 wie lokal und Live, ohne OpenSearch.
 - **Adressen:** `ketteler-shop.mocodev.de` (Shop und Verwaltung), `ketteler-shop-login.mocodev.de` (Test-ZITADEL),
   `ketteler-shop-mail.mocodev.de` (Mailpit). Alles hinter Passwortschutz, außer `/api/` (weclapp; später nur deren
   IP-Adressen) und `robots.txt`; überall `X-Robots-Tag: noindex`.

@@ -170,6 +170,19 @@ Händlerkonto verbindet Ketteler später selbst auf Staging bzw. Live.
 - **USt-IdNr.:** Lokal prüft eine Nachbildung von VIES (`KETTELER_VIES_URL`). Gültige Testnummern: `ATU12345675`,
   `IT12345678903`; jede andere AT-Nummer gilt als ungültig.
 
+## Staging
+
+Shop auf dem gemeinsamen Staging-Server: https://ketteler-shop.mocodev.de (Passwortschutz; Zugangsdaten in Atillas
+Passwortmanager). Ausgeliefert werden nur Tags `shop-staging-JJJJ-MM-TT.N`:
+
+```bash
+git tag shop-staging-2026-10-13.1 && git push origin shop-staging-2026-10-13.1
+ssh ketteler 'bash /opt/ketteler-shop/repo/ops/staging/ausliefern.sh shop-staging-2026-10-13.1'
+make test-staging
+```
+
+Aufbau, Zurück, Sicherung, Speicher und Regeln: [docs/staging.md](docs/staging.md).
+
 ## Wenn etwas nicht klappt
 
 - **„Docker läuft nicht“:** Docker Desktop öffnen und warten, bis unten links „Engine running“ steht.

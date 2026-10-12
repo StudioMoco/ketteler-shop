@@ -1,4 +1,102 @@
-# Shop auf Staging: Bestand, Plan, Auslieferung
+# Shop auf Staging: Betrieb, Auslieferung, Plan
+
+Stand 12.10.2026, nach Phase 2. Server: gemeinsamer Staging-Server `ketteler-01` (195.201.26.80), Regeln in
+`docs/staging-server.md` des Redaktions-Repositorys. Zugang nur als `deploy` mit dem Schlüssel des Geräts. Der Teil
+„Phase 1“ weiter unten ist der Stand vor dem Aufbau (Bestand, Planung) und bleibt als Verlauf stehen.
+
+## Betrieb (Phase 2)
+
+| | |
+|---|---|
+| Adressen | https://ketteler-shop.mocodev.de (Shop, Verwaltung unter /admin), https://ketteler-shop-login.mocodev.de (Test-ZITADEL), https://ketteler-shop-mail.mocodev.de (Mailpit) |
+| Schutz | Passwortschutz (Basic Auth, Benutzer `ketteler`) vor allem, außer `/api/` des Shops (weclapp) und `/robots.txt`; überall `X-Robots-Tag: noindex, nofollow`; robots.txt sperrt alles |
+| Ordner | `/opt/ketteler-shop` (deploy, 750): `git/` (Klon, Deploy-Key nur lesend), `staende/<tag>/`, `repo` (Verweis auf den laufenden Stand), `.env` (600), `stand.env`, `STAND`, `sicherungen/`, `protokolle/` |
+| Compose | Projekt `ketteler-shop-stg`, Datei `ops/staging/compose.yaml`; Netze `intern` (ohne Weg nach außen), `aussen`, dazu nur `front` im Netz `ketteler_web` (Name `ketteler-shop-front`) |
+| Caddy | gemeinsamer Caddy: nur `/opt/staging-caddy/sites/ketteler-shop.caddy` (drei Adressen, Weiterleitung an `ketteler-shop-front:80`), eingespielt mit `caddy-datei.sh`; Passwortschutz, noindex, robots.txt im Caddy des Stacks (`ops/staging/front/Caddyfile`) |
+| Geheimnisse | nur `/opt/ketteler-shop/.env` (600) und Atillas Passwortmanager: `STG_BASICAUTH_PASSWORT`, `SHOP_ADMIN_PASSWORT` (Benutzer `admin`), `ZITADEL_ADMIN_PASSWORT` (zitadel-admin@ketteler.test), `KETTELER_TESTKUNDE_PASSWORT` (testkunde@ketteler.test) |
+| Mails | Shopware und ZITADEL nur an Mailpit; Mailpit hängt nur im Netz `intern` ohne Weg nach außen (Prüfung in `pruefen.sh`) |
+| Lizenzen, Anmeldung | Lizenz-Attrappe und Test-ZITADEL im Stack; nicht das Staging-Redaktionssystem und nicht dessen ZITADEL |
+| VIES, PayPal | VIES offiziell (`KETTELER_VIES_URL` leer); PayPal nur Sandbox, derzeit ohne Zugangsdaten (nicht in der Kasse) |
+
+### Warum der Passwortschutz im Stack liegt und nicht in der Shop-Datei des gemeinsamen Caddy
+
+- Der Passwort-Hash und das Zugangs-Cookie stehen nur in der `.env` des Shops (600). In der Shop-Datei lägen sie in
+  `/opt/staging-caddy/sites` (für alle lesbar) und im Repository.
+- Änderungen an Passwortschutz, Ausnahmen oder weclapp-Adressen brauchen kein Neuladen des gemeinsamen Caddy.
+- Die Shop-Datei im gemeinsamen Caddy bleibt minimal und ohne Bausteine (keine Namenskonflikte mit anderen Instanzen).
+- Preis: eine zusätzliche Caddy-Ebene (48 MiB Grenze, gemessen 15 MiB).
+
+### Speicher (gemessen am 12.10.2026)
+
+| Container | Grenze | Leerlauf | Spitze im Testlauf | davon eigener Speicher (ohne Datei-Cache) |
+|---|---|---|---|---|
+| `ketteler-shop-stg-front-1` (Caddy) | 48 MiB | 12 MiB | 15 MiB | 13 MiB |
+| `ketteler-shop-stg-web-1` (Shopware, PHP-FPM 4 Prozesse) | 640 MiB | 153 MiB | 294 MiB | 54 MiB |
+| `ketteler-shop-stg-worker-1` | 256 MiB | 51 MiB | 60 MiB | 48 MiB |
+| `ketteler-shop-stg-datenbank-1` (MySQL 8.4, Puffer 192 MiB) | 600 MiB | 260 MiB | 527 MiB | 396 MiB |
+| `ketteler-shop-stg-zitadel-1` | 384 MiB | 86 MiB | 163 MiB | 89 MiB |
+| `ketteler-shop-stg-zitadel-db-1` (Postgres) | 160 MiB | 60 MiB | 160 MiB* | 32 MiB |
+| `ketteler-shop-stg-mailer-1` (Mailpit) | 64 MiB | 8 MiB | 21 MiB | 11 MiB |
+| `ketteler-shop-stg-lizenz-attrappe-1` | 48 MiB | 13 MiB | 18 MiB | 12 MiB |
+| `ketteler-shop-stg-sicherung-shop-1` | 64 MiB | 1 MiB | 5 MiB | 0 MiB |
+| `ketteler-shop-stg-sicherung-zitadel-1` | 64 MiB | 1 MiB | 4 MiB | 0 MiB |
+| **Summe** | **2 328 MiB** | **≈ 645 MiB** | | |
+
+\* Grenze erreicht nur durch Datei-Cache, den Linux an der Grenze freigibt; kein Abbruch (`oom_kill 0` in allen Containern).
+Server nach dem Testlauf: 4,9 GB verfügbar, Swap unbenutzt. Beim Ausliefern kommt kurz das Bauen des Bildes dazu
+(Composer, etwa 35 Sekunden).
+
+### Ausliefern, zurück, prüfen
+
+```bash
+ssh ketteler 'bash /opt/ketteler-shop/repo/ops/staging/ausliefern.sh shop-staging-JJJJ-MM-TT.N'
+ssh ketteler 'bash /opt/ketteler-shop/repo/ops/staging/zurueck.sh <tag> [--datenbank <sicherung>]'
+ssh ketteler 'bash /opt/ketteler-shop/repo/ops/staging/pruefen.sh'
+ssh ketteler 'bash /opt/ketteler-shop/repo/ops/staging/redaktion-pruefen.sh'
+```
+
+- Ausgeliefert wird nur ein Tag `shop-staging-JJJJ-MM-TT.N` von GitHub; je Tag ein eigener, unveränderter Arbeitsstand.
+- `ausliefern.sh`: Redaktion-Stand vorher, Tag holen, Bild bauen, Sicherung von Shop- und ZITADEL-Datenbank (geprüft),
+  Wartungsmodus, neuen Stand starten, `system:update:finish`, Plugins, `ketteler:einrichten`, Steuerregeln, Theme, Cache,
+  Caddy-Datei nur bei Änderung, 16 Prüfungen (`pruefen.sh`). Scheitert etwas: automatisch `zurueck.sh` auf den vorherigen
+  Tag mit der Sicherung. Danach Redaktion-Stand nachher und Vergleich; ein Unterschied bricht mit Meldung ab.
+- `zurueck.sh` mit `--datenbank`: sichert erst den jetzigen Stand, spielt dann die genannte Sicherung von Shop und ZITADEL ein.
+- Die drei neuesten Stände und Bilder bleiben, ältere räumt `ausliefern.sh` weg. Verlauf in `/opt/ketteler-shop/STAND`,
+  Protokolle in `protokolle/`.
+- `redaktion-pruefen.sh` (nur lesend): Container der Redaktion mit Startzeit und Neustarts, Caddyfile, Datei
+  `ketteler-redaktion.caddy`, die Gesamtkonfiguration **ohne** die Shop-Datei per `caddy adapt` (ergibt denselben Wert wie
+  vor dem Shop: `901b47c7…`), Git-Stand `/opt/ketteler`, crontab, Erreichbarkeit.
+
+Durchlauf am 12.10.2026: `.4` ausgeliefert, `.5` ausgeliefert (Sicherung probehalber in eine Wegwerf-Datenbank
+eingespielt: 241 von 241 Tabellen, 9 Artikel, 23 Bestellungen), zurück auf `.4` mit Datenbank (eine nach der Sicherung
+gesetzte Markierung war danach weg), wieder vor auf `.5`, dann `.6` und `.7`. Jedes Mal alle Prüfungen bestanden und
+Redaktion unverändert.
+
+### Sicherung
+
+- Dienste `sicherung-shop` (Bild mysql:8.4) und `sicherung-zitadel` (postgres:17.10-alpine) im Stack, keine Zeile in der
+  crontab: täglich zwischen 03:40 und 04:00 Uhr nach `sicherungen/taeglich/` (14 Stände), protokolliert in
+  `sicherungen/sicherung.log`; dazu vor jeder Auslieferung und Rücknahme nach `sicherungen/auslieferung/` (30 Tage).
+- Jede Sicherung wird geprüft (gzip-Test, Schlusszeile des Dumps), sonst verworfen und gemeldet.
+- Die Dateien gehören root (die Dienste schreiben als root); Löschen nur über die Dienste.
+- Medien werden nicht gesichert (Testdaten, später aus weclapp).
+
+### weclapp-Adressen eintragen (später)
+
+In `/opt/ketteler-shop/.env` die Zeile `WECLAPP_IPS=` mit den Adressen füllen (durch Leerzeichen getrennt), dann
+`front` neu erstellen (`docker compose … up -d --force-recreate front`, oder mit der nächsten Auslieferung). Danach ist
+`/api/` nur noch offen für diese Adressen und für Browser, die vorher den Passwortschutz passiert haben (Zugangs-Cookie;
+die Verwaltung braucht `/api/` selbst).
+
+### Tests gegen Staging
+
+`make test-staging` startet dieselben Ende-zu-Ende-Tests gegen Staging (Zugangsdaten per SSH zur Laufzeit gelesen, nie
+gespeichert; Datenbank und Konsole per SSH; Attrappe über einen SSH-Tunnel auf `127.0.0.1:18090`). Übersprungen und warum:
+siehe Bericht Phase 2.
+
+---
+
+# Phase 1 (12.10.2026, nur gelesen)
 
 Stand 12.10.2026, Phase 1 (nur gelesen, nichts auf dem Server geändert). Server: Staging `ketteler-01`, 195.201.26.80,
 Zugang nur als `deploy` mit dem Schlüssel des Geräts. Auf dem Server testet Ketteler das Redaktionssystem; dessen Dienste,

@@ -2,7 +2,7 @@
 # Plan: docs/staging.md). Eigenes Compose-Projekt, eigene Netze und Volumes, nur „front“ hängt zusätzlich am Netz
 # ketteler_web des gemeinsamen Caddy. Aufruf nur über ops/staging/*.sh (Projektordner /opt/ketteler-shop).
 #
-# Speichergrenzen (Summe 2 400 MiB, erlaubt 2,5 GB): front 48, web 640, worker 256, datenbank 600, zitadel 384,
+# Speichergrenzen (Summe 2 328 MiB, erlaubt 2,5 GB): front 48, web 640, worker 256, datenbank 600, zitadel 384,
 # zitadel-db 160, mailer 64, lizenz-attrappe 48, sicherung-shop 64, sicherung-zitadel 64 (Werte in MiB, siehe unten).
 name: ketteler-shop-stg
 
