@@ -13,6 +13,10 @@ RUN composer install --no-dev --no-interaction --no-progress --no-scripts --opti
 
 FROM ghcr.io/shopware/docker-base:8.3-caddy
 COPY --from=bau --chown=www-data:www-data /var/www/html /var/www/html
+# Ziele der Volumes (Medien, Vorschaubilder, Dateien) mit dem richtigen Besitzer anlegen, sonst gehören neue Volumes root
+USER root
+RUN install -d -o www-data -g www-data /var/www/html/public/media /var/www/html/public/thumbnail /var/www/html/public/theme /var/www/html/files
+USER www-data
 COPY --chmod=755 ops/staging/start.sh /usr/local/bin/ketteler-start
 ARG STAND=unbekannt
 ENV KETTELER_STAND=$STAND
