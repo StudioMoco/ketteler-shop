@@ -8,7 +8,8 @@ S=$(bash /opt/ketteler/ops/staging-server/stand.sh 2>/dev/null)
 echo "== Container der Redaktion (Name, Start, Neustart-Regel, Neustarts, Zustand)"
 echo "$S" | sed -n '/^== Container/,/^== Caddy/p' | grep -v '^==' | grep -v '^ketteler-shop-stg-' | awk '{print $1, $2, $3, $4, $5}'
 echo "== Caddy"
-echo "$S" | grep -E 'bind |volume |Caddyfile im Container'
+echo "$S" | grep -E '^(bind|volume) ' | sort   # Reihenfolge der Mounts liefert docker inspect nicht fest
+echo "$S" | grep -E 'Caddyfile im Container'
 sha256sum /opt/staging-caddy/sites/ketteler-redaktion.caddy | sed 's# .*#  sites/ketteler-redaktion.caddy (sha256)#'
 docker exec ketteler-caddy-1 caddy adapt --config /etc/caddy/Caddyfile --adapter caddyfile 2>/dev/null | python3 -c '
 import hashlib, json, sys
