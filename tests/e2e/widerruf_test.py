@@ -13,7 +13,7 @@ import sys
 import time
 import urllib.parse
 
-from hilfen import ENV, SHOP, STAGING, AdminApi, Browser, Ergebnis, interne_vermerke, json_anfrage, sql
+from hilfen import ENV, SHOP, STAGING, AdminApi, Browser, Ergebnis, interne_vermerke, json_anfrage, konsole, sql
 from lizenz_test import MAILPIT, angemeldeter_kunde, attrappe, bestellen, lizenz_zu, warte
 from anmeldung_test import gast_registrieren, in_den_warenkorb
 
@@ -34,15 +34,23 @@ def text_von(nachricht):
 _LETZTE = []
 
 
+def warte_auf_ratenbegrenzung():
+    """Shopware begrenzt das Widerrufsformular je Adresse (time_backoff: nach 3 Versuchen 30 s Abstand, nach 5 60 s, nach
+    10 90 s; Zähler 24 h). Gegen Staging kommen alle Anfragen von einer Adresse: Abstände einhalten statt die Sperre zu
+    lockern. Lokal ohne Wartezeiten."""
+    if not STAGING:
+        return
+    n = len(_LETZTE)
+    abstand = 0 if n < 3 else 30 if n < 5 else 60 if n < 10 else 90
+    if _LETZTE:
+        rest = _LETZTE[-1] + abstand + 1 - time.time()
+        if rest > 0:
+            time.sleep(rest)
+    _LETZTE.append(time.time())
+
+
 def formular_senden(b, seite_url, felder):
-    # Shopware begrenzt das Formular je Adresse (3 in 30 s, danach Wartezeit). Lokal fällt das nicht ins Gewicht; gegen
-    # Staging laufen die Anfragen über eine Adresse, also höchstens 3 Erklärungen je 30 Sekunden absenden.
-    if STAGING:
-        jetzt = time.time()
-        while len([t for t in _LETZTE if jetzt - t < 31]) >= 3:
-            time.sleep(1)
-            jetzt = time.time()
-        _LETZTE.append(jetzt)
+    warte_auf_ratenbegrenzung()
     b.get(seite_url)
     f = b.formular("/form/revocation/request")
     assert f is not None, "Widerrufsformular fehlt auf " + seite_url
@@ -129,6 +137,9 @@ def verwaltung_bearbeitet(e, oid, nr, seite, k):
 
 def main():
     e = Ergebnis()
+    if STAGING:
+        # Zähler der Ratenbegrenzung aus früheren Testläufen (gleiche Adresse) leeren; die Begrenzung selbst bleibt
+        konsole("cache:pool:clear", "cache.rate_limiter")
     attrappe("/_zuruecksetzen", {})
     json_anfrage("DELETE", MAILPIT + "/api/v1/messages")
     empfaenger = ENV["KETTELER_WIDERRUF_EMAIL"]
