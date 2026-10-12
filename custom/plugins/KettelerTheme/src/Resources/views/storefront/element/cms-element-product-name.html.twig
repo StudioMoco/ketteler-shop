@@ -1,0 +1,15 @@
+{% sw_extends '@Storefront/storefront/element/cms-element-product-name.html.twig' %}
+
+{# Kennzeichen Artikelart und Abo über dem Artikelnamen #}
+{% block element_product_name_inner %}
+    {% set ktProdukt = page.product ?? null %}
+    {% set ktArt = ktProdukt ? (ktProdukt.translated.customFields.ketteler_artikelart ?? null) : null %}
+    {% set ktAbo = ktProdukt ? (ktProdukt.translated.customFields.ketteler_abo ?? null) : null %}
+    {% if ktArt or ktAbo %}
+        <div class="kt-kennzeichen">
+            {% if ktArt %}<span class="kt-artikelart">{{ ('ketteler.artikelart.' ~ ktArt)|trans|sw_sanitize }}</span>{% endif %}
+            {% if ktAbo %}<span class="kt-artikelart kt-abo">{{ 'ketteler.abo.kennzeichen'|trans|sw_sanitize }}</span>{% endif %}
+        </div>
+    {% endif %}
+    {{ parent() }}
+{% endblock %}

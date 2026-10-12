@@ -8,6 +8,7 @@
         "shopware/core": "6.6.10.29",
         "shopware/elasticsearch": "6.6.10.29",
         "shopware/storefront": "6.6.10.29",
+        "swag/paypal": "~9.13.4",
         "symfony/flex": "~2"
     },
     "repositories": [
@@ -85,7 +86,9 @@
             "Ketteler\\Anmeldung\\": "custom/plugins/KettelerAnmeldung/src/",
             "Ketteler\\Anmeldung\\Tests\\": "custom/plugins/KettelerAnmeldung/tests/",
             "Ketteler\\Lizenzen\\": "custom/plugins/KettelerLizenzen/src/",
-            "Ketteler\\Lizenzen\\Tests\\": "custom/plugins/KettelerLizenzen/tests/"
+            "Ketteler\\Lizenzen\\Tests\\": "custom/plugins/KettelerLizenzen/tests/",
+            "Ketteler\\Mehrplatz\\": "custom/plugins/KettelerMehrplatz/src/",
+            "Ketteler\\Mehrplatz\\Tests\\": "custom/plugins/KettelerMehrplatz/tests/"
         }
     }
 }

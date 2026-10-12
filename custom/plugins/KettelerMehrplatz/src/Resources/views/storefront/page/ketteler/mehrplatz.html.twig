@@ -1,0 +1,45 @@
+{% sw_extends '@Storefront/storefront/base.html.twig' %}
+
+{% block base_content %}
+    <div class="row justify-content-md-center my-4">
+        <div class="col-md-10 col-lg-7">
+            <h1 class="h3">{{ 'ketteler.mehrplatz.titel'|trans|sw_sanitize }}</h1>
+            {% if gesendet %}
+                <div class="alert alert-success" role="status" data-kt="mehrplatz-gesendet">
+                    {{ 'ketteler.mehrplatz.danke'|trans|sw_sanitize }}
+                </div>
+            {% else %}
+                <p>{{ 'ketteler.mehrplatz.einleitung'|trans|sw_sanitize }}</p>
+                {% if fehler is not empty %}
+                    <div class="alert alert-danger" role="alert" data-kt="mehrplatz-fehler">{{ 'ketteler.mehrplatz.fehler.allgemein'|trans|sw_sanitize }}</div>
+                {% endif %}
+                <form method="post" action="{{ path('frontend.ketteler.mehrplatz.senden') }}" data-kt="mehrplatz">
+                    {% sw_include '@Storefront/storefront/component/captcha/base.html.twig' with { additionalClass: 'col-md-12', formId: 'ketteler-mehrplatz' } %}
+                    <input type="hidden" name="artikel" value="{{ daten.artikel|default('') }}">
+                    <input type="hidden" name="werk" value="{{ daten.werk|default('') }}">
+                    {% for feld in [
+                        {name: 'einrichtung', typ: 'text', auto: 'organization', pflicht: true},
+                        {name: 'ansprechperson', typ: 'text', auto: 'name', pflicht: true},
+                        {name: 'email', typ: 'email', auto: 'email', pflicht: true},
+                        {name: 'telefon', typ: 'tel', auto: 'tel', pflicht: true},
+                        {name: 'anzahl', typ: 'number', auto: 'off', pflicht: true}
+                    ] %}
+                        <div class="mb-3">
+                            <label class="form-label" for="kt-mp-{{ feld.name }}">{{ ('ketteler.mehrplatz.feld.' ~ feld.name)|trans|sw_sanitize }}{% if feld.pflicht %}*{% endif %}</label>
+                            <input class="form-control{% if fehler[feld.name] is defined %} is-invalid{% endif %}" id="kt-mp-{{ feld.name }}"
+                                   type="{{ feld.typ }}" name="{{ feld.name }}" value="{{ daten[feld.name]|default('') }}" autocomplete="{{ feld.auto }}"
+                                   {% if feld.name == 'anzahl' %}min="2" step="1"{% endif %} {% if feld.pflicht %}required{% endif %}>
+                            {% if fehler[feld.name] is defined %}<div class="invalid-feedback">{{ fehler[feld.name]|trans|sw_sanitize }}</div>{% endif %}
+                        </div>
+                    {% endfor %}
+                    <div class="mb-3">
+                        <label class="form-label" for="kt-mp-nachricht">{{ 'ketteler.mehrplatz.feld.nachricht'|trans|sw_sanitize }}</label>
+                        <textarea class="form-control" id="kt-mp-nachricht" name="nachricht" rows="5">{{ daten.nachricht|default('') }}</textarea>
+                    </div>
+                    <p class="small text-muted">{{ 'ketteler.mehrplatz.hinweis'|trans|sw_sanitize }}</p>
+                    <button class="btn btn-primary" type="submit">{{ 'ketteler.mehrplatz.senden'|trans|sw_sanitize }}</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

@@ -6,7 +6,8 @@ Einrichtung, Theme, eigene Plugins, Grundeinstellungen und Testartikel. Datenban
 nicht dazu, ein frischer Aufbau ergibt immer denselben Stand.
 
 Stand: lokal mit Grundaufbau, Anmeldung über einen eigenen ZITADEL, Lizenzvergabe gegen eine Attrappe der
-Lizenz-Schnittstelle und „Jetzt lesen“. Nicht mit Staging, Live oder weclapp verbunden. Plan und Schnittstellen:
+Lizenz-Schnittstelle, „Jetzt lesen“, Kasse mit Lieferländern, Steuern, Versand nach Gewicht, Rechnung und PayPal
+(Testmodus), Abos, Widerruf-Häkchen, Mehrplatz-Anfrage, Mails im Ketteler-Ton und Rechtstext-Entwürfen. Nicht mit Staging, Live oder weclapp verbunden. Plan und Schnittstellen:
 [docs/plan.md](docs/plan.md), Fragen an den Verlag: [docs/fragen-ketteler.md](docs/fragen-ketteler.md).
 
 ## Neuen Rechner einrichten
@@ -82,7 +83,8 @@ Anmeldung zurück. Testkunden (Passwort in `.env` unter `KETTELER_TESTKUNDE_PASS
 | `testkunde2@ketteler.test` | normaler Kunde |
 | `unbestaetigt@ketteler.test` | E-Mail nicht bestätigt; ZITADEL verlangt die Bestätigung (Code in Mailpit) |
 
-**Konto anlegen** geht ebenfalls über ZITADEL; die Bestätigungsmail landet in Mailpit. Ohne Anmeldung kann man nur
+**Konto anlegen** geht ebenfalls über ZITADEL; die Bestätigungsmail landet in Mailpit. Alle Mails des Shops
+(Bestellbestätigung, Versand, Storno, Kontoanlage) stehen ebenfalls in Mailpit. Ohne Anmeldung kann man nur
 gedruckte Artikel bestellen (Gastbestellung). Nach einer Bestellung mit Online-Zugang erscheint „Jetzt lesen“ in der
 Bestätigung und im Kundenkonto; lokal zeigt der Link auf eine Platzhalter-Adresse.
 
@@ -96,7 +98,7 @@ Bestätigung und im Kundenkonto; lokal zeigt der Link auf eine Platzhalter-Adres
 | `make einrichten` | nur den Grundaufbau erneut anwenden (Kategorien, Testartikel) |
 | `make neu` | Datenbank dieses Rechners verwerfen und alles frisch aufbauen (fragt vorher) |
 | `make test` | Unit-Tests der eigenen Plugins (wenige Sekunden) |
-| `make test-e2e` | Ende-zu-Ende-Tests gegen den laufenden Shop: Anmeldung, Gastbestellung, Lizenzen (etwa 3 Minuten) |
+| `make test-e2e` | Ende-zu-Ende-Tests gegen den laufenden Shop: Anmeldung, Lizenzen, Kasse, Mails (etwa 4 Minuten) |
 | `make konsole` | Kommandozeile im Shop-Container (z. B. `bin/console`) |
 | `make logs` | Protokolle ansehen |
 
@@ -117,28 +119,46 @@ Dateien unten.
 | `custom/plugins/KettelerEinrichtung/src/Resources/daten/kategorien.json` | Kategorien (vorläufig nach dem heutigen Shop) |
 | `custom/plugins/KettelerEinrichtung/src/Resources/daten/artikel.json` | Testartikel mit Platzhaltertexten |
 | `custom/plugins/KettelerAnmeldung` | Anmeldung über ZITADEL (PKCE, Abmelden auch bei ZITADEL, Verknüpfung der Konten), Gastbestellung nur für Print, Befehl `ketteler:zitadel:einrichten` (nur lokal) |
-| `custom/plugins/KettelerLizenzen` | Lizenz beim Online-Kauf über die Warteschlange, Storno, „Jetzt lesen“, Befehl `ketteler:lizenz:erneut` |
+| `custom/plugins/KettelerLizenzen` | Lizenz beim Online-Kauf über die Warteschlange, Storno, „Jetzt lesen“, Kundenkonto „Meine Online-Zugänge“, Befehl `ketteler:lizenz:erneut` |
+| `custom/plugins/KettelerMehrplatz` | „Mehrere Lizenzen anfragen“: Formular, Mail an den Kundenservice, Liste in der Verwaltung (Kunden > Mehrplatz-Anfragen) |
+| `custom/plugins/KettelerEinrichtung/src/Resources/daten/` | `laender.json`, `steuern.json` (Platzhalter), `versand.json` (Platzhalter), `mails/` (Mailtexte), `rechtstexte/` (aus `content/` erzeugt) |
+| `content/` | Inhalte des heutigen Shops als Rohmaterial für das Design (Eigentum Ketteler), Übersicht in `content/README.md` |
+| `tools/rechtstexte_html.py` | wandelt `content/rechtstexte/*.md` in die Rechtstext-Seiten um (danach `make einrichten`) |
 | `tools/lizenz-attrappe` | Nachbildung der Lizenz-Schnittstelle des Redaktionssystems für lokale Tests |
 | `tests/e2e` | Ende-zu-Ende-Tests (Python, ohne Zusatzpakete) |
 | `docs/plan.md` | Plan: Lizenz-Plugin, ZITADEL, weclapp, Staging und Live, offene Fragen |
 
 ## Grundaufbau (macht `ketteler:einrichten`)
 
-- Sprache Deutsch, Währung Euro, Land Deutschland (nur diese im Verkaufskanal).
-- Steuersätze 19 % und 7 %. Welcher Artikel welchen Satz hat, kommt später aus weclapp.
-- Zahlart **Rechnung** (Zahlungsziel 10 Tage), alle anderen Zahlarten aus.
-- Versand: **Versand per Post** (vorläufig 4,50 € pauschal) für Bestellungen mit Print oder Bundle, **Ohne Versand
-  (Online-Zugang)** für Bestellungen nur mit Online-Artikeln. Gesteuert über „versandkostenfrei“ am Artikel.
+- Sprache Deutsch, Währung Euro. **29 Lieferländer:** Deutschland, die EU, Schweiz, Großbritannien.
+- Steuern: 19 % und 7 % (deutsche Umsatzsteuer, auch für Print ins EU-Ausland) und „Online“ für Online-Zugänge mit der
+  Umsatzsteuer des Kundenlandes für Privatkunden in der EU (Sätze sind Platzhalter). Schweiz und Großbritannien ohne
+  Umsatzsteuer; Einrichtungen in anderen EU-Ländern mit USt-IdNr. ebenfalls ohne.
+- Zahlarten **Rechnung** (Zahlungsziel 10 Tage) und **PayPal** (offizielles Plugin, nur Testmodus, siehe unten).
+- Versand: **Versand per Post** nach Gewicht und Zone (Deutschland, EU, Schweiz, Großbritannien; Werte sind Platzhalter)
+  für Bestellungen mit Print oder Bundle, **Ohne Versand (Online-Zugang)** für Bestellungen nur mit Online-Artikeln.
+- Mails (Bestellbestätigung, Versand, Storno, Kontoanlage) und Kopf und Fuß aller Mails im Ketteler-Ton.
+- Rechtstexte (Impressum, AGB, Widerrufsbelehrung, Datenschutz, Versand und Lieferung) als Entwurf aus dem heutigen Shop,
+  verknüpft mit Fußzeile und Kasse; Prüfliste in `docs/rechtstexte-pruefliste.md`.
 - Artikel-Zusatzfelder (Verwaltung → Artikel → Reiter Spezifikationen, Abschnitt „Ketteler“):
   - `ketteler_artikelart`: print, online oder bundle
   - `ketteler_produkt`: Online-Werk für die Lizenz, `avr` oder `eichstaetter` (leer bei Print)
+  - `ketteler_abo`: Hinweis zum Abonnement; ist er gesetzt, ist der Artikel im Shop als Abo gekennzeichnet
 - Nummernkreise: Bestellungen `SW100000` ff., Kunden `SK100000` ff. (stoßen nicht mit weclapp-Nummern zusammen).
 - Kategorien nach der Struktur des heutigen Shops, dazu Fußzeile mit Service und Rechtlichem (Platzhalter).
-- Sechs Testartikel (Nummern beginnen mit `TEST-`): Print mit 7 % und 19 %, zwei Online-Zugänge (AVR, Eichstätter),
-  ein Bundle, ein Einzelheft.
+- Neun Testartikel (Nummern beginnen mit `TEST-`): Print mit 7 % und 19 %, zwei Online-Zugänge (AVR, Eichstätter; der
+  Eichstätter-Zugang mit Bestand 0, verkäuflich ohne Bestandsprüfung), ein Bundle, ein Einzelheft und drei Abos (ZMV Print,
+  ZMV Digital, AVR Digital).
 
 Alle Datensätze haben feste Kennungen. Ein zweiter Lauf ändert nichts, Änderungen an den JSON-Dateien werden beim
 nächsten `make einrichten` übernommen.
+
+## PayPal im Testmodus
+
+PayPal ist eingerichtet, erscheint lokal aber erst, wenn Zugangsdaten einer eigenen **PayPal-Sandbox-App** in der `.env`
+stehen (`PAYPAL_SANDBOX_CLIENT_ID`, `PAYPAL_SANDBOX_CLIENT_SECRET`, `PAYPAL_SANDBOX_MERCHANT_ID`; anlegen unter
+developer.paypal.com). Danach `make einrichten`. Nie Kettelers Zugangsdaten verwenden; das Händlerkonto verbindet Ketteler
+später selbst auf Staging bzw. Live.
 
 ## Wenn etwas nicht klappt
 

@@ -4,7 +4,7 @@
 {% block page_account_register_inner %}
     <div class="row justify-content-md-center">
         <div class="col-md-8 col-lg-6">
-            {% sw_include '@KettelerAnmeldung/storefront/component/ketteler/anmelden-karte.html.twig' with { ziel: null } %}
+            {% sw_include '@KettelerAnmeldung/storefront/component/ketteler/anmelden-karte.html.twig' with { ziel: ketteler_ziel_aus_route(app.request.query.get('redirectTo')) } %}
         </div>
     </div>
 {% endblock %}

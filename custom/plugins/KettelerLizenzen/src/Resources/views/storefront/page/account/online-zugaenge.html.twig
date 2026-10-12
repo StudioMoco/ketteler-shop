@@ -1,0 +1,38 @@
+{% sw_extends '@Storefront/storefront/page/account/_page.html.twig' %}
+
+{% block page_account_main_content %}
+    <div class="account-online-zugaenge" data-kt="online-zugaenge">
+        <h1 class="h3">{{ 'ketteler.lizenz.titel'|trans|sw_sanitize }}</h1>
+        <p>{{ 'ketteler.lizenz.seiteEinleitung'|trans|sw_sanitize }}</p>
+        {% if zugaenge is empty %}
+            <div class="alert alert-info" role="status">{{ 'ketteler.lizenz.keine'|trans|sw_sanitize }}</div>
+        {% else %}
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead><tr>
+                        <th>{{ 'ketteler.lizenz.werk'|trans|sw_sanitize }}</th>
+                        <th>{{ 'ketteler.lizenz.bestellung'|trans|sw_sanitize }}</th>
+                        <th>{{ 'ketteler.lizenz.stand'|trans|sw_sanitize }}</th>
+                        <th></th>
+                    </tr></thead>
+                    <tbody>
+                    {% for z in zugaenge %}
+                        <tr data-kt-zugang="{{ z.werk }}" data-kt-stand="{{ z.status }}">
+                            <td><strong>{{ ('ketteler.werk.' ~ z.werk)|trans|sw_sanitize }}</strong>{% if z.abo %}<br><span class="kt-artikelart kt-abo">{{ 'ketteler.lizenz.abo'|trans|sw_sanitize }}</span>{% endif %}</td>
+                            <td>{{ z.bestellnummer }}<br><small class="text-muted">{{ z.datum|format_date('medium', locale=app.request.locale) }}</small></td>
+                            <td>{{ ('ketteler.lizenz.stand_' ~ z.status)|trans|sw_sanitize }}</td>
+                            <td class="text-end">
+                                {% if z.status in ['angelegt', 'offen', 'wartet'] %}
+                                    <a class="btn btn-primary btn-sm" href="{{ ketteler_bibliothek_url(z.werk) }}" data-kt-werk="{{ z.werk }}">{{ 'ketteler.lizenz.jetztLesen'|trans|sw_sanitize }}</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+        <p class="mt-4">{{ 'ketteler.lizenz.mehrplatz'|trans|sw_sanitize }}
+            <a href="{{ path('frontend.ketteler.mehrplatz') }}">{{ 'ketteler.mehrplatz.link'|trans|sw_sanitize }}</a></p>
+    </div>
+{% endblock %}

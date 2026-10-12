@@ -1,0 +1,13 @@
+{% set lieferung = order.deliveries.first %}
+<p>Guten Tag {{ order.orderCustomer.firstName }} {{ order.orderCustomer.lastName }},</p>
+<p>gute Nachricht: Wir haben Ihre Bestellung {{ order.orderNumber }} vom {{ order.orderDateTime|format_date('long', locale='de-DE') }} heute verschickt.</p>
+{% if lieferung and lieferung.trackingCodes is not empty %}
+    <p><strong>Sendungsnummer:</strong> {{ lieferung.trackingCodes|join(', ') }}</p>
+{% endif %}
+{% if lieferung %}
+    {% set an = lieferung.shippingOrderAddress %}
+    <p><strong>Lieferanschrift</strong><br>{% if an.company %}{{ an.company }}<br>{% endif %}{{ an.firstName }} {{ an.lastName }}<br>{{ an.street }}<br>{{ an.zipcode }} {{ an.city }}<br>{{ an.country.translated.name }}</p>
+{% endif %}
+<p>Ihre Bestellung finden Sie jederzeit in Ihrem Kundenkonto: <a href="{{ rawUrl('frontend.account.order.single.page', { 'deepLinkCode': order.deepLinkCode }, salesChannel.domains|first.url) }}" style="color: #b7005c;">Bestellung ansehen</a></p>
+<p>Wir wünschen Ihnen viel Freude beim Lesen.</p>
+<p>Freundliche Grüße<br>Ihr KETTELER-Verlag</p>

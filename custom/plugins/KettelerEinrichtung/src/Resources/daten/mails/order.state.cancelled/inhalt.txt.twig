@@ -1,0 +1,10 @@
+{% set online = false %}{% for position in order.lineItems %}{% if position.payload.customFields.ketteler_artikelart ?? null in ['online', 'bundle'] %}{% set online = true %}{% endif %}{% endfor %}Guten Tag {{ order.orderCustomer.firstName }} {{ order.orderCustomer.lastName }},
+
+Ihre Bestellung {{ order.orderNumber }} vom {{ order.orderDateTime|format_date('long', locale='de-DE') }} ist storniert. Sie müssen nichts weiter tun.
+{% if online %}
+Ein Online-Zugang aus dieser Bestellung ist damit beendet. Andere Zugänge in Ihrem Ketteler-Konto bleiben bestehen.
+{% endif %}
+Haben Sie die Stornierung nicht veranlasst oder haben Sie Fragen dazu? Dann melden Sie sich bitte bei unserem Kundenservice.
+
+Freundliche Grüße
+Ihr KETTELER-Verlag

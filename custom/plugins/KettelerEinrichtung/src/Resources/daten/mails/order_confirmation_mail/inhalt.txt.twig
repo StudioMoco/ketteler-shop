@@ -1,0 +1,43 @@
+{% set waehrung = order.currency.isoCode %}{% set kunde = order.orderCustomer %}{% set rechnung = order.addresses.get(order.billingAddressId) %}{% set lieferung = order.deliveries.first %}{% set werke = [] %}{% set ohneWerk = false %}{% set abo = false %}{% for position in order.lineItems %}{% set felder = position.payload.customFields ?? {} %}{% if felder.ketteler_artikelart ?? null in ['online', 'bundle'] %}{% if felder.ketteler_produkt ?? null %}{% if felder.ketteler_produkt not in werke %}{% set werke = werke|merge([felder.ketteler_produkt]) %}{% endif %}{% else %}{% set ohneWerk = true %}{% endif %}{% endif %}{% if felder.ketteler_abo ?? null %}{% set abo = true %}{% endif %}{% endfor %}
+Guten Tag {{ kunde.firstName }} {{ kunde.lastName }},
+
+vielen Dank für Ihre Bestellung. Sie ist am {{ order.orderDateTime|format_datetime('long', 'short', locale='de-DE') }} bei uns eingegangen, wir bearbeiten sie jetzt.
+
+Bestellnummer: {{ order.orderNumber }}
+
+Ihre Artikel:
+{% for position in order.lineItems %}
+{{ position.quantity }} x {{ position.label }}{% if position.payload.productNumber is defined %} (Artikelnummer {{ position.payload.productNumber }}){% endif %}: {{ position.totalPrice|currency(waehrung) }}
+{% if position.payload.customFields.ketteler_abo ?? null %}   Abonnement: {{ position.payload.customFields.ketteler_abo }}
+{% endif %}{% endfor %}
+{% for versand in order.deliveries %}Versandkosten ({{ versand.shippingMethod.translated.name }}): {{ versand.shippingCosts.totalPrice|currency(waehrung) }}
+{% endfor %}{% for steuer in order.price.calculatedTaxes %}{% if order.taxStatus is same as('net') %}zuzüglich{% else %}darin enthalten{% endif %} {{ steuer.taxRate }} % Umsatzsteuer: {{ steuer.tax|currency(waehrung) }}
+{% endfor %}Gesamtbetrag: {{ order.price.totalPrice|currency(waehrung) }}
+{% if werke is not empty %}
+
+Ihr Online-Zugang
+Wir schalten Ihren Zugang sofort frei. Sie lesen in unserer Bibliothek mit Ihrem Ketteler-Konto, also mit derselben E-Mail-Adresse und demselben Passwort wie im Shop.
+{% for werk in werke %}Jetzt lesen, {{ ('ketteler.werk.' ~ werk)|trans }}: {{ ketteler_bibliothek_url(werk) }}
+{% endfor %}{% endif %}
+{% if ohneWerk %}
+Wie Sie die digitale Ausgabe erhalten, teilen wir Ihnen gesondert mit.
+{% endif %}{% if order.customFields.ketteler_widerruf is defined %}
+Ihre Zustimmung: {{ order.customFields.ketteler_widerruf.text }} (bestätigt am {{ order.customFields.ketteler_widerruf.zugestimmt|format_datetime('medium', 'short', locale='de-DE') }})
+{% endif %}{% if abo %}
+Für Ihr Abonnement legen wir den Vertrag für Sie an. Sie erhalten dazu eine eigene Bestätigung.
+{% endif %}{% set zahlart = order.transactions.first.paymentMethod ?? null %}{% if zahlart %}
+Zahlung: {{ zahlart.translated.name }}.{% if zahlart.technicalName == 'payment_invoicepayment' %} Die Rechnung erhalten Sie gesondert, bitte überweisen Sie den Betrag innerhalb von 10 Tagen.{% endif %}
+{% endif %}{% if lieferung %}Versand: {{ lieferung.shippingMethod.translated.name }}
+{% endif %}
+Rechnungsanschrift:
+{% if rechnung.company %}{{ rechnung.company }}
+{% endif %}{{ rechnung.firstName }} {{ rechnung.lastName }}
+{{ rechnung.street }}
+{{ rechnung.zipcode }} {{ rechnung.city }}
+{{ rechnung.country.translated.name }}
+
+Ihre Bestellung finden Sie jederzeit in Ihrem Kundenkonto:
+{{ rawUrl('frontend.account.order.single.page', { 'deepLinkCode': order.deepLinkCode }, salesChannel.domains|first.url) }}
+
+Freundliche Grüße
+Ihr KETTELER-Verlag

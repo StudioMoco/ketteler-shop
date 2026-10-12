@@ -9,6 +9,7 @@
         <testsuite name="Ketteler">
             <directory>custom/plugins/KettelerAnmeldung/tests</directory>
             <directory>custom/plugins/KettelerLizenzen/tests</directory>
+            <directory>custom/plugins/KettelerMehrplatz/tests</directory>
         </testsuite>
     </testsuites>
 </phpunit>

@@ -1,0 +1,13 @@
+{% sw_extends '@Storefront/storefront/page/checkout/confirm/index.html.twig' %}
+
+{# Widerruf bei Online-Zugängen für Privatkunden (Text von Ketteler zu prüfen) #}
+{% block page_checkout_confirm_tos_control %}
+    {{ parent() }}
+    {% if ketteler_widerruf_noetig(page.cart, context) %}
+        <div class="form-check mt-2" data-kt="widerruf">
+            <input type="checkbox" class="form-check-input" required="required" id="ketteler_widerruf"
+                   form="confirmOrderForm" name="ketteler_widerruf" value="1">
+            <label for="ketteler_widerruf" class="custom-control-label">{{ 'ketteler.widerruf.zustimmung'|trans|sw_sanitize }}</label>
+        </div>
+    {% endif %}
+{% endblock %}

@@ -29,9 +29,10 @@ einrichten: ## Grundaufbau erneut anwenden (nach Änderungen an Kategorien oder 
 test: ## Unit-Tests der eigenen Plugins (phpunit, ohne Datenbank)
 	@$(DOCKER) compose exec -T web vendor/bin/phpunit
 
-test-e2e: ## Ende-zu-Ende-Tests gegen die laufende Umgebung (Anmeldung, Gastbestellung, Lizenzen; etwa 3 Minuten)
+test-e2e: ## Ende-zu-Ende-Tests gegen die laufende Umgebung (Anmeldung, Lizenzen, Kasse, Mails; etwa 4 Minuten)
 	@python3 tests/e2e/anmeldung_test.py
 	@python3 tests/e2e/lizenz_test.py
+	@python3 tests/e2e/shop_test.py
 
 konsole: ## Kommandozeile im Shop-Container öffnen
 	@$(DOCKER) compose exec web bash

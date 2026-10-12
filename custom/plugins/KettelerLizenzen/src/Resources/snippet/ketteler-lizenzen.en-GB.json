@@ -1,10 +1,24 @@
 {
     "ketteler": {
         "lizenz": {
-            "titel": "Meine Online-Werke",
+            "titel": "Meine Online-Zugänge",
             "jetztLesen": "Jetzt lesen",
             "bestaetigung": "Ihr Online-Zugang wird jetzt freigeschaltet. Sie können sofort mit Ihrem Ketteler-Konto in der Bibliothek lesen und erhalten zusätzlich eine E-Mail.",
-            "wirdEingerichtet": "Der Zugang wird gerade eingerichtet und steht in wenigen Minuten bereit."
+            "wirdEingerichtet": "Der Zugang wird gerade eingerichtet und steht in wenigen Minuten bereit.",
+            "menue": "Meine Online-Zugänge",
+            "seiteEinleitung": "Hier finden Sie alle Online-Zugänge aus Ihren Bestellungen. Sie lesen in unserer Bibliothek mit demselben Ketteler-Konto wie im Shop.",
+            "keine": "Sie haben noch keinen Online-Zugang bestellt.",
+            "werk": "Werk",
+            "bestellung": "Bestellung",
+            "stand": "Stand",
+            "stand_angelegt": "freigeschaltet",
+            "stand_offen": "wird eingerichtet",
+            "stand_wartet": "wird eingerichtet",
+            "stand_fehler": "wird von unserem Kundenservice geprüft",
+            "stand_storniert": "beendet (Bestellung storniert)",
+            "abo": "Abonnement",
+            "mehrplatz": "Sie brauchen Zugänge für mehrere Personen?",
+            "alleZugaenge": "Alle Online-Zugänge ansehen"
         },
         "werk": {
             "avr": "Kompendium AVR Caritas",

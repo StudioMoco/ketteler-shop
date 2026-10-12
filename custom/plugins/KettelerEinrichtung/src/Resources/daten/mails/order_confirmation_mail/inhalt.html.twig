@@ -1,0 +1,79 @@
+{% set waehrung = order.currency.isoCode %}
+{% set kunde = order.orderCustomer %}
+{% set rechnung = order.addresses.get(order.billingAddressId) %}
+{% set lieferung = order.deliveries.first %}
+{% set werke = [] %}
+{% set ohneWerk = false %}
+{% set abo = false %}
+{% for position in order.lineItems %}
+    {% set felder = position.payload.customFields ?? {} %}
+    {% if felder.ketteler_artikelart ?? null in ['online', 'bundle'] %}
+        {% if felder.ketteler_produkt ?? null %}{% if felder.ketteler_produkt not in werke %}{% set werke = werke|merge([felder.ketteler_produkt]) %}{% endif %}{% else %}{% set ohneWerk = true %}{% endif %}
+    {% endif %}
+    {% if felder.ketteler_abo ?? null %}{% set abo = true %}{% endif %}
+{% endfor %}
+<p>Guten Tag {{ kunde.firstName }} {{ kunde.lastName }},</p>
+<p>vielen Dank für Ihre Bestellung. Sie ist am {{ order.orderDateTime|format_datetime('long', 'short', locale='de-DE') }} bei uns eingegangen, wir bearbeiten sie jetzt.</p>
+<p><strong>Bestellnummer: {{ order.orderNumber }}</strong></p>
+
+<table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+    <tr style="text-align: left; border-bottom: 1px solid #e6e6e9;">
+        <th style="padding: 6px 4px;">Artikel</th><th style="padding: 6px 4px; text-align: right;">Menge</th><th style="padding: 6px 4px; text-align: right;">Preis</th><th style="padding: 6px 4px; text-align: right;">Summe</th>
+    </tr>
+    {% for position in order.lineItems %}
+        {% set felder = position.payload.customFields ?? {} %}
+        <tr style="border-bottom: 1px solid #e6e6e9; vertical-align: top;">
+            <td style="padding: 6px 4px;">{{ position.label }}{% if position.payload.productNumber is defined %}<br><span style="color: #6b6b70; font-size: 12px;">Artikelnummer {{ position.payload.productNumber }}</span>{% endif %}
+                {% if felder.ketteler_abo ?? null %}<br><span style="font-size: 12px;"><strong>Abonnement:</strong> {{ felder.ketteler_abo }}</span>{% endif %}</td>
+            <td style="padding: 6px 4px; text-align: right;">{{ position.quantity }}</td>
+            <td style="padding: 6px 4px; text-align: right;">{{ position.unitPrice|currency(waehrung) }}</td>
+            <td style="padding: 6px 4px; text-align: right;">{{ position.totalPrice|currency(waehrung) }}</td>
+        </tr>
+    {% endfor %}
+    {% for versand in order.deliveries %}
+        <tr><td colspan="3" style="padding: 6px 4px;">Versandkosten ({{ versand.shippingMethod.translated.name }})</td><td style="padding: 6px 4px; text-align: right;">{{ versand.shippingCosts.totalPrice|currency(waehrung) }}</td></tr>
+    {% endfor %}
+    {% for steuer in order.price.calculatedTaxes %}
+        <tr><td colspan="3" style="padding: 2px 4px; color: #6b6b70;">{% if order.taxStatus is same as('net') %}zuzüglich{% else %}darin enthalten{% endif %} {{ steuer.taxRate }} % Umsatzsteuer</td><td style="padding: 2px 4px; text-align: right; color: #6b6b70;">{{ steuer.tax|currency(waehrung) }}</td></tr>
+    {% endfor %}
+    <tr style="font-weight: 700;"><td colspan="3" style="padding: 8px 4px;">Gesamtbetrag</td><td style="padding: 8px 4px; text-align: right;">{{ order.price.totalPrice|currency(waehrung) }}</td></tr>
+</table>
+
+{% if werke is not empty %}
+    <div style="margin: 24px 0; padding: 12px 16px; background: #f7eaf0; border-left: 3px solid #b7005c;">
+        <p style="margin: 0 0 8px;"><strong>Ihr Online-Zugang</strong></p>
+        <p style="margin: 0 0 8px;">Wir schalten Ihren Zugang sofort frei. Sie lesen in unserer Bibliothek mit Ihrem Ketteler-Konto, also mit derselben E-Mail-Adresse und demselben Passwort wie im Shop.</p>
+        {% for werk in werke %}
+            <p style="margin: 0 0 6px;"><a href="{{ ketteler_bibliothek_url(werk) }}" style="display: inline-block; padding: 8px 16px; background: #b7005c; color: #ffffff; text-decoration: none; border-radius: 6px;">Jetzt lesen: {{ ('ketteler.werk.' ~ werk)|trans }}</a></p>
+        {% endfor %}
+    </div>
+{% endif %}
+{% if ohneWerk %}
+    <p>Wie Sie die digitale Ausgabe erhalten, teilen wir Ihnen gesondert mit.</p>
+{% endif %}
+{% if order.customFields.ketteler_widerruf is defined %}
+    <p style="font-size: 13px;"><strong>Ihre Zustimmung:</strong> {{ order.customFields.ketteler_widerruf.text }} (bestätigt am {{ order.customFields.ketteler_widerruf.zugestimmt|format_datetime('medium', 'short', locale='de-DE') }})</p>
+{% endif %}
+{% if abo %}
+    <p>Für Ihr Abonnement legen wir den Vertrag für Sie an. Sie erhalten dazu eine eigene Bestätigung.</p>
+{% endif %}
+
+{% set zahlart = order.transactions.first.paymentMethod ?? null %}
+{% if zahlart %}
+    <p><strong>Zahlung:</strong> {{ zahlart.translated.name }}.
+    {% if zahlart.technicalName == 'payment_invoicepayment' %}Die Rechnung erhalten Sie gesondert, bitte überweisen Sie den Betrag innerhalb von 10 Tagen.{% endif %}</p>
+{% endif %}
+{% if lieferung %}
+    <p><strong>Versand:</strong> {{ lieferung.shippingMethod.translated.name }}</p>
+{% endif %}
+
+<table style="width: 100%; font-size: 14px;"><tr style="vertical-align: top;">
+    <td style="padding-right: 12px;"><strong>Rechnungsanschrift</strong><br>{% if rechnung.company %}{{ rechnung.company }}<br>{% endif %}{{ rechnung.firstName }} {{ rechnung.lastName }}<br>{{ rechnung.street }}<br>{{ rechnung.zipcode }} {{ rechnung.city }}<br>{{ rechnung.country.translated.name }}</td>
+    {% if lieferung and lieferung.shippingCosts.totalPrice > 0 %}
+        {% set an = lieferung.shippingOrderAddress %}
+        <td><strong>Lieferanschrift</strong><br>{% if an.company %}{{ an.company }}<br>{% endif %}{{ an.firstName }} {{ an.lastName }}<br>{{ an.street }}<br>{{ an.zipcode }} {{ an.city }}<br>{{ an.country.translated.name }}</td>
+    {% endif %}
+</tr></table>
+
+<p>Ihre Bestellung finden Sie jederzeit in Ihrem Kundenkonto: <a href="{{ rawUrl('frontend.account.order.single.page', { 'deepLinkCode': order.deepLinkCode }, salesChannel.domains|first.url) }}" style="color: #b7005c;">Bestellung ansehen</a></p>
+<p>Freundliche Grüße<br>Ihr KETTELER-Verlag</p>

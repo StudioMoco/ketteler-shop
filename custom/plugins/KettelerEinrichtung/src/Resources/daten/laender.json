@@ -1,0 +1,11 @@
+{
+  "_hinweis": "Lieferländer wie im heutigen Shop: Deutschland, Österreich, Schweiz, Italien, Großbritannien und die EU. Zonen steuern die Versandkosten. CH und GB: Ausfuhr, Preise ohne deutsche Umsatzsteuer. EU ohne DE: Firmenkunden mit USt-IdNr. steuerfrei (Reverse Charge).",
+  "zonen": {
+    "DE": { "name": "Deutschland", "laender": ["DE"] },
+    "EU": { "name": "EU ohne Deutschland", "laender": ["AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE"] },
+    "CH": { "name": "Schweiz", "laender": ["CH"] },
+    "GB": { "name": "Großbritannien", "laender": ["GB"] }
+  },
+  "steuerfrei_alle": ["CH", "GB"],
+  "steuerfrei_firmen_mit_ustid": ["AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE"]
+}

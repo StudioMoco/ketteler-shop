@@ -27,8 +27,13 @@
             "strasse": "Straße und Hausnummer",
             "plz": "PLZ",
             "ort": "Ort",
-            "land": "Lieferung und Rechnung innerhalb Deutschlands.",
-            "kontoAnlegen": "Kundenkonto anlegen"
+            "land": "Land",
+            "kontoAnlegen": "Kundenkonto anlegen",
+            "ustid": "USt-IdNr. (nur Einrichtungen in anderen EU-Ländern, für die Lieferung ohne Umsatzsteuer)"
+        },
+        "widerruf": {
+            "zustimmung": "Ich stimme zu, dass der Online-Zugang sofort beginnt, und weiß, dass ich damit mein Widerrufsrecht verliere.",
+            "fehlt": "Bitte bestätigen Sie, dass der Online-Zugang sofort beginnen soll."
         }
     },
     "checkout": {

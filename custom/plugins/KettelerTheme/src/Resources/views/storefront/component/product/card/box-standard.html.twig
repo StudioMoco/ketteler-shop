@@ -2,8 +2,12 @@
 
 {% block component_product_box_name %}
     {% set ktArt = product.translated.customFields.ketteler_artikelart ?? null %}
-    {% if ktArt %}
-        <span class="kt-artikelart">{{ ('ketteler.artikelart.' ~ ktArt)|trans|sw_sanitize }}</span>
+    {% set ktAbo = product.translated.customFields.ketteler_abo ?? null %}
+    {% if ktArt or ktAbo %}
+        <div class="kt-kennzeichen">
+            {% if ktArt %}<span class="kt-artikelart">{{ ('ketteler.artikelart.' ~ ktArt)|trans|sw_sanitize }}</span>{% endif %}
+            {% if ktAbo %}<span class="kt-artikelart kt-abo">{{ 'ketteler.abo.kennzeichen'|trans|sw_sanitize }}</span>{% endif %}
+        </div>
     {% endif %}
     {{ parent() }}
 {% endblock %}

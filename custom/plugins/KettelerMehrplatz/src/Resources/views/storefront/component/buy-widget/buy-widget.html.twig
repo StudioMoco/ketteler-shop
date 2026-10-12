@@ -1,0 +1,15 @@
+{% sw_extends '@Storefront/storefront/component/buy-widget/buy-widget.html.twig' %}
+
+{# Online-Zugänge nur einzeln; für mehrere Lizenzen deutlich sichtbar die Anfrage #}
+{% block buy_widget_buy_container %}
+    {{ parent() }}
+    {% set ktArt = product.translated.customFields.ketteler_artikelart ?? null %}
+    {% if ktArt in ['online', 'bundle'] %}
+        <div class="kt-mehrplatz-hinweis" data-kt="mehrplatz-link">
+            <p class="mb-2">{{ 'ketteler.mehrplatz.produktHinweis'|trans|sw_sanitize }}</p>
+            <a class="btn btn-outline-primary w-100" href="{{ path('frontend.ketteler.mehrplatz', {artikel: product.productNumber, werk: product.translated.customFields.ketteler_produkt ?? ''}) }}">
+                {{ 'ketteler.mehrplatz.link'|trans|sw_sanitize }}
+            </a>
+        </div>
+    {% endif %}
+{% endblock %}

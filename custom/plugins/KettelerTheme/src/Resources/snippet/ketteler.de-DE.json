@@ -12,6 +12,10 @@
             "online": "Online-Zugang",
             "bundle": "Print und Online",
             "onlineLieferung": "Online-Zugang, sofort nach dem Kauf"
+        },
+        "abo": {
+            "kennzeichen": "Abo",
+            "titel": "Abonnement:"
         }
     },
     "footer": {

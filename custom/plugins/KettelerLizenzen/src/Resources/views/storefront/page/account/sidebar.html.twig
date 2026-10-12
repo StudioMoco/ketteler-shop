@@ -1,0 +1,15 @@
+{% sw_extends '@Storefront/storefront/page/account/sidebar.html.twig' %}
+
+{% block page_account_sidebar_link_home %}
+    {{ parent() }}
+    {% if context.customer and not context.customer.guest %}
+        <a href="{{ path('frontend.ketteler.online-zugaenge') }}" title="{{ 'ketteler.lizenz.menue'|trans|striptags }}"
+           class="list-group-item list-group-item-action account-aside-item{% if activeRoute is same as('frontend.ketteler.online-zugaenge') %} is-active{% endif %}"
+           {% if activeRoute is same as('frontend.ketteler.online-zugaenge') %} aria-current="page"{% endif %}>
+            {{ 'ketteler.lizenz.menue'|trans|sw_sanitize }}
+        </a>
+    {% endif %}
+{% endblock %}
+
+{# Zahlungsart wählt der Kunde in der Kasse (Rechnung oder PayPal) #}
+{% block page_account_sidebar_link_payment %}{% endblock %}

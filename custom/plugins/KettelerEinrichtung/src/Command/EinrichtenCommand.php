@@ -2,13 +2,16 @@
 
 namespace Ketteler\Einrichtung\Command;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\DefinitionInstanceRegistry;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsAnyFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\NotFilter;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\CustomField\CustomFieldTypes;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
@@ -45,18 +48,21 @@ class EinrichtenCommand extends Command
         $this->context = Context::createCLIContext();
 
         $salesChannelId = $this->storefrontId();
-        $landId = $this->landDeutschland();
-        $steuern = $this->steuern();
+        $laender = $this->laender();
+        $steuern = $this->steuern($laender);
         $this->zusatzfelder();
         [$regelVersand, $regelOnline] = $this->regeln();
+        $zonen = $this->zonenRegeln($laender);
         [$lieferzeitPost, $lieferzeitSofort] = $this->lieferzeiten();
-        [$versandPost, $versandOnline] = $this->versandarten($regelVersand, $regelOnline, $lieferzeitPost, $lieferzeitSofort);
-        $rechnung = $this->zahlartRechnung();
+        [$versandPost, $versandOnline] = $this->versandarten($regelVersand, $regelOnline, $zonen, $lieferzeitPost, $lieferzeitSofort);
+        $zahlarten = $this->zahlarten();
         [$wurzel, $fuss] = $this->kategorien();
-        $this->verkaufskanal($salesChannelId, $landId, $rechnung, $versandPost, [$versandPost, $versandOnline], $wurzel, $fuss);
+        $this->rechtstexte();
+        $this->verkaufskanal($salesChannelId, $laender, $zahlarten, $versandPost, [$versandPost, $versandOnline], $wurzel, $fuss);
         $this->nummernkreise();
         $this->artikel($salesChannelId, $steuern, $lieferzeitPost, $lieferzeitSofort);
         $this->einstellungen();
+        $this->mails($salesChannelId);
 
         $this->io->success('Grundaufbau fertig.');
 
@@ -94,28 +100,79 @@ class EinrichtenCommand extends Command
         return $id;
     }
 
-    private function landDeutschland(): string
+    /** @return array<string, string> ISO-Code => ID; Lieferländer und Steuerfreiheit laut laender.json */
+    private function laender(): array
     {
-        $id = $this->ersteId('country', (new Criteria())->addFilter(new EqualsFilter('iso', 'DE')));
-        if ($id === null) {
-            throw new \RuntimeException('Land DE fehlt.');
+        $daten = $this->json('laender.json');
+        $iso = array_merge(...array_map(static fn (array $z): array => $z['laender'], array_values($daten['zonen'])));
+        $ids = [];
+        foreach ($this->repo('country')->search((new Criteria())->addFilter(new EqualsAnyFilter('iso', $iso)), $this->context) as $land) {
+            $ids[(string) $land->getIso()] = $land->getId();
         }
-        $this->repo('country')->update([['id' => $id, 'active' => true, 'shippingAvailable' => true, 'position' => 1]], $this->context);
+        $fehlt = array_diff($iso, array_keys($ids));
+        if ($fehlt !== []) {
+            throw new \RuntimeException('Länder fehlen: ' . implode(', ', $fehlt));
+        }
+        $steuerfrei = static fn (bool $an): array => ['enabled' => $an, 'currencyId' => Defaults::CURRENCY, 'amount' => 0];
+        $zeilen = [];
+        foreach ($ids as $code => $id) {
+            $zeilen[] = [
+                'id' => $id,
+                'active' => true,
+                'shippingAvailable' => true,
+                'position' => $code === 'DE' ? 1 : 10,
+                'customerTax' => $steuerfrei(\in_array($code, $daten['steuerfrei_alle'], true)),
+                'companyTax' => $steuerfrei(\in_array($code, $daten['steuerfrei_firmen_mit_ustid'], true) || \in_array($code, $daten['steuerfrei_alle'], true)),
+            ];
+        }
+        $this->repo('country')->update($zeilen, $this->context);
+        $this->io->writeln(\sprintf('%d Lieferländer eingerichtet (CH und GB ohne Umsatzsteuer, EU-Firmen mit USt-IdNr. steuerfrei).', \count($ids)));
 
-        return $id;
+        return $ids;
     }
 
-    /** @return array<int, string> Steuersatz in Prozent => ID */
-    private function steuern(): array
+    /**
+     * Steuern laut steuern.json. Die beiden Druck-Steuern sind die Shopware-Vorgaben (19 % und 7 %), umbenannt.
+     * „Online“ ist eine eigene Steuer mit Regeln je EU-Land (Bestimmungslandprinzip für Privatkunden).
+     *
+     * @param array<string, string> $laender
+     *
+     * @return array<string, string> Schlüssel (print19, print7, online) => ID
+     */
+    private function steuern(array $laender): array
     {
+        $daten = $this->json('steuern.json');
+        $onlineId = $this->id('steuer.online');
         $ergebnis = [];
-        foreach ([19 => 'Umsatzsteuer 19 %', 7 => 'Umsatzsteuer 7 %'] as $satz => $name) {
-            $id = $this->ersteId('tax', (new Criteria())->addFilter(new EqualsFilter('taxRate', (float) $satz)))
-                ?? $this->id('steuer.' . $satz);
-            $this->repo('tax')->upsert([['id' => $id, 'taxRate' => (float) $satz, 'name' => $name, 'position' => $satz === 19 ? 1 : 2]], $this->context);
-            $ergebnis[$satz] = $id;
+        foreach ($daten['steuern'] as $schluessel => $steuer) {
+            $id = $schluessel === 'online' ? $onlineId : ($this->ersteId('tax', (new Criteria())
+                ->addFilter(new EqualsFilter('taxRate', (float) $steuer['satz']))
+                ->addFilter(new NotFilter(NotFilter::CONNECTION_AND, [new EqualsFilter('id', $onlineId)]))) ?? $this->id('steuer.' . $schluessel));
+            $this->repo('tax')->upsert([['id' => $id, 'taxRate' => (float) $steuer['satz'], 'name' => $steuer['name'], 'position' => \count($ergebnis) + 1]], $this->context);
+            $ergebnis[$schluessel] = $id;
         }
-        $this->io->writeln('Steuersätze 19 % und 7 % angelegt.');
+
+        // Gedruckte Artikel: deutsche Umsatzsteuer für alle Lieferländer. Länderregeln, die Shopware bei der Installation an
+        // die Standardsteuern hängt (z. B. Österreich), entfernen (offene Frage Lieferschwelle, siehe docs/plan.md).
+        $this->db->executeStatement(
+            'DELETE FROM tax_rule WHERE tax_id IN (:t)',
+            ['t' => Uuid::fromHexToBytesList([$ergebnis['print19'], $ergebnis['print7']])],
+            ['t' => ArrayParameterType::BINARY],
+        );
+
+        $typ = $this->ersteId('tax_rule_type', (new Criteria())->addFilter(new EqualsFilter('technicalName', 'entire_country')));
+        $regeln = [];
+        foreach ($daten['online_je_land'] as $code => $satz) {
+            $regeln[] = [
+                'id' => $this->id('steuer.online.' . $code),
+                'taxId' => $onlineId,
+                'countryId' => $laender[$code],
+                'taxRuleTypeId' => $typ,
+                'taxRate' => (float) $satz,
+            ];
+        }
+        $this->repo('tax_rule')->upsert($regeln, $this->context);
+        $this->io->writeln(\sprintf('Steuern 19 %%, 7 %% und „Online“ mit %d Länderregeln (Platzhalter, mit weclapp abgleichen).', \count($regeln)));
 
         return $ergebnis;
     }
@@ -162,10 +219,23 @@ class EinrichtenCommand extends Command
                         'options' => $auswahl(['avr' => 'AVR (Kompendium AVR Caritas)', 'eichstaetter' => 'Eichstätter Kommentar']),
                     ],
                 ],
+                [
+                    'id' => $this->id('zusatzfeld.abo'),
+                    'name' => 'ketteler_abo',
+                    'type' => CustomFieldTypes::TEXT,
+                    'allowCartExpose' => true,
+                    'config' => [
+                        'label' => ['de-DE' => 'Abonnement (Hinweis für Kunden)', 'en-GB' => 'Subscription note'],
+                        'helpText' => ['de-DE' => 'Leer = kein Abo. Sonst kurzer Hinweis zu Laufzeit und Verlängerung; der Artikel wird im Shop als Abo gekennzeichnet. Den Vertrag legt die Verwaltung in weclapp an.'],
+                        'componentName' => 'sw-field',
+                        'customFieldType' => 'text',
+                        'customFieldPosition' => 3,
+                    ],
+                ],
             ],
         ]], $this->context);
         // allowCartExpose: Shopware gibt die Felder nur dann an Warenkorb und Bestellpositionen weiter
-        $this->io->writeln('Zusatzfelder ketteler_artikelart und ketteler_produkt angelegt.');
+        $this->io->writeln('Zusatzfelder ketteler_artikelart, ketteler_produkt und ketteler_abo angelegt.');
     }
 
     /** @return array{0: string, 1: string} */
@@ -223,6 +293,48 @@ class EinrichtenCommand extends Command
         return [$versand, $online];
     }
 
+    /**
+     * Eine Regel je Versandzone (Lieferland), für die Gewichtsstaffeln.
+     *
+     * @param array<string, string> $laender
+     *
+     * @return array<string, string> Zone => Regel-ID
+     */
+    private function zonenRegeln(array $laender): array
+    {
+        $zonen = [];
+        $zeilen = [];
+        foreach ($this->json('laender.json')['zonen'] as $zone => $daten) {
+            $id = $this->id('regel.zone.' . $zone);
+            $zonen[$zone] = $id;
+            $zeilen[] = [
+                'id' => $id,
+                'name' => 'Lieferland: ' . $daten['name'],
+                'description' => 'Versandzone für die Gewichtsstaffeln (KettelerEinrichtung).',
+                'priority' => 50,
+                'conditions' => [[
+                    'id' => $this->id('regel.zone.' . $zone . '.oder'),
+                    'type' => 'orContainer',
+                    'position' => 0,
+                    'children' => [[
+                        'id' => $this->id('regel.zone.' . $zone . '.und'),
+                        'type' => 'andContainer',
+                        'position' => 0,
+                        'children' => [[
+                            'id' => $this->id('regel.zone.' . $zone . '.land'),
+                            'type' => 'customerShippingCountry',
+                            'position' => 0,
+                            'value' => ['operator' => '=', 'countryIds' => array_values(array_map(static fn (string $c): string => $laender[$c], $daten['laender']))],
+                        ]],
+                    ]],
+                ]],
+            ];
+        }
+        $this->repo('rule')->upsert($zeilen, $this->context);
+
+        return $zonen;
+    }
+
     /** @return array{0: string, 1: string} */
     private function lieferzeiten(): array
     {
@@ -237,7 +349,8 @@ class EinrichtenCommand extends Command
     }
 
     /** @return array{0: string, 1: string} */
-    private function versandarten(string $regelVersand, string $regelOnline, string $lieferzeitPost, string $lieferzeitSofort): array
+    /** @param array<string, string> $zonen Zone => Regel-ID */
+    private function versandarten(string $regelVersand, string $regelOnline, array $zonen, string $lieferzeitPost, string $lieferzeitSofort): array
     {
         $post = $this->id('versand.post');
         $online = $this->id('versand.online');
@@ -260,18 +373,13 @@ class EinrichtenCommand extends Command
                 'id' => $post,
                 'technicalName' => 'ketteler_post',
                 'name' => 'Versand per Post',
-                'description' => 'Deutsche Post innerhalb Deutschlands. Versandkosten vorläufig pauschal, später nach Gewicht aus weclapp.',
+                'description' => 'Deutsche Post. Versandkosten nach Gewicht und Lieferland (Werte vorläufig, folgen aus weclapp).',
                 'active' => true,
                 'position' => 1,
                 'taxType' => 'auto',
                 'availabilityRuleId' => $regelVersand,
                 'deliveryTimeId' => $lieferzeitPost,
-                'prices' => [[
-                    'id' => $this->id('versand.post.preis'),
-                    'calculation' => 1,
-                    'quantityStart' => 1,
-                    'currencyPrice' => $preis(4.50),
-                ]],
+                'prices' => $this->gewichtsstaffeln($zonen, $preis),
             ],
             [
                 'id' => $online,
@@ -291,37 +399,84 @@ class EinrichtenCommand extends Command
                 ]],
             ],
         ], $this->context);
-        $this->io->writeln('Versandarten „Versand per Post“ und „Ohne Versand (Online-Zugang)“ angelegt.');
+        // Pauschalpreis aus dem ersten Grundaufbau entfernen (erst jetzt, sonst hätte die Versandart kurz keinen Preis)
+        if ($this->repo('shipping_method_price')->searchIds(new Criteria([$this->id('versand.post.preis')]), $this->context)->getTotal() > 0) {
+            $this->repo('shipping_method_price')->delete([['id' => $this->id('versand.post.preis')]], $this->context);
+        }
+        $this->io->writeln('Versandarten „Versand per Post“ (Gewichtsstaffeln je Zone) und „Ohne Versand (Online-Zugang)“ angelegt.');
 
         return [$post, $online];
     }
 
-    private function zahlartRechnung(): string
+    /**
+     * Preise nach Gewicht (Berechnung 3) je Zone; die Zone wird über die Regel des Lieferlands gewählt.
+     *
+     * @param array<string, string> $zonen
+     * @param callable(float): array<int, array<string, mixed>> $preis
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function gewichtsstaffeln(array $zonen, callable $preis): array
     {
-        $alle = $this->repo('payment_method')->search(new Criteria(), $this->context);
-        $rechnung = null;
-        $updates = [];
-        foreach ($alle as $zahlart) {
-            if (str_ends_with((string) $zahlart->getHandlerIdentifier(), '\\InvoicePayment')) {
-                $rechnung = $zahlart->getId();
-                continue;
+        $ergebnis = [];
+        foreach ($this->json('versand.json')['staffeln'] as $zone => $staffeln) {
+            $von = 0.0;
+            foreach ($staffeln as $n => $staffel) {
+                $ergebnis[] = [
+                    'id' => $this->id('versand.post.preis.' . $zone . '.' . $n),
+                    'ruleId' => $zonen[$zone],
+                    'calculation' => 3,
+                    'quantityStart' => $von,
+                    'quantityEnd' => $staffel['bis_kg'] !== null ? (float) $staffel['bis_kg'] : null,
+                    'currencyPrice' => $preis((float) $staffel['preis']),
+                ];
+                $von = $staffel['bis_kg'] !== null ? (float) $staffel['bis_kg'] + 0.001 : $von;
             }
-            $updates[] = ['id' => $zahlart->getId(), 'active' => false];
+        }
+
+        return $ergebnis;
+    }
+
+    /**
+     * Rechnung und PayPal (offizielles Plugin SwagPayPal, nur die Zahlart „PayPal“). Alle anderen Zahlarten aus.
+     * PayPal läuft lokal im Testmodus (Sandbox); Zugangsdaten nur aus der .env (PAYPAL_SANDBOX_*). Ohne sie blendet das
+     * Plugin PayPal in der Kasse aus.
+     *
+     * @return list<string> IDs, Rechnung zuerst
+     */
+    private function zahlarten(): array
+    {
+        $rechnung = null;
+        $paypal = null;
+        $updates = [];
+        foreach ($this->repo('payment_method')->search(new Criteria(), $this->context) as $zahlart) {
+            $handler = (string) $zahlart->getHandlerIdentifier();
+            if (str_ends_with($handler, '\\InvoicePayment')) {
+                $rechnung = $zahlart->getId();
+            } elseif (str_ends_with($handler, '\\PayPalPaymentHandler')) {
+                $paypal = $zahlart->getId();
+            } else {
+                $updates[] = ['id' => $zahlart->getId(), 'active' => false];
+            }
         }
         if ($rechnung === null) {
             throw new \RuntimeException('Zahlart Rechnung (InvoicePayment) nicht gefunden.');
         }
-        $updates[] = [
-            'id' => $rechnung,
-            'name' => 'Rechnung',
-            'description' => 'Zahlung auf Rechnung, Zahlungsziel 10 Tage.',
-            'active' => true,
-            'position' => 1,
-        ];
+        $updates[] = ['id' => $rechnung, 'name' => 'Rechnung', 'description' => 'Zahlung auf Rechnung, Zahlungsziel 10 Tage.', 'active' => true, 'position' => 1];
+        if ($paypal !== null) {
+            $updates[] = ['id' => $paypal, 'name' => 'PayPal', 'active' => true, 'position' => 2];
+            $this->config->set('SwagPayPal.settings.sandbox', true);
+            foreach (['PAYPAL_SANDBOX_CLIENT_ID' => 'clientIdSandbox', 'PAYPAL_SANDBOX_CLIENT_SECRET' => 'clientSecretSandbox', 'PAYPAL_SANDBOX_MERCHANT_ID' => 'merchantPayerIdSandbox'] as $env => $feld) {
+                $wert = trim((string) ($_SERVER[$env] ?? getenv($env) ?: ''));
+                if ($wert !== '') {
+                    $this->config->set('SwagPayPal.settings.' . $feld, $wert);
+                }
+            }
+        }
         $this->repo('payment_method')->update($updates, $this->context);
-        $this->io->writeln('Zahlart „Rechnung“ aktiv, andere Zahlarten aus.');
+        $this->io->writeln($paypal !== null ? 'Zahlarten „Rechnung“ und „PayPal“ (Testmodus) aktiv, andere aus.' : 'Zahlart „Rechnung“ aktiv (PayPal-Plugin fehlt).');
 
-        return $rechnung;
+        return array_values(array_filter([$rechnung, $paypal]));
     }
 
     /** @return array{0: string, 1: string} IDs von Navigationswurzel und Fußzeile */
@@ -371,9 +526,83 @@ class EinrichtenCommand extends Command
         }
     }
 
-    /** @param list<string> $versandarten */
-    private function verkaufskanal(string $id, string $landId, string $zahlart, string $versand, array $versandarten, string $wurzel, string $fuss): void
+    /**
+     * Rechtstexte aus dem bisherigen Shop (Entwürfe, von Ketteler zu prüfen) als Erlebniswelt-Seiten, verknüpft mit den
+     * Fußzeilen-Kategorien und den Shop-Einstellungen (AGB-Link in der Kasse, Widerruf, Datenschutz, Impressum).
+     * Quelle: content/rechtstexte/*.md, umgewandelt mit tools/rechtstexte_html.py nach daten/rechtstexte/*.html.
+     */
+    private function rechtstexte(): void
     {
+        $texte = [
+            'impressum' => ['Impressum', 'fuss-impressum', 'core.basicInformation.imprintPage'],
+            'agb' => ['Allgemeine Geschäftsbedingungen', 'fuss-agb', 'core.basicInformation.tosPage'],
+            'widerruf' => ['Widerrufsbelehrung', 'fuss-widerruf', 'core.basicInformation.revocationPage'],
+            'datenschutz' => ['Datenschutzerklärung', 'fuss-datenschutz', 'core.basicInformation.privacyPage'],
+            'versand-lieferung' => ['Versand und Lieferung', 'fuss-versand', 'core.basicInformation.shippingPaymentInfoPage'],
+        ];
+        $seiten = [];
+        $kategorien = [];
+        foreach ($texte as $datei => [$titel, $kategorie, $einstellung]) {
+            $pfad = self::DATEN . 'rechtstexte/' . $datei . '.html';
+            if (!is_file($pfad)) {
+                $this->io->warning('Rechtstext fehlt: ' . $datei . ' (python3 tools/rechtstexte_html.py)');
+                continue;
+            }
+            $id = $this->id('cms.rechtstext.' . $datei);
+            $seiten[] = [
+                'id' => $id,
+                'type' => 'page',
+                'name' => 'Rechtstext: ' . $titel . ' (Entwurf, von Ketteler zu prüfen)',
+                'sections' => [[
+                    'id' => $this->id('cms.rechtstext.' . $datei . '.bereich'),
+                    'type' => 'default',
+                    'position' => 0,
+                    'sizingMode' => 'boxed',
+                    'blocks' => [
+                        [
+                            'id' => $this->id('cms.rechtstext.' . $datei . '.titel'),
+                            'type' => 'text',
+                            'position' => 0,
+                            'sectionPosition' => 'main',
+                            'slots' => [[
+                                'id' => $this->id('cms.rechtstext.' . $datei . '.titel.text'),
+                                'type' => 'text',
+                                'slot' => 'content',
+                                'config' => ['content' => ['source' => 'static', 'value' => '<h1>' . htmlspecialchars($titel) . '</h1>']],
+                            ]],
+                        ],
+                        [
+                            'id' => $this->id('cms.rechtstext.' . $datei . '.inhalt'),
+                            'type' => 'text',
+                            'position' => 1,
+                            'sectionPosition' => 'main',
+                            'slots' => [[
+                                'id' => $this->id('cms.rechtstext.' . $datei . '.inhalt.text'),
+                                'type' => 'text',
+                                'slot' => 'content',
+                                'config' => ['content' => ['source' => 'static', 'value' => (string) file_get_contents($pfad)]],
+                            ]],
+                        ],
+                    ],
+                ]],
+            ];
+            $kategorien[] = ['id' => $this->id('kategorie.' . $kategorie), 'cmsPageId' => $id, 'description' => null];
+            $this->config->set($einstellung, $id);
+        }
+        $this->repo('cms_page')->upsert($seiten, $this->context);
+        $this->repo('category')->update($kategorien, $this->context);
+        $this->io->writeln(\sprintf('%d Rechtstexte als Seiten angelegt (Entwürfe, von Ketteler zu prüfen).', \count($seiten)));
+    }
+
+    /**
+     * @param array<string, string> $laender
+     * @param list<string> $zahlarten
+     * @param list<string> $versandarten
+     */
+    private function verkaufskanal(string $id, array $laender, array $zahlarten, string $versand, array $versandarten, string $wurzel, string $fuss): void
+    {
+        $landId = $laender['DE'];
+        $zahlart = $zahlarten[0];
         $this->repo('sales_channel')->update([[
             'id' => $id,
             'name' => 'KETTELER-Verlag',
@@ -385,23 +614,31 @@ class EinrichtenCommand extends Command
             'navigationCategoryId' => $wurzel,
             'navigationCategoryDepth' => 3,
             'footerCategoryId' => $fuss,
-            'countries' => [['id' => $landId]],
+            'countries' => array_map(static fn (string $l): array => ['id' => $l], array_values($laender)),
             'currencies' => [['id' => Defaults::CURRENCY]],
             'languages' => [['id' => Defaults::LANGUAGE_SYSTEM]],
-            'paymentMethods' => [['id' => $zahlart]],
+            'paymentMethods' => array_map(static fn (string $z): array => ['id' => $z], $zahlarten),
             'shippingMethods' => array_map(static fn (string $v): array => ['id' => $v], $versandarten),
         ]], $this->context);
 
-        // Zuordnungen, die die Installation zusätzlich angelegt hat, entfernen: nur Deutschland, Euro, Deutsch
+        // Zuordnungen, die die Installation zusätzlich angelegt hat, entfernen: nur die Lieferländer, Euro, Deutsch
         $kanal = Uuid::fromHexToBytes($id);
-        $this->db->executeStatement('DELETE FROM sales_channel_country WHERE sales_channel_id = ? AND country_id <> ?', [$kanal, Uuid::fromHexToBytes($landId)]);
+        $this->db->executeStatement(
+            'DELETE FROM sales_channel_country WHERE sales_channel_id = :k AND country_id NOT IN (:l)',
+            ['k' => $kanal, 'l' => Uuid::fromHexToBytesList(array_values($laender))],
+            ['l' => ArrayParameterType::BINARY],
+        );
         $this->db->executeStatement('DELETE FROM sales_channel_currency WHERE sales_channel_id = ? AND currency_id <> ?', [$kanal, Uuid::fromHexToBytes(Defaults::CURRENCY)]);
-        $this->db->executeStatement('DELETE FROM sales_channel_payment_method WHERE sales_channel_id = ? AND payment_method_id <> ?', [$kanal, Uuid::fromHexToBytes($zahlart)]);
+        $this->db->executeStatement(
+            'DELETE FROM sales_channel_payment_method WHERE sales_channel_id = :k AND payment_method_id NOT IN (:z)',
+            ['k' => $kanal, 'z' => Uuid::fromHexToBytesList($zahlarten)],
+            ['z' => ArrayParameterType::BINARY],
+        );
         $this->db->executeStatement(
             'DELETE FROM sales_channel_shipping_method WHERE sales_channel_id = ? AND shipping_method_id NOT IN (?, ?)',
             [$kanal, Uuid::fromHexToBytes($versandarten[0]), Uuid::fromHexToBytes($versandarten[1])],
         );
-        $this->io->writeln('Verkaufskanal: Deutsch, Euro, Deutschland, Rechnung, Versand per Post.');
+        $this->io->writeln(\sprintf('Verkaufskanal: Deutsch, Euro, %d Lieferländer, Rechnung und PayPal, Versand per Post.', \count($laender)));
     }
 
     private function nummernkreise(): void
@@ -418,7 +655,7 @@ class EinrichtenCommand extends Command
         $this->io->writeln('Nummernkreise: Bestellungen SW100000 ff., Kunden SK100000 ff.');
     }
 
-    /** @param array<int, string> $steuern */
+    /** @param array<string, string> $steuern Schlüssel => Steuer-ID */
     private function artikel(string $salesChannelId, array $steuern, string $lieferzeitPost, string $lieferzeitSofort): void
     {
         $hersteller = $this->id('hersteller.ketteler');
@@ -428,14 +665,14 @@ class EinrichtenCommand extends Command
         foreach ($this->json('artikel.json')['artikel'] as $a) {
             $id = $this->id('artikel.' . $a['nummer']);
             $online = $a['artikelart'] === 'online';
-            $satz = (int) $a['steuer'];
+            $satz = (float) $this->json('steuern.json')['steuern'][$a['steuer']]['satz'];
             $zeilen[] = [
                 'id' => $id,
                 'productNumber' => $a['nummer'],
                 'name' => $a['name'],
                 'description' => '<p>' . htmlspecialchars($a['beschreibung']) . '</p>',
                 'active' => true,
-                'taxId' => $steuern[$satz],
+                'taxId' => $steuern[$a['steuer']],
                 'manufacturerId' => $hersteller,
                 'price' => [[
                     'currencyId' => Defaults::CURRENCY,
@@ -443,7 +680,7 @@ class EinrichtenCommand extends Command
                     'net' => round($a['preis'] / (1 + $satz / 100), 2),
                     'linked' => true,
                 ]],
-                'stock' => 1000,
+                'stock' => (int) ($a['bestand'] ?? 1000),
                 'isCloseout' => false,
                 // Online-Zugang einzeln; Mehrplatz vergibt die Verwaltung
                 'maxPurchase' => $online ? 1 : null,
@@ -453,6 +690,7 @@ class EinrichtenCommand extends Command
                 'customFields' => [
                     'ketteler_artikelart' => $a['artikelart'],
                     'ketteler_produkt' => $a['produkt'],
+                    'ketteler_abo' => $a['abo'] ?? null,
                 ],
                 'visibilities' => [[
                     'id' => $this->id('artikel.' . $a['nummer'] . '.sichtbar'),
@@ -464,6 +702,53 @@ class EinrichtenCommand extends Command
         }
         $this->repo('product')->upsert($zeilen, $this->context);
         $this->io->writeln(\sprintf('%d Testartikel angelegt.', \count($zeilen)));
+    }
+
+    /**
+     * Mailtexte aus daten/mails/<technischer Name>/ (Betreff, HTML, Text) und Kopf und Fuß aus daten/mails/_kopf_fuss/.
+     * Geschrieben wird die Standardsprache (Deutsch).
+     */
+    private function mails(string $salesChannelId): void
+    {
+        $ordner = self::DATEN . 'mails/';
+        $lesen = static fn (string $datei): string => (string) file_get_contents($ordner . $datei);
+        $anzahl = 0;
+        foreach (glob($ordner . '*', \GLOB_ONLYDIR) ?: [] as $pfad) {
+            $typ = basename($pfad);
+            if ($typ === '_kopf_fuss') {
+                continue;
+            }
+            $id = $this->ersteId('mail_template', (new Criteria())
+                ->addFilter(new EqualsFilter('mailTemplateType.technicalName', $typ))
+                ->addFilter(new EqualsFilter('systemDefault', true)));
+            if ($id === null) {
+                $this->io->warning('Mailvorlage ' . $typ . ' nicht gefunden.');
+                continue;
+            }
+            $this->repo('mail_template')->update([[
+                'id' => $id,
+                'senderName' => 'KETTELER-Verlag',
+                'subject' => trim($lesen($typ . '/betreff.txt')),
+                'contentHtml' => $lesen($typ . '/inhalt.html.twig'),
+                'contentPlain' => $lesen($typ . '/inhalt.txt.twig'),
+            ]], $this->context);
+            ++$anzahl;
+        }
+
+        $kopfFuss = $this->ersteId('mail_header_footer', (new Criteria())->addFilter(new EqualsFilter('systemDefault', true)))
+            ?? $this->id('mail.kopf-fuss');
+        $this->repo('mail_header_footer')->upsert([[
+            'id' => $kopfFuss,
+            'systemDefault' => true,
+            'name' => 'KETTELER-Verlag',
+            'description' => 'Kopf und Fuß aller Mails mit Kundenservice und Impressum',
+            'headerHtml' => $lesen('_kopf_fuss/kopf.html.twig'),
+            'footerHtml' => $lesen('_kopf_fuss/fuss.html.twig'),
+            'headerPlain' => $lesen('_kopf_fuss/kopf.txt.twig'),
+            'footerPlain' => $lesen('_kopf_fuss/fuss.txt.twig'),
+        ]], $this->context);
+        $this->repo('sales_channel')->update([['id' => $salesChannelId, 'mailHeaderFooterId' => $kopfFuss]], $this->context);
+        $this->io->writeln(\sprintf('%d Mailtexte und Kopf und Fuß der Mails eingespielt.', $anzahl));
     }
 
     private function einstellungen(): void

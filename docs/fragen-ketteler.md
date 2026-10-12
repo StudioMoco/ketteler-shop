@@ -1,44 +1,30 @@
-# Fragen an den KETTELER-Verlag zum neuen Shop
+# Offene Fragen an den KETTELER-Verlag zum neuen Shop
 
-Stand 12.10.2026. Für den neuen Online-Shop, der den heutigen Shop auf ketteler-verlag.de ablöst.
+Stand 12.10.2026. Die meisten Fragen der ersten Liste sind beantwortet. Offen ist noch:
 
-## Warenwirtschaft (weclapp)
+## Zum Prüfen
 
-1. **Neue Shop-Version:** Bitte fragen Sie beim weclapp-Support schriftlich nach, ab wann die Verbindung zwischen weclapp
-   und dem Shop-System „Shopware 6.7“ unterstützt. Heute bestätigt weclapp nur die ältere Version 6.6.
-2. **Darf der Testshop an weclapp?** Wir möchten den neuen Shop vor dem Start mit weclapp verbinden und testen. Geht das
-   mit einem eigenen Testbereich in weclapp, oder sollen im Test nur Artikel gelesen werden?
-3. **Aufräumen der Artikel in weclapp:** Wer übernimmt das, und bis wann? Nötig sind:
-   - zwei neue Felder an den Artikeln: „Art“ (Buch/Heft, Online-Zugang oder Paket aus beidem) und „Online-Werk“
-     (AVR oder Eichstätter Kommentar)
-   - der Online-Zugang zum Eichstätter Kommentar (Nummer 608082) als Artikel ohne Lager
-   - Pakete aus Buch und Online-Zugang als eigene, aktive Artikel
-   - Artikelnummern ohne Leerzeichen und Sonderzeichen
-   - fehlende Beschreibungen, Bilder und Gewichte
-   - das Feld „viit_shop“: Wird es noch gebraucht?
+1. **Zustimmung bei Online-Zugängen:** Privatkunden setzen beim Bestellen eines Online-Zugangs dieses Häkchen:
+   „Ich stimme zu, dass der Online-Zugang sofort beginnt, und weiß, dass ich damit mein Widerrufsrecht verliere.“
+   Bitte den Text mit Ihrer Rechtsberatung prüfen.
+2. **Rechtstexte:** AGB, Widerrufsbelehrung, Datenschutzerklärung, Impressum und die Seite zu Versand und Lieferung haben
+   wir unverändert aus dem heutigen Shop übernommen. Wir haben eine Liste der Stellen erstellt, die für den neuen Shop
+   vermutlich angepasst werden müssen (zum Beispiel neue Anmeldung, Online-Zugänge, PayPal, Lieferländer). Bitte prüfen
+   Sie die Texte mit dieser Liste und Ihrer Rechtsberatung.
+3. **Widerrufsfunktion:** Seit Juni 2026 verlangt die EU für Online-Verträge eine einfache Möglichkeit, den Widerruf im Shop
+   zu erklären. Bitte mit Ihrer Rechtsberatung klären, wie das im neuen Shop aussehen soll.
+4. **Impressum:** Wer gehört zur Geschäftsführung? Die Angabe fehlt noch.
 
-## Bestellen und Bezahlen
+## Zur Steuer (mit Ihrer Steuerberatung)
 
-4. **Zahlarten:** Zum Start nur „Rechnung“? Auf der heutigen Versandseite stehen auch Bankeinzug und Nachnahme, in weclapp
-   gibt es Bestellungen mit PayPal.
-5. **Versand:** In welche Länder liefern Sie (heute genannt: Deutschland, Österreich, Schweiz, Italien, Großbritannien,
-   EU)? Richten sich die Versandkosten nach Gewicht, oder gibt es Pauschalen?
-6. **Abonnements** (ZMV gedruckt und digital, AVR Digital): Sollen sie im neuen Shop bestellbar sein wie heute? Den
-   Vertrag würde weiter die Verwaltung in weclapp anlegen.
-7. **Buchhandel:** Brauchen Buchhandlungen im Shop eigene Preise oder Rabatte?
+5. Online-Zugänge an Privatkunden im EU-Ausland berechnen wir mit der Umsatzsteuer des jeweiligen Landes. Bitte bestätigen
+   Sie die Sätze für elektronische Bücher und Datenbanken je Land, die Sie in weclapp verwenden.
+6. Gedruckte Artikel an Privatkunden im EU-Ausland berechnen wir mit deutscher Umsatzsteuer. Das gilt, solange Ihre
+   Verkäufe ins EU-Ausland unter 10.000 Euro im Jahr bleiben. Stimmt das für Sie?
+7. Lieferungen in die Schweiz und nach Großbritannien berechnen wir ohne deutsche Umsatzsteuer. Gilt das so auch für
+   Online-Zugänge dorthin?
 
-## Online-Zugänge
+## Zur ZMV
 
-8. **Mehrere Zugänge für eine Einrichtung:** Wie oft kommt das vor? Zum Start würde die Verwaltung diese Bestellungen von
-   Hand freischalten. Soll man im Shop später mehrere Leser direkt angeben können?
-9. **Stornierte Bestellung:** Ein Online-Zugang endet mit der Stornierung sofort. Soll der Kunde dazu eine eigene E-Mail
-   bekommen?
-10. **Widerruf:** Bei Online-Zugängen für Privatkunden muss der Kunde beim Bestellen bestätigen, dass der Zugang sofort
-    beginnt und das Widerrufsrecht damit erlischt. Bitte den gewünschten Text dafür (mit Ihrer Rechtsberatung).
-
-## Inhalte und Rechtliches
-
-11. **Seiten ohne Artikel:** Was wird aus „MAV Einstieg“, „ZMV aktuell“, „ZMV Fachtagung“ und „Interviews Autoren“? Sollen
-    sie als Inhaltsseiten in den neuen Shop, oder entfallen sie?
-12. **Rechtstexte:** Für den neuen Shop brauchen wir AGB, Widerrufsbelehrung (auch für Online-Zugänge),
-    Datenschutzerklärung (mit der neuen Anmeldung und der Verbindung zu weclapp) und das Impressum mit Geschäftsführung.
+8. **ZMV digital:** Was bekommt ein Käufer beim digitalen Teil der ZMV (Digital, Kombi, Zusatz-Abo), und wo liest er?
+   Soll die ZMV später auch in die neue Bibliothek?

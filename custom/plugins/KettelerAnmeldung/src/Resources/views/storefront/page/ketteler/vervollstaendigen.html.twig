@@ -37,6 +37,10 @@
                     <input class="form-control" type="text" id="kt-firma" name="firma" value="{{ daten.firma|default('') }}" autocomplete="organization">
                 </div>
                 <div class="mb-3">
+                    <label class="form-label" for="kt-ustid">{{ 'ketteler.anmeldung.ustid'|trans|sw_sanitize }}</label>
+                    <input class="form-control" type="text" id="kt-ustid" name="ustid" value="{{ daten.ustid|default('') }}">
+                </div>
+                <div class="mb-3">
                     <label class="form-label" for="kt-strasse">{{ 'ketteler.anmeldung.strasse'|trans|sw_sanitize }}*</label>
                     <input class="form-control" type="text" id="kt-strasse" name="strasse" value="{{ daten.strasse|default('') }}" required autocomplete="street-address">
                 </div>
@@ -50,7 +54,14 @@
                         <input class="form-control" type="text" id="kt-ort" name="ort" value="{{ daten.ort|default('') }}" required autocomplete="address-level2">
                     </div>
                 </div>
-                <p class="text-muted small">{{ 'ketteler.anmeldung.land'|trans|sw_sanitize }}</p>
+                <div class="mb-3">
+                    <label class="form-label" for="kt-land">{{ 'ketteler.anmeldung.land'|trans|sw_sanitize }}*</label>
+                    <select class="form-select" id="kt-land" name="land" required>
+                        {% for id, name in laender %}
+                            <option value="{{ id }}" {% if daten.land|default('') == id %}selected{% endif %}>{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
                 <button class="btn btn-primary" type="submit">{{ 'ketteler.anmeldung.kontoAnlegen'|trans|sw_sanitize }}</button>
             </form>
         </div>

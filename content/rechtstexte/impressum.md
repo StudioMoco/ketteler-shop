@@ -1,0 +1,68 @@
+---
+titel: "Impressum"
+quelle_url: "https://www.ketteler-verlag.de/impressum"
+abgerufen: 2026-10-12
+gliederung:
+  - "Impressum"
+  - "Sitz des Verlages"
+  - "Postanschrift:"
+  - "Haftung für Inhalte"
+  - "Haftungsausschluss für externe Links"
+  - "Urheberrecht und Verlagsrechte"
+  - "Online-Plattform zur außergerichtlichen Streitschlichtung (ODR-Verordnung Art. 14 Abs. 1) sowie Hinweis nach § 36 VSBG"
+textumfang_woerter: 477
+bilder: []
+links_auf_produkte: 0
+hinweis: "Rohmaterial aus dem bisherigen Shop, Eigentum KETTELER-Verlag"
+---
+
+<!-- Vollständiger Text. Einfache Zeilenumbrüche entsprechen <br> im Original. Der Link „www.ketteler-verlag.de“ ist im Original fehlerhaft (relativ gesetzt → https://www.ketteler-verlag.de/www.ketteler-verlag.de). Rechtsstand prüfen (z. B. TMG-Verweise, OS-Plattform). -->
+
+### Impressum
+
+KETTELER-Verlag GmbH
+
+**Sitz des Verlages** Bernhard-Letterhaus-Str. 26
+50670 Köln
+
+vertreten durch den Geschäftsführer
+Josef Singer
+
+**Postanschrift:**
+KETTELER-Verlag GmbH
+Niederlassung
+Schloßhof 1
+93449 Waldmünchen
+Telefon: 09972 94 14 - 51
+Telefax: 09972 94 14 – 55
+
+E-Mail: kontakt@ketteler-verlag.de
+Internet: [www.ketteler-verlag.de](https://www.ketteler-verlag.de/www.ketteler-verlag.de)
+
+Handelsregister: Amtsgericht Köln HRB 34678
+Umsatzsteuer-ID: DE 122 792 915
+
+**Haftung für Inhalte**
+Alle Angaben und Daten wurden mit größter Sorgfalt erstellt. Für deren Vollständigkeit, Richtigkeit, Aktualität oder Qualität wird jedoch keine Gewähr übernommen, ebenso wenig wie eine Haftung für die rechtswidrige Verwendung dieser Seiten oder deren Inhalte.
+Als Diensteanbieter sind wir gemäß § 7 Abs. 1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir als Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen. Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den allgemeinen Gesetzen bleiben hiervon unberührt.
+Haftungsansprüche gegen den Verlag, welche sich auf Schäden materieller oder ideeller Art beziehen, die durch die Nutzung oder Nichtnutzung der dargebotenen Informationen bzw. durch die Nutzung fehlerhafter oder unvollständiger Informationen verursacht wurden, sind grundsätzlich ausgeschlossen, sofern seitens des Verlages kein nachweislich vorsätzliches oder grob fahrlässiges Verschulden vorliegt.
+Eine Haftung ist jedoch erst ab dem Zeitpunkt der Kenntniserlangung einer konkreten Rechtsverletzung möglich. Bei Bekanntwerden obengenannter Rechtsverletzungen werden wir diese Inhalte unverzüglich entfernen.
+
+**Haftungsausschluss für externe Links**
+Unser Angebot enthält Links zu externen Web-Seiten Dritter. Für Inhalte und Gestaltung der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich.
+Der Verlag erklärt ausdrücklich, dass zum Zeitpunkt der Linksetzung die entsprechenden Seiten frei von illegalen Inhalten waren. Der Verlag hat keinerlei Einfluss weder auf die aktuelle und künftige Gestaltung noch auf die Inhalte dieser Seiten.
+Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist jedoch ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei bekannt werden von Rechtsverletzungen werden wir derartige Links umgehend entfernen.
+Links zu externen Anbietern stellen keine Werbung oder Empfehlung durch die KETTELER-Verlag GmbH dar.
+
+**Urheberrecht und Verlagsrechte**
+Unsere Web-Seite und alle in diesem Angebot veröffentlichten Beiträge sind urheberrechtlich geschützt.
+Alle Rechte für den Inhalt und die Gestaltung stehen allein der KETTELER-Verlag GmbH bzw. den genannten Autoren zu.
+Vollständiges oder teilweises Reproduzieren, Verbreiten oder Benutzen dieses Angebotes oder von Teilen davon für öffentliche oder kommerzielle Zwecke ist ohne vorherige schriftliche Zustimmung des Verlages nicht gestattet.
+Downloads und Kopien dieser Seite sind nur für den privaten und nicht kommerziellen Gebrauch erlaubt. Sind die Inhalte auf unserer Web-Seite nicht von uns erstellt, sind die Urheberrechte Dritter zu beachten.
+
+**Online-Plattform zur außergerichtlichen Streitschlichtung (ODR-Verordnung Art. 14 Abs. 1) sowie Hinweis nach § 36 VSBG**
+Zur außergerichtlichen Beilegung von verbraucherrechtlichen Streitigkeiten hat die Europäische Union eine Online-Plattform (OS-Plattform) eingerichtet, an die Sie sich wenden können.
+Diese OS-Plattform ist über folgenden Link erreichbar: [https://ec.europa.eu/consumers/odr/](https://ec.europa.eu/consumers/odr/)
+Wir sind weder verpflichtet noch bereit, an dem Streitschlichtungsverfahren teilzunehmen.
+
+[Datenschutz](https://www.ketteler-verlag.de/privacy)

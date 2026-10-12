@@ -1,0 +1,5 @@
+<p>Guten Tag {{ customer.firstName }} {{ customer.lastName }},</p>
+<p>herzlich willkommen beim KETTELER-Verlag. Ihr Kundenkonto im Shop ist angelegt.</p>
+<p>Sie melden sich mit Ihrem Ketteler-Konto an, also mit Ihrer E-Mail-Adresse {{ customer.email }} und Ihrem Passwort. Mit demselben Konto lesen Sie auch Ihre Online-Werke in unserer Bibliothek. E-Mail-Adresse und Passwort ändern Sie in Ihrem Ketteler-Konto.</p>
+<p>In Ihrem Kundenkonto finden Sie Ihre Bestellungen, Anschriften und Ihre Online-Zugänge: <a href="{{ rawUrl('frontend.account.home.page', {}, salesChannel.domains|first.url) }}" style="color: #b7005c;">Zum Kundenkonto</a></p>
+<p>Freundliche Grüße<br>Ihr KETTELER-Verlag</p>

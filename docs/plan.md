@@ -1,12 +1,14 @@
 # Plan: Ketteler-Shop mit Shopware 6
 
-Stand 12.10.2026 (zweite Runde). Grundlage: `docs/shop-weclapp-analyse.md` (Branch `feature/shop-analyse` im
+Stand 12.10.2026 (dritte Runde). Grundlage: `docs/shop-weclapp-analyse.md` (Branch `feature/shop-analyse` im
 Redaktions-Repository), `docs/lizenzen/shop-schnittstelle.md` und `docs/lizenzen/shopware.md` (Redaktions-Repository,
 Branch `feature/stichtag`).
 
 **Lokal gebaut** (nur auf den Entwicklungsrechnern, keine Verbindung zu Staging, Live oder weclapp): Grundaufbau, Theme,
 Anmelde-Plugin `KettelerAnmeldung` mit eigenem ZITADEL-Container, Lizenz-Plugin `KettelerLizenzen` gegen eine Attrappe der
-Lizenz-Schnittstelle, „Jetzt lesen“. Tests: `make test` (Unit-Tests) und `make test-e2e` (Ende-zu-Ende).
+Lizenz-Schnittstelle, „Jetzt lesen“, Mehrplatz-Anfrage (`KettelerMehrplatz`), Mails im Ketteler-Ton, Lieferländer mit
+Steuerregeln, Versand nach Gewicht, Rechnung und PayPal (Testmodus), Abo-Kennzeichnung, Widerruf-Häkchen, Rechtstexte als
+Entwurf. Tests: `make test` (Unit-Tests) und `make test-e2e` (Ende-zu-Ende).
 
 **Feste Entscheidungen** (Atilla, 12.10.2026):
 
@@ -24,6 +26,31 @@ Lizenz-Schnittstelle, „Jetzt lesen“. Tests: `make test` (Unit-Tests) und `ma
 - Staging-Server wird vergrößert, wenn das Shop-Staging ansteht (Bestellung bei Hetzner macht Atilla). Adresse
   `staging-shop.mocodev.de`.
 
+**Entscheidungen der dritten Runde** (Atilla mit dem Wissen von Ketteler, 12.10.2026):
+
+- Storno: keine zusätzliche Mail aus dem Redaktionssystem (die Stornomail des Shops genügt).
+- Bestellungen aus der Shopware-Verwaltung bekommen ebenfalls automatisch eine Lizenz (geprüft: sie laufen über denselben
+  Bestellweg, das Lizenz-Plugin greift).
+- Shopware-Version: Atilla fragt beim weclapp-Support selbst nach 6.7. Bis dahin 6.6.
+- weclapp-Test: Der Shop auf Staging wird später lesend und schreibend an das echte weclapp angebunden. Testbestellungen nur
+  über einen eigenen Testkunden „TEST Studio Moco“, Ketteler wird vorher informiert. Der lokale Shop wird nie angebunden.
+- Artikel in weclapp: Ketteler räumt vorerst nichts auf. Artikelart und Online-Werk pflegen wir im Shop. Der Eichstätter
+  Online-Zugang (608082) wird ohne Bestandsprüfung verkauft. Pakete aus Buch und Online gibt es schon in weclapp (vor allem
+  ZMV), welche das sind, prüfen wir beim Anbinden. Artikelnummern mit Leerzeichen oder Sonderzeichen prüfen wir beim
+  Anbinden und geben Atilla eine Liste.
+- Zahlarten: Rechnung und PayPal (offizielles Shopware-Plugin). Ketteler verbindet sein Händlerkonto später selbst; lokal
+  nur Testmodus ohne Kettelers Zugangsdaten.
+- Versand nach Gewicht wie in weclapp; Lieferländer wie heute (Deutschland, Österreich, Schweiz, Italien, Großbritannien, EU).
+  Online-Zugänge an Privatkunden im EU-Ausland mit der Umsatzsteuer des Kundenlandes.
+- Abos: ZMV (gedruckt und digital) und AVR Digital im Shop bestellbar, Vertrag legt die Verwaltung in weclapp an, AVR Digital
+  bekommt die Lizenz sofort, im Shop klar als Abo gekennzeichnet.
+- Buchhandel: keine eigenen Preise oder Rabatte.
+- Mehrere Lizenzen: Online-Artikel nur einzeln, dazu „Mehrere Lizenzen anfragen“ (keine Bestellung, keine Lizenz).
+- Widerruf: Pflicht-Häkchen bei Online-Artikeln für Privatkunden (Text von Ketteler zu prüfen).
+- Rechtstexte aus dem heutigen Shop übernehmen, als „von Ketteler zu prüfen“ markieren, Anpassungsbedarf nur auflisten.
+- Inhalte und Design: eigene Startseite, Werkseiten für AVR, ZMV und Eichstätter, Storytelling-Seiten. Design und UX zuerst,
+  gebaut wird danach.
+
 ## 0. Shopware-Version
 
 | | |
@@ -32,8 +59,11 @@ Lizenz-Schnittstelle, „Jetzt lesen“. Tests: `make test` (Unit-Tests) und `ma
 | Shopware Store, weclapp-App | Kompatibilität bis 6.7.15.1 angezeigt; das ist die Store-App für Shopware Cloud und keine Freigabe der eingebauten Anbindung |
 | aktuelle Shopware-Versionen | 6.7.15.1 (aktuell), **6.6.10.29** (Extended Support), 6.8 noch nicht erschienen |
 
-**Gewählt: 6.6.10.29.** Sobald weclapp 6.7 freigibt (Ketteler fragt beim Support schriftlich an), auf 6.7 wechseln,
-möglichst **vor** dem Livegang.
+**Gewählt: 6.6.10.29.** Sobald weclapp 6.7 freigibt (Atilla fragt beim Support), auf 6.7 wechseln, möglichst **vor** dem
+Livegang. Hinweis für die Anfrage: Die weclapp-Übersichtsseite der Shop-Anbindungen
+(https://doc.weclapp.com/documentation/e-commerce/01-shops/, laut Recherche Stand Dezember 2025) nennt bereits „alle
+Shopware 6.7 & 6.6 Versionen“, die Seite zu Shopware 6 (Stand August 2025) noch 6.5 und 6.6. Bitte die Freigabe für 6.7
+schriftlich bestätigen lassen.
 
 **Wie lange bekommt 6.6 noch Korrekturen?** Quelle: Shopware Release Policy, Versionsübersicht
 (https://developer.shopware.com/release-notes/, Grafik
@@ -136,18 +166,20 @@ Verwaltung, 5xx und Zeitüberschreitung werden wie bei der Anlage wiederholt.
 
 | Fall | Wirkung |
 |---|---|
-| Widerruf (Privatkunden, 14 Tage) | Im Checkout für Privatkunden Zustimmung „sofortiger Beginn, Widerrufsrecht erlischt“ (§ 356 Abs. 5 BGB) abfragen (noch nicht gebaut, Text von Ketteler). Widerruft trotzdem jemand, storniert die Verwaltung die Bestellung (dann greift `stornieren`) oder beendet die Lizenz in „Kunden & Lizenzen“. |
+| Widerruf (Privatkunden, 14 Tage) | Gebaut: Pflicht-Häkchen in der Kasse für Privatkunden mit Online-Zugang oder Bundle: „Ich stimme zu, dass der Online-Zugang sofort beginnt, und weiß, dass ich damit mein Widerrufsrecht verliere.“ (von Ketteler zu prüfen). Ohne Häkchen keine Bestellung (auch serverseitig geprüft); Zeitpunkt und Wortlaut stehen an der Bestellung und in der Bestellbestätigung. Firmenkunden und Bestellungen aus der Verwaltung sind ausgenommen. Widerruft trotzdem jemand, storniert die Verwaltung die Bestellung (dann greift `stornieren`). |
+| Widerrufsfunktion (EU, seit 19.06.2026) | Shopware 6.6.10 bringt eine Einstellung „Widerrufsanfrage“ mit (`core.basicInformation.revocationRequestPage`, Mails `revocation_request.*`). Noch nicht eingerichtet: mit Ketteler und der Rechtsberatung klären, ob und wie die Widerrufsfunktion im Shop angeboten werden muss. |
 | Rückgabe des Buchs aus einem Bundle | Lizenz bleibt, außer die Verwaltung storniert. Rückgaben bucht weclapp. |
 | Rechnung nicht bezahlt | Verwaltung sperrt die Lizenz in „Kunden & Lizenzen“. Kein automatischer Weg aus weclapp. |
 | Abo-Kündigung (AVR Digital, später ZMV) | wie heute: Kündigung in „Kunden & Lizenzen“ mit Ende der bezahlten Laufzeit. |
 
 ### Mehrplatz
 
-Zum Start über die Verwaltung (Entscheidung): Online-Zugänge im Shop einzeln (Höchstmenge 1); Mehrplatz-Artikel (z. B.
-„Zusätzliche digitale Lizenzen“, Eichstätter ab 3 oder 5 Zugängen) bekommen später ein Kennzeichen, bei dem das Plugin
-keine Lizenz anlegt, sondern die Verwaltung per Mail informiert. Die Verwaltung vergibt Einzel- oder IP-Lizenzen in
-„Kunden & Lizenzen“. Später möglich: Leser-E-Mails im Checkout, je Leser ein `lizenz_anlegen`; dafür müsste die
-Schnittstelle mehrere Lizenzen je Bestellung und Produkt zulassen.
+Gebaut (`KettelerMehrplatz`): Online-Zugänge lassen sich nur einzeln kaufen (Höchstmenge 1). Auf jeder Artikelseite eines
+Online-Zugangs oder Bundles steht deutlich sichtbar „Mehrere Lizenzen anfragen“, ebenso auf der Seite „Meine
+Online-Zugänge“. Das Formular fragt Einrichtung, Ansprechperson, E-Mail, Telefon, Anzahl der Lizenzen (ab 2) und Nachricht
+ab, ist mit dem Shopware-Captcha geschützt, speichert die Anfrage (Verwaltung: Kunden > Mehrplatz-Anfragen) und schickt sie
+an `KETTELER_KONTAKT_EMAIL` (Live: kontakt@ketteler-verlag.de, lokal Mailpit). Keine Bestellung, keine Lizenz. Die
+Verwaltung vergibt die Lizenzen in „Kunden & Lizenzen“.
 
 ## 2. Anmeldung über ZITADEL (`KettelerAnmeldung`, lokal gebaut)
 
@@ -202,42 +234,57 @@ Gebaut (lokal):
 
 ## 3. weclapp-Integration
 
-### In Shopware einrichten (wir)
+### Was die Anbindung laut Doku tut (Stand der Recherche 12.10.2026)
 
-1. Shopware-Zugang für weclapp: laut weclapp-Doku über einen Admin-Benutzer (Benutzername und Passwort), nicht über eine
-   Integration. Eigener Benutzer `weclapp` mit starkem Passwort, nur dafür.
-2. Steuersätze 7 % und 19 % (angelegt), Währung Euro, Einheiten (Stück) müssen vorhanden sein, bevor weclapp verbindet.
-3. Lagerführung: Bestände kommen aus weclapp, Shopware-Bestandsbewegungen abschalten (laut weclapp-Doku).
-4. Nummernkreise: Bestellungen `SW100000` ff., Kunden `SK100000` ff. (angelegt). weclapp übernimmt diese Nummern, sie
-   dürfen nicht mit weclapp-Nummern (4- und 5-stellig) zusammenfallen.
-5. Zusatzfelder in Shopware, die weclapp befüllen soll: `ketteler_artikelart` (print, online, bundle) und
-   `ketteler_produkt` (avr, eichstaetter) sind angelegt.
-6. Kategorien pflegen wir in Shopware; dass weclapp Kategorien überträgt, ist nicht dokumentiert (im Test prüfen).
-7. Der Shop muss für weclapp erreichbar sein. Auf Staging statt Passwortschutz eine IP-Freigabe für die Adressen des
-   weclapp-Supports.
+Quellen: Shopware 6 (https://doc.weclapp.com/documentation/e-commerce/01-shops/01-2-shopware-6/), Shopware 5 (gleiche
+Anbindung, ausführlicher: .../01-1-shopware-5/), häufige Fehler (.../01-7-die-haeufigsten-fehler-shops/), FAQ Versandkosten
+(https://doc.weclapp.com/knowledgebase/wie-werden-versandkosten-vom-shop-zu-weclapp-uebertragen/).
 
-### In weclapp einrichten (Ketteler mit uns)
+| Frage | Befund | Folge für uns |
+|---|---|---|
+| Überschreibt weclapp unsere Felder `ketteler_artikelart`, `ketteler_produkt`, `ketteler_abo`? | Artikelfelder werden über eine Zuordnungstabelle übertragen („immer oder nur bei der Artikelanlage“); Zusatzfelder nur, wenn sie einzeln zugeordnet sind. Ob nicht zugeordnete Shopware-Zusatzfelder unberührt bleiben oder das ganze Zusatzfeld-Paket ersetzt wird, steht **nicht** in der Doku. | Unsere Felder in weclapp nicht zuordnen. Auf Staging als erstes prüfen: Artikel mit gesetzten Feldern, Abgleich aus weclapp laufen lassen, Felder vergleichen. Falls weclapp sie löscht: Felder aus einer eigenen Tabelle je Artikelnummer nachtragen (kleines Plugin) oder weclapp-Support fragen. |
+| Überträgt weclapp Versandarten oder Versandkosten in den Shop? | **Nein**, davon steht nichts in der Doku. Versandkosten gehen nur vom Shop nach weclapp, mit dem Auftrag (als Versandkosten-Artikel, als Artikel oder als Textzeile). | Gewichtsstaffeln in Shopware nachgebaut (gebaut, Werte Platzhalter, `daten/versand.json`). Echte Werte aus den weclapp-Versandkosten-Artikeln (`DE_…`, `EU_…`, Schweiz, Ausland) übernehmen. |
+| Bestand | weclapp rechnet den verkaufbaren Bestand und schreibt ihn alle 5 Minuten in den Shop; die Lagerbewegungen in Shopware abschalten. Zum Verkauf ohne Bestandsprüfung steht nichts in der Doku. | 608082 und alle Online-Artikel: in Shopware „Abverkauf“ aus (gebaut: verkäuflich auch bei Bestand 0). Auf Staging prüfen, ob weclapp das Feld überschreibt. |
+| Aufträge | Auftrags- und Kundennummer kommen aus dem Shop. Zuordnung der Kunden über Kundennummer oder E-Mail, Gastbestellung ergibt jeweils einen neuen weclapp-Kunden. Zahlarten werden je Shopware-Zahlart auf Auftragsart, Zahlungsart und Zahlungsbedingung abgebildet (PayPal empfohlen als Auftragsart „Vorkasse“). Wählbar, welche Status importiert werden; mindestens 2 Sicherheitstage. Jeder Artikel eines Auftrags muss in weclapp existieren. | Zuordnung Rechnung → „Auf Rechnung“, PayPal → „Vorkasse“/„PayPal“ beim Einrichten festlegen. Testartikel (`TEST-…`) gibt es nicht in weclapp: Testbestellungen auf Staging nur mit echten Artikeln und dem Testkunden „TEST Studio Moco“. |
+| Artikelnummern | „Shopware lässt nur a-Z, 0-9, Punkt, Bindestrich und Unterstrich in Artikelnummern zu.“ | Beim Anbinden alle Artikel mit Leerzeichen oder Sonderzeichen auflisten (Liste an Atilla); bekannt ist z. B. „ZMV Einzelartikel“. |
+| Abos, digitale Artikel | nichts dokumentiert; Artikel, die aus dem Shop nach weclapp kommen, werden immer Lagerartikel. | Abos als normale Bestellung, Vertrag von Hand (entschieden). |
 
-Einstellungen → Integration → Shops → Shopware 6: Shop-Adresse und Zugang; weclapp führend für Artikel, Preise,
-Bestände; Aufträge aus dem Shop abholen (Status „neu“, Sicherheitstage 3); Zuordnungen: Zahlart Rechnung → „Auf
-Rechnung“ (Ziel 10 Tage), Versandart „Versand per Post“ → Versandkosten-Artikel, Kundengruppe → Vertriebsweg `GROSS1`,
-Lager Hauptlager. Zuerst nur Artikel übertragen, Auftragsabruf erst nach dem Test einschalten.
+### In Shopware einrichten (wir, auf Staging)
 
-### In weclapp aufräumen (Ketteler, vor dem Anschluss)
+1. Shopware-Zugang für weclapp: laut weclapp-Doku über einen Admin-Benutzer (Benutzername und Passwort). Eigener Benutzer
+   `weclapp` mit starkem Passwort, nur dafür.
+2. Steuern (19 %, 7 %, „Online“ mit Länderregeln), Währung Euro, Einheiten müssen vorhanden sein, bevor weclapp verbindet.
+   Welcher weclapp-Steuersatz auf welche Shopware-Steuer zeigt, beim Einrichten festlegen; Online-Artikel brauchen die
+   Steuer „Online“.
+3. Lagerbewegungen in Shopware abschalten (laut weclapp-Doku).
+4. Nummernkreise: Bestellungen `SW100000` ff., Kunden `SK100000` ff. (angelegt), damit sie nicht mit weclapp-Nummern
+   (4- und 5-stellig) zusammenfallen.
+5. Zusatzfelder `ketteler_artikelart`, `ketteler_produkt`, `ketteler_abo` pflegen wir im Shop (in weclapp nicht zuordnen).
+6. Kategorien pflegen wir in Shopware.
+7. Der Shop muss für weclapp erreichbar sein: auf Staging statt Passwortschutz eine IP-Freigabe für die weclapp-Adressen.
 
-1. **Neue Artikel-Zusatzfelder** „Artikelart“ (Print, Online, Bundle) und „Online-Werk“ (AVR, Eichstätter) anlegen und
-   für alle Shop-Artikel füllen. Heute erkennt man Online-Artikel nur an Nummer und Name.
-2. **Eichstätter Online-Zugang (608082)** von Lagerartikel auf `BASIC` umstellen, sonst erscheint er mit Bestand und
-   Lieferzeit.
-3. **Bundles** als eigene, aktive Artikel anlegen (608042 ist inaktiv).
-4. **Mehrplatz-Artikel** klar benennen (Zusätzliche digitale Lizenzen, Staffeln beim Eichstätter).
-5. **Artikelnummern** ohne Leerzeichen und Sonderzeichen (z. B. „ZMV Einzelartikel“).
-6. **„Auf Website anzeigen“** als einziges Shop-Kennzeichen pflegen; altes Feld „viit_shop“ klären und entfernen.
-7. **Beschreibungen** (189 ohne Langtext), **Bilder** (154 ohne Bild), **Gewichte** (51 Lagerartikel mit 0) nachtragen.
-8. **Steuersatz** je Artikel prüfen (ermäßigt 199, voll 142, 0 % 2).
-9. **Versandkosten**: alte Pauschalen (`VA1`, `VA500`, `VA19-…`) und Gewichtszonen auf ein Schema bringen, das der Shop
-   abbilden kann.
-10. Doppelte Kundenkategorie „Ökumenisch/Oekumenisch“ zusammenführen.
+### In weclapp einrichten (mit Ketteler)
+
+Einstellungen > Integration > Shops > Shopware 6: Shop-Adresse und Zugang; weclapp führend für Artikel, Preise, Bestände;
+Aufträge aus dem Shop abholen (Status „offen“, Sicherheitstage 3); Zuordnungen: Rechnung → „Auf Rechnung“ (Ziel 10 Tage),
+PayPal → Vorkasse/PayPal, Versandkosten → Versandkosten-Artikel, Kundengruppe → Vertriebsweg `GROSS1`, Lager Hauptlager.
+Zuerst nur Artikel übertragen, Auftragsabruf erst nach dem Test einschalten. Testbestellungen nur mit dem Testkunden
+„TEST Studio Moco“; Ketteler vorher informieren.
+
+### Gewicht fehlt (aus der vorhandenen Analyse, kein neuer Zugriff)
+
+Laut `shop-weclapp-analyse.md` (Stand 12.10.2026) haben von den **343** aktiven, für die Website markierten Artikeln **330**
+ein Gewicht eingetragen, **13** also keines. Zusätzlich steht bei **51 von 242 Lagerartikeln** das Gewicht auf **0**. Ob sich
+beide Gruppen überschneiden, gibt die Analyse nicht her; es sind also **mindestens 51 und höchstens 64 Artikel** ohne
+brauchbares Gewicht. Für reine Online-Artikel (ohne Lager) ist das egal, für Print führt es zu zu niedrigen Versandkosten.
+Beim Anbinden die Liste erzeugen und an Ketteler geben.
+
+### Offen für später
+
+- **ZMV digital:** Was bekommt ein Käufer beim Online-Teil der ZMV (ZMV Digital, Kombi, Zusatz-Abo), und wo (heute
+  `/digibib` im NCE-Shop)? Die ZMV gehört bisher nicht zur neuen Bibliothek. Der Testartikel „ZMV Abonnement Digital“ vergibt
+  deshalb keine Lizenz; die Bestellbestätigung sagt „Wie Sie die digitale Ausgabe erhalten, teilen wir Ihnen gesondert mit.“
+- Welche Pakete aus Buch und Online es in weclapp gibt (vor allem ZMV) und welches Online-Werk sie freischalten.
 
 ## 4. Weg zu Staging und Live
 
@@ -251,7 +298,8 @@ Lager Hauptlager. Zuerst nur Artikel übertragen, Auftragsabruf erst nach dem Te
 - **Aufbau:** eigener Stack `ketteler-shop-stg` (PHP-FPM, Worker für Warteschlange und geplante Aufgaben, MySQL 8.4 wie
   Live, ohne OpenSearch, ohne Redis) hinter dem vorhandenen Caddy; Adresse `staging-shop.mocodev.de`.
 - **Verbindungen:** Lizenz-Schnittstelle von Staging (eigenes Geheimnis), Staging-ZITADEL (Anwendung „Shop“), weclapp
-  (IP-Freigabe statt Passwortschutz; zuerst nur Artikel, ob mit Testmandant ist offen).
+  (echtes weclapp, lesend und schreibend; IP-Freigabe statt Passwortschutz; zuerst nur Artikel; Testbestellungen nur
+  mit dem Testkunden „TEST Studio Moco“, Ketteler wird vorher informiert).
 - **Einspielen:** nur aus GitHub (Deploy-Key nur lesend), Ablauf wie beim Redaktionssystem; Shopware
   `deployment-helper` für Migrationen, Plugins und Theme; Theme und Verwaltung beim Bauen übersetzen, nicht auf dem Server.
 
@@ -273,21 +321,51 @@ Lager Hauptlager. Zuerst nur Artikel übertragen, Auftragsabruf erst nach dem Te
 
 ### Reihenfolge
 
-1. Lokal: Grundaufbau, Anmelde-Plugin mit lokalem ZITADEL, Lizenz-Plugin mit Attrappe, „Jetzt lesen“ (fertig).
+1. Lokal: Grundaufbau, Anmeldung, Lizenzen, Kasse, Mails, Mehrplatz-Anfrage, Rechtstext-Entwürfe (fertig).
+1a. Design und UX für Startseite, Werkseiten und Storytelling-Seiten (Grundlage: `content/`), danach bauen (Abschnitt 5).
 2. Redaktionssystem: Schnittstelle um `stornieren` erweitern (und später Mehrplatz), Bibliothek „Zugang wird eingerichtet“.
 3. Staging-Server vergrößern, Shop-Staging aufbauen, Plugins gegen Staging-Redaktionssystem und Staging-ZITADEL.
-4. weclapp an Shop-Staging: zuerst Artikel, dann Aufträge. Parallel räumt Ketteler weclapp auf.
+4. weclapp an Shop-Staging: zuerst Artikel (Zusatzfelder prüfen, Liste der Artikelnummern mit Sonderzeichen und ohne
+   Gewicht), dann Aufträge mit dem Testkunden „TEST Studio Moco“.
 5. Test mit Ketteler (Bestellen, Rechnung, Lizenz, Lesen, Storno).
 6. Live-Server auf CPX42, Shop live unter vorläufiger Adresse prüfen, dann DNS von NCE auf den neuen Shop umstellen.
 
-## 5. Offene Fragen
+## 5. Startseite, Werkseiten und Storytelling-Seiten (Empfehlung, noch nicht gebaut)
+
+Grundlage für das Design: Bestandsaufnahme der heutigen Inhalte in `content/` (Übersicht `content/README.md`).
+
+**Grundsatz:** alles mit den **Erlebniswelten** von Shopware (Einkaufswelten, im Admin unter Inhalte > Erlebniswelten), damit
+Ketteler Texte, Bilder und Produktauswahl selbst pflegt. Wir bauen dafür wenige **eigene Blöcke** im Theme-Plugin, die genau
+das Design abbilden; Layouts legen wir an, Inhalte pflegt Ketteler.
+
+| Seite | Umsetzung | Ketteler pflegt |
+|---|---|---|
+| **Startseite** | Erlebniswelt vom Typ „Shopseite“ an der Hauptkategorie. Standardblöcke (Bild mit Text, Text, Produkt-Slider) plus eigene Blöcke „Werk-Teaser“ (Bild, Titel, kurzer Text, Link auf die Werkseite) und „Aktuelles“. | Texte, Bilder, welche Werke und Produkte erscheinen |
+| **Werkseiten** AVR, ZMV, Eichstätter | Die vorhandenen Kategorien „Kompendium AVR Caritas“, „Zeitschrift ZMV“, „Eichstätter Kommentar“ bekommen **ein gemeinsames Layout** „Werkseite“ (Kategorie-Layout). Eigener Block **„Angebote nebeneinander“**: bis zu vier Produkte (Print, Online, Paket, Abo) als Karten mit Kennzeichen, Preis, Kaufen-Knopf, darunter der Mehrplatz-Hinweis mit Link zur Anfrage. Dazu Blöcke „Werk vorstellen“ (Text, Bild, Zitat) und „Jetzt lesen“ für Kunden mit Zugang. Shopware 6.6 erlaubt je Kategorie eigene Inhalte in denselben Layout-Plätzen. | je Werk: Einleitung, Bilder, die vier Produkte (Auswahl im Block), Zitate |
+| **Storytelling** (MAV Einstieg, ZMV aktuell, ZMV Fachtagung, Interviews Autoren) | Erlebniswelten vom Typ „Landingpage“ (eigene Adresse, SEO) oder Kategorien vom Typ „Seite“ in einem Bereich „Wissen und Aktuelles“ in der Navigation. Eigene Blöcke „Interview“ (Frage und Antwort, Bild der Person) und „Linkliste“ (für „Hilfreiche Links“). | Texte, Bilder, Reihenfolge, neue Seiten nach Vorlage |
+
+**Technik:** Eigene Blöcke bestehen aus einer Storefront-Vorlage (Twig, SCSS im Theme) und einer Vorschau samt Einstellungen
+für die Verwaltung (Admin-JavaScript). Für das Admin-JavaScript brauchen wir einen Bauschritt (z. B. `shopware-cli extension
+build` im Docker-Container); die gebauten Dateien liegen im Repository, `make setup` braucht dann keinen Bau. Inhalte der
+Erlebniswelten liegen in der Datenbank, nicht im Repository: Für Staging und Live legen wir die Grundlayouts per
+Einrichtungsbefehl an (wie die Rechtstexte), danach pflegt Ketteler. Keine Seitenbaukästen von Drittanbietern zum Start.
+
+**Weiterleitungen:** Die heutigen Adressen (`/digibib`, `/bookreader`, `/importraet`, `/kompendiumaktuell`,
+`/aktuellinteressant` usw., Liste in `content/README.md`) auf die neuen Seiten umleiten (301).
+
+## 6. Offene Fragen
 
 ### An Atilla
 
-1. Mail an den Kunden bei Storno: keine (Vorschlag) oder eine neue Mail „Zugang beendet“?
-2. Bestellungen, die die Verwaltung in der Shopware-Verwaltung anlegt: sollen sie auch automatisch eine Lizenz bekommen
-   (Flow-Builder-Aktion)?
-3. Rechnungsanschrift beim ersten Anmelden: Reicht Deutschland, oder sollen Österreich und die Schweiz gleich mit?
+1. Rechnungsanschrift beim ersten Anmelden: Gebaut sind alle 29 Lieferländer mit optionaler USt-IdNr. für Einrichtungen. Passt das?
+2. Mehrplatz-Anfrage: Telefon ist Pflichtfeld, Nachricht freiwillig. So lassen?
+3. PayPal lokal testen: Soll Studio Moco eine eigene PayPal-Sandbox-App anlegen (Zugangsdaten nur in der lokalen `.env`)?
+   Ohne sie erscheint PayPal lokal nicht in der Kasse.
+4. Steuern: Für Print an Privatkunden im EU-Ausland bleibt die deutsche Umsatzsteuer (Lieferschwelle 10.000 Euro im Jahr).
+   Für die Schweiz und Großbritannien sind alle Preise ohne deutsche Umsatzsteuer (Ausfuhr). Bitte mit der Steuerberatung
+   von Ketteler bestätigen; die Sätze für Online-Zugänge je Land sind Platzhalter (`daten/steuern.json`).
+5. Preise bei Online-Zugängen ins EU-Ausland: Shopware hält den Bruttopreis gleich (89,90 Euro bleiben 89,90 Euro, die
+   Steuer darin ändert sich). Gewünscht, oder soll der Nettopreis gleich bleiben?
 
 ### An Ketteler
 

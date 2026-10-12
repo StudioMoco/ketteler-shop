@@ -54,7 +54,19 @@
             <tag name="shopware.cart.validator"/>
         </service>
 
+        <service id="Ketteler\Anmeldung\Checkout\WiderrufSubscriber">
+            <argument type="service" id="Shopware\Core\Checkout\Cart\SalesChannel\CartService"/>
+            <argument type="service" id="request_stack"/>
+            <argument type="service" id="router"/>
+            <argument type="service" id="translator"/>
+            <tag name="kernel.event_subscriber"/>
+        </service>
+        <service id="Ketteler\Anmeldung\Storefront\WiderrufTwig">
+            <tag name="twig.extension"/>
+        </service>
+
         <service id="Ketteler\Anmeldung\Storefront\TwigErweiterung">
+            <argument type="service" id="router"/>
             <tag name="twig.extension"/>
         </service>
 

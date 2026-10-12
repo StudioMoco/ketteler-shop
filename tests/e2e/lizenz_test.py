@@ -34,8 +34,9 @@ def angemeldeter_kunde():
     return b
 
 
-def bestellen(b, *nummern):
-    """Warenkorb leeren, Artikel hinzufügen, auf Rechnung bestellen. Gibt (orderId, Bestellnummer, Seite) zurück."""
+def bestellen(b, *nummern, widerruf=True):
+    """Warenkorb leeren, Artikel hinzufügen, auf Rechnung bestellen. Gibt (orderId, Bestellnummer, Seite) zurück.
+    widerruf: Häkchen „sofortiger Beginn“ setzen (Pflicht für Privatkunden mit Online-Artikel)."""
     b.get(SHOP + "/checkout/cart")
     for f in b.formulare():
         if "/checkout/line-item/delete/" in f["action"]:
@@ -47,7 +48,7 @@ def bestellen(b, *nummern):
             "lineItems[%s][quantity]" % pid: "1", "lineItems[%s][stackable]" % pid: "1", "lineItems[%s][removable]" % pid: "1"},
             kopf={"X-Requested-With": "XMLHttpRequest"})
     b.get(SHOP + "/checkout/confirm")
-    b.absenden("/checkout/order", {"tos": "on"})
+    b.absenden("/checkout/order", {"tos": "on", **({"ketteler_widerruf": "1"} if widerruf else {})})
     assert "/checkout/finish" in b.url, "Bestellung nicht abgeschlossen: " + b.url
     order_id = b.url.split("orderId=")[1].split("&")[0]
     nummer = sql("SELECT order_number FROM `order` WHERE id=UNHEX('%s') AND version_id=UNHEX('0fa91ce3e96a4bc2be4bd9ce752c3425')" % order_id)[0][0]

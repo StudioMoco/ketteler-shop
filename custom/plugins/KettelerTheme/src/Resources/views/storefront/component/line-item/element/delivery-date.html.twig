@@ -1,7 +1,11 @@
 {% sw_extends '@Storefront/storefront/component/line-item/element/delivery-date.html.twig' %}
 
-{# Online-Zugänge werden nicht geliefert: statt Lieferzeitraum ein Hinweis #}
+{# Online-Zugänge werden nicht geliefert: statt Lieferzeitraum ein Hinweis. Abos: Hinweis zum Abonnement. #}
 {% block component_line_item_delivery_date %}
+    {% set ktAbo = lineItem.payload.customFields.ketteler_abo ?? null %}
+    {% if ktAbo %}
+        <div class="kt-abo-hinweis" data-kt="abo-hinweis"><strong>{{ 'ketteler.abo.titel'|trans|sw_sanitize }}</strong> {{ ktAbo }}</div>
+    {% endif %}
     {% if (lineItem.payload.customFields.ketteler_artikelart ?? null) == 'online' %}
         <div class="line-item-delivery-date">{{ 'ketteler.artikelart.onlineLieferung'|trans|sw_sanitize }}</div>
     {% else %}

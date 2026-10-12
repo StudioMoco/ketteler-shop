@@ -68,6 +68,7 @@ def main():
     zitadel_anmelden(b, "testkunde@ketteler.test", PASSWORT)
     e.pruefe(b.url.startswith(SHOP + "/account/oidc/vervollstaendigen"), "Konto vervollständigen", b.url)
     e.pruefe("testkunde@ketteler.test" in b.html, "E-Mail aus ZITADEL vorbelegt")
+    e.pruefe(b.html.count("<option value=") >= 31 and 'name="ustid"' in b.html, "alle Lieferländer und USt-IdNr. wählbar")
     b.absenden("/account/oidc/vervollstaendigen", {"kontotyp": "privat", "strasse": "Musterweg 2", "plz": "50670", "ort": "Köln"})
     e.pruefe(b.url.rstrip("/").endswith("/account") and "Tessa" in b.html, "angemeldet im Kundenkonto", b.url)
     sub = sub_von("testkunde@ketteler.test")

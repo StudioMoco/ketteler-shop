@@ -1,0 +1,9 @@
+{
+  "_hinweis": "PLATZHALTER. Gewichtsstaffeln je Zone wie in weclapp (Versandkosten-Artikel DE_…, EU_…, Schweiz, Ausland), Werte folgen aus weclapp. bis_kg = Obergrenze der Staffel, null = darüber. Preise brutto in Euro.",
+  "staffeln": {
+    "DE": [ { "bis_kg": 0.5, "preis": 2.50 }, { "bis_kg": 1, "preis": 4.50 }, { "bis_kg": 2, "preis": 5.95 }, { "bis_kg": 5, "preis": 7.50 }, { "bis_kg": null, "preis": 9.90 } ],
+    "EU": [ { "bis_kg": 0.5, "preis": 6.50 }, { "bis_kg": 1, "preis": 9.50 }, { "bis_kg": 2, "preis": 13.90 }, { "bis_kg": 5, "preis": 18.90 }, { "bis_kg": null, "preis": 29.90 } ],
+    "CH": [ { "bis_kg": 0.5, "preis": 9.50 }, { "bis_kg": 1, "preis": 12.50 }, { "bis_kg": 2, "preis": 16.90 }, { "bis_kg": 5, "preis": 24.90 }, { "bis_kg": null, "preis": 39.90 } ],
+    "GB": [ { "bis_kg": 0.5, "preis": 9.50 }, { "bis_kg": 1, "preis": 12.50 }, { "bis_kg": 2, "preis": 16.90 }, { "bis_kg": 5, "preis": 24.90 }, { "bis_kg": null, "preis": 39.90 } ]
+  }
+}

@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="Ketteler\Mehrplatz\Anfrage\AnfrageDefinition">
+            <tag name="shopware.entity.definition" entity="ketteler_mehrplatz_anfrage"/>
+        </service>
+
+        <service id="Ketteler\Mehrplatz\Storefront\AnfrageController" public="true">
+            <argument type="service" id="ketteler_mehrplatz_anfrage.repository"/>
+            <argument type="service" id="mailer"/>
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+            <argument type="service" id="logger"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+            <call method="setTwig">
+                <argument type="service" id="twig"/>
+            </call>
+        </service>
+    </services>
+</container>

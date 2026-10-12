@@ -67,3 +67,10 @@ a { color: $kt-accent; }
 .footer-main a:hover { color: $kt-accent; }
 .footer-column-headline { color: $kt-ink; font-weight: 600; }
 .kt-fuss-impressum { padding: 18px 0; border-top: 1px solid $kt-hair; font-size: 13px; color: $kt-mute; }
+
+// Kennzeichen Artikelart und Abo
+.kt-kennzeichen { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+.kt-kennzeichen .kt-artikelart { margin-bottom: 0; }
+.kt-abo { background: $kt-ink; color: #fff; }
+.kt-abo-hinweis { margin: 6px 0 0; padding: 8px 10px; border-left: 3px solid $kt-accent; background: $kt-box; font-size: 13.5px; color: $kt-ink; }
+.kt-mehrplatz-hinweis { margin-top: 16px; padding: 12px 14px; border: 1px solid $kt-hair; border-radius: 8px; background: $kt-frame; font-size: 14px; }

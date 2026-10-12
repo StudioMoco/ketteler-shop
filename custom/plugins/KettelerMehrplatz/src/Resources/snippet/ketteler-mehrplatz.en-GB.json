@@ -1,0 +1,27 @@
+{
+    "ketteler": {
+        "mehrplatz": {
+            "titel": "Mehrere Lizenzen anfragen",
+            "link": "Mehrere Lizenzen anfragen",
+            "produktHinweis": "Online-Zugänge gelten für eine Person. Sie brauchen Zugänge für mehrere Mitarbeitende oder für Ihre ganze Einrichtung?",
+            "einleitung": "Sie möchten mehreren Personen in Ihrer Einrichtung Zugang geben? Schreiben Sie uns, wie viele Lizenzen Sie brauchen. Wir melden uns mit einem Angebot bei Ihnen.",
+            "hinweis": "Ihre Angaben verwenden wir nur, um Ihre Anfrage zu bearbeiten. Mit dem Absenden entsteht keine Bestellung.",
+            "senden": "Anfrage senden",
+            "danke": "Vielen Dank für Ihre Anfrage. Unser Kundenservice meldet sich in Kürze bei Ihnen.",
+            "feld": {
+                "einrichtung": "Einrichtung",
+                "ansprechperson": "Ansprechperson",
+                "email": "E-Mail-Adresse",
+                "telefon": "Telefon",
+                "anzahl": "Anzahl der Lizenzen",
+                "nachricht": "Nachricht"
+            },
+            "fehler": {
+                "allgemein": "Bitte prüfen Sie die markierten Felder.",
+                "pflicht": "Bitte füllen Sie dieses Feld aus.",
+                "email": "Bitte geben Sie eine gültige E-Mail-Adresse an.",
+                "anzahl": "Bitte geben Sie eine Zahl ab 2 an."
+            }
+        }
+    }
+}

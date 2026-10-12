@@ -178,6 +178,7 @@ class AnmeldungController extends StorefrontController
             'identitaet' => $identitaet,
             'daten' => $daten,
             'formViolations' => $fehler,
+            'laender' => $this->kontoAnlage->lieferlaenderMitNamen($context),
         ]);
     }
 

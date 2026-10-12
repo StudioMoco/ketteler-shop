@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5069d08c473821c8af0f9d55275b8c11",
+    "content-hash": "46ab1091924374a73896832e9e303cce",
     "packages": [
         {
             "name": "async-aws/core",
@@ -6016,6 +6016,65 @@
                 "source": "https://github.com/squirrelphp/twig-php-syntax/tree/v1.13"
             },
             "time": "2025-05-03T06:37:30+00:00"
+        },
+        {
+            "name": "swag/paypal",
+            "version": "9.13.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/shopware/SwagPayPal",
+                "reference": "1601a4cc4b5d523bb7bfedc81d274e8807eca732"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/shopware/SwagPayPal/zipball/1601a4cc4b5d523bb7bfedc81d274e8807eca732",
+                "reference": "1601a4cc4b5d523bb7bfedc81d274e8807eca732",
+                "shasum": ""
+            },
+            "require": {
+                "shopware/core": "~6.6.0@dev"
+            },
+            "suggest": {
+                "shopware/administration": "Require '*'. Allows you to to set up the plugin easily",
+                "shopware/storefront": "Require '*'. Enables special payment features like 'Smart Payment Buttons' or 'Express Checkout'"
+            },
+            "type": "shopware-platform-plugin",
+            "extra": {
+                "label": {
+                    "de-DE": "PayPal-Produkte für Shopware 6",
+                    "en-GB": "PayPal Products for Shopware 6"
+                },
+                "copyright": "(c) by shopware AG",
+                "description": {
+                    "de-DE": "Bieten Sie Ihren Kunden Deutschlands beliebteste Bezahlmöglichkeiten mit nur einer Integration: Das PayPal-Plugin bietet PayPal Checkout, den Expressbutton, Zettle und vieles mehr",
+                    "en-GB": "Get access to over 100 currencies and 200 markets worldwide with the payment module PayPal for your Shopware shop. Experience an easy and comfortable way of payment."
+                },
+                "supportLink": {
+                    "de-DE": "https://issues.shopware.com/",
+                    "en-GB": "https://issues.shopware.com/"
+                },
+                "manufacturerLink": {
+                    "de-DE": "https://store.shopware.com/shopware-ag.html",
+                    "en-GB": "https://store.shopware.com/en/shopware-ag.html"
+                },
+                "shopware-plugin-class": "Swag\\PayPal\\SwagPayPal"
+            },
+            "autoload": {
+                "psr-4": {
+                    "Swag\\PayPal\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Shopware"
+                }
+            ],
+            "description": "PayPal integration for Shopware 6",
+            "time": "2026-10-01T14:27:25+00:00"
         },
         {
             "name": "symfony/asset",

@@ -7,6 +7,7 @@ use Shopware\Core\Checkout\Customer\SalesChannel\AbstractRegisterRoute;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
 use Shopware\Core\Framework\Validation\DataBag\RequestDataBag;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
 
@@ -25,7 +26,7 @@ class KontoAnlage
     ) {
     }
 
-    /** @param array<string, mixed> $eingabe Formularfelder: kontotyp, firma, strasse, plz, ort */
+    /** @param array<string, mixed> $eingabe Formularfelder: kontotyp, firma, ustid, strasse, plz, ort, land (ID) */
     public function anlegen(Identitaet $identitaet, array $eingabe, SalesChannelContext $context): string
     {
         $firma = trim((string) ($eingabe['firma'] ?? ''));
@@ -34,7 +35,7 @@ class KontoAnlage
             'street' => trim((string) ($eingabe['strasse'] ?? '')),
             'zipcode' => trim((string) ($eingabe['plz'] ?? '')),
             'city' => trim((string) ($eingabe['ort'] ?? '')),
-            'countryId' => $this->landDeutschland($context),
+            'countryId' => $this->land((string) ($eingabe['land'] ?? ''), $context),
         ];
         if ($geschaeftlich) {
             $anschrift['company'] = $firma;
@@ -49,6 +50,7 @@ class KontoAnlage
             'lastName' => $identitaet->nachname !== '' ? $identitaet->nachname : $identitaet->email,
             'accountType' => $geschaeftlich ? 'business' : 'private',
             'company' => $geschaeftlich ? $firma : null,
+            'vatIds' => $geschaeftlich && trim((string) ($eingabe['ustid'] ?? '')) !== '' ? [trim((string) $eingabe['ustid'])] : null,
             'acceptedDataProtection' => true,
             'billingAddress' => new RequestDataBag($anschrift),
         ]);
@@ -65,8 +67,33 @@ class KontoAnlage
         return $this->anreden->searchIds((new Criteria())->addFilter(new EqualsFilter('salutationKey', 'not_specified'))->setLimit(1), $context->getContext())->firstId();
     }
 
-    private function landDeutschland(SalesChannelContext $context): ?string
+    /** Gewähltes Lieferland, wenn es zum Verkaufskanal gehört; sonst Deutschland. */
+    private function land(string $id, SalesChannelContext $context): ?string
     {
+        if ($id !== '' && \in_array($id, $this->lieferlaender($context), true)) {
+            return $id;
+        }
+
         return $this->laender->searchIds((new Criteria())->addFilter(new EqualsFilter('iso', 'DE'))->setLimit(1), $context->getContext())->firstId();
+    }
+
+    /** @return list<string> IDs der Lieferländer des Verkaufskanals */
+    public function lieferlaender(SalesChannelContext $context): array
+    {
+        $criteria = (new Criteria())->addFilter(new EqualsFilter('salesChannels.id', $context->getSalesChannelId()))->addFilter(new EqualsFilter('active', true));
+
+        return array_values($this->laender->searchIds($criteria, $context->getContext())->getIds());
+    }
+
+    /** @return array<string, string> ID => Name, Deutschland zuerst */
+    public function lieferlaenderMitNamen(SalesChannelContext $context): array
+    {
+        $criteria = (new Criteria($this->lieferlaender($context)))->addSorting(new FieldSorting('position'), new FieldSorting('name'));
+        $namen = [];
+        foreach ($this->laender->search($criteria, $context->getContext()) as $land) {
+            $namen[$land->getId()] = (string) $land->getTranslation('name');
+        }
+
+        return $namen;
     }
 }

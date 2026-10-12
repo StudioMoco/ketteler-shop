@@ -1,0 +1,13 @@
+{
+  "_hinweis": "PLATZHALTER, UNGEPRÜFT. Sätze für elektronische Veröffentlichungen (Online-Zugänge) an Privatkunden im EU-Ausland (Bestimmungslandprinzip, OSS). Vor dem Livegang mit weclapp und der Steuerberatung abgleichen. Gedruckte Artikel bleiben bei 7 % bzw. 19 % deutscher Umsatzsteuer (offene Frage: Lieferschwelle 10.000 Euro im EU-Fernverkauf).",
+  "steuern": {
+    "print19": { "name": "Umsatzsteuer 19 %", "satz": 19 },
+    "print7": { "name": "Umsatzsteuer 7 %", "satz": 7 },
+    "online": { "name": "Online-Zugang (7 % in Deutschland, sonst Satz des Kundenlandes)", "satz": 7 }
+  },
+  "online_je_land": {
+    "AT": 10, "BE": 6, "BG": 9, "HR": 5, "CY": 5, "CZ": 0, "DK": 25, "EE": 9, "FI": 14, "FR": 5.5,
+    "GR": 6, "HU": 5, "IE": 0, "IT": 4, "LV": 5, "LT": 9, "LU": 3, "MT": 5, "NL": 9, "PL": 5,
+    "PT": 6, "RO": 11, "SK": 5, "SI": 5, "ES": 4, "SE": 6
+  }
+}

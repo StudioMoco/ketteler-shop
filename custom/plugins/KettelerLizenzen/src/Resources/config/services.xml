@@ -41,6 +41,15 @@
         <service id="Ketteler\Lizenzen\Storefront\MeineWerke">
             <argument type="service" id="Doctrine\DBAL\Connection"/>
         </service>
+        <service id="Ketteler\Lizenzen\Storefront\OnlineZugaengeController" public="true">
+            <argument type="service" id="Ketteler\Lizenzen\Storefront\MeineWerke"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+            <call method="setTwig">
+                <argument type="service" id="twig"/>
+            </call>
+        </service>
         <service id="Ketteler\Lizenzen\Storefront\TwigErweiterung">
             <argument type="service" id="Ketteler\Lizenzen\Storefront\MeineWerke"/>
             <tag name="twig.extension"/>

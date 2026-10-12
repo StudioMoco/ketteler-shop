@@ -1,0 +1,10 @@
+{% sw_extends '@Storefront/storefront/component/buy-widget/buy-widget.html.twig' %}
+
+{# Abo-Hinweis direkt am Kaufen-Bereich #}
+{% block buy_widget_buy_container %}
+    {% set ktAbo = product.translated.customFields.ketteler_abo ?? null %}
+    {% if ktAbo %}
+        <p class="kt-abo-hinweis mb-3" data-kt="abo-hinweis"><strong>{{ 'ketteler.abo.titel'|trans|sw_sanitize }}</strong> {{ ktAbo }}</p>
+    {% endif %}
+    {{ parent() }}
+{% endblock %}

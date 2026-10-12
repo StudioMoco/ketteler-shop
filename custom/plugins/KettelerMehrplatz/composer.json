@@ -1,0 +1,27 @@
+{
+    "name": "ketteler/mehrplatz",
+    "description": "Anfrage für mehrere Lizenzen (Mehrplatz): Formular im Shop, Mail an den Kundenservice, Liste in der Verwaltung",
+    "type": "shopware-platform-plugin",
+    "version": "0.1.0",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "Ketteler\\Mehrplatz\\": "src/"
+        }
+    },
+    "require": {
+        "shopware/core": "~6.6.10",
+        "shopware/storefront": "~6.6.10"
+    },
+    "extra": {
+        "shopware-plugin-class": "Ketteler\\Mehrplatz\\KettelerMehrplatz",
+        "label": {
+            "de-DE": "Ketteler Mehrplatz-Anfrage",
+            "en-GB": "Ketteler multi-licence request"
+        },
+        "description": {
+            "de-DE": "„Mehrere Lizenzen anfragen“: keine Bestellung, keine Lizenz, nur Anfrage an den Kundenservice",
+            "en-GB": "Multi-licence request form"
+        }
+    }
+}
