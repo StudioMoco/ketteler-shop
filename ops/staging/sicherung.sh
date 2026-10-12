@@ -3,7 +3,8 @@
 # Bild postgres). Läuft im Stack, nicht in der crontab des Servers.
 #   sicherung.sh dienst <shop|zitadel>     täglich 03:40 Uhr (TZ=Europe/Berlin), 14 Stände in /sicherungen/taeglich
 #   sicherung.sh jetzt <shop|zitadel> <name>   sofort, nach /sicherungen/auslieferung/<name>_<db>.sql.gz (30 Tage)
-# Jede Sicherung wird geprüft (gzip-Test und Schlusszeile des Dumps); erst dann gilt sie als gelungen.
+# Jede Sicherung wird geprüft (gzip-Test und Schlusszeile des Dumps; pg_dump ab 17.6 schreibt danach noch
+# „\\unrestrict …“); erst dann gilt sie als gelungen.
 set -eu
 ART=$1; DB=$2
 
@@ -16,7 +17,7 @@ dump() {   # $1 = Zieldatei
     pg_dump -h zitadel-db -U zitadel zitadel | gzip -6 > "$tmp"
     schluss="PostgreSQL database dump complete"
   fi
-  gzip -t "$tmp" && gunzip -c "$tmp" | tail -3 | grep -q "$schluss" || { rm -f "$tmp"; echo "$(date '+%F %T') FEHLER $DB $1"; return 1; }
+  gzip -t "$tmp" && gunzip -c "$tmp" | tail -8 | grep -q "$schluss" || { rm -f "$tmp"; echo "$(date '+%F %T') FEHLER $DB $1"; return 1; }
   mv "$tmp" "$1"
   echo "$(date '+%F %T') OK $(basename "$1") $(wc -c < "$1") Bytes"
 }

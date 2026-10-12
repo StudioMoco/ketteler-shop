@@ -6,6 +6,7 @@
 #   /opt/ketteler-shop/stand.env  SHOP_TAG=<laufender Tag>;  STAND: Verlauf der Auslieferungen
 #   /opt/ketteler-shop/sicherungen, protokolle
 set -euo pipefail
+WERKZEUG=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")   # Ordner der Skripte des Standes, der gerade ausgeführt wird
 BASIS=/opt/ketteler-shop
 GIT=$BASIS/git
 SCHLUESSEL=/home/deploy/.ssh/github_ketteler_shop_ro
@@ -80,9 +81,10 @@ shop_aktualisieren() {
   dc restart worker >/dev/null
 }
 
+# Sicherung sofort; mit dem Sicherungsskript dieses Standes (nicht der im laufenden Stand eingebundenen Kopie)
 sicherung_jetzt() {   # $1 = Name
-  dc exec -T sicherung-shop sh /sicherung/sicherung.sh jetzt shop "$1"
-  dc exec -T sicherung-zitadel sh /sicherung/sicherung.sh jetzt zitadel "$1"
+  dc exec -T sicherung-shop sh -s -- jetzt shop "$1" < "$WERKZEUG/sicherung.sh"
+  dc exec -T sicherung-zitadel sh -s -- jetzt zitadel "$1" < "$WERKZEUG/sicherung.sh"
 }
 
 caddy_datei() {
