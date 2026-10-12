@@ -32,7 +32,9 @@ fi
 mkdir -p /sicherungen/taeglich
 while true; do
   heute=$(date +%Y%m%d)
-  if [ "$(date +%H%M)" -ge 0340 ] && ! ls /sicherungen/taeglich/"${DB}_${heute}"_*.sql.gz >/dev/null 2>&1; then
+  # Nur im Fenster 03:40 bis 03:59 Uhr (kein Nachholen beim Start; bei Fehlschlag neuer Versuch in der nächsten Minute)
+  uhr=$(date +%H%M)
+  if [ "$uhr" \> "0339" ] && [ "$uhr" \< "0400" ] && ! ls /sicherungen/taeglich/"${DB}_${heute}"_*.sql.gz >/dev/null 2>&1; then
     dump "/sicherungen/taeglich/${DB}_${heute}_$(date +%H%M).sql.gz" >> /sicherungen/sicherung.log 2>&1 || true
     ls -1t /sicherungen/taeglich/"${DB}"_*.sql.gz 2>/dev/null | tail -n +15 | xargs -r rm -f
   fi
