@@ -9,6 +9,8 @@ nok() { printf '  FEHLER %s  (%s)\n' "$1" "$2"; FEHLER=$((FEHLER + 1)); }
 mit_pw() { printf 'user = "%s:%s"\n' "$(envwert STG_BASICAUTH_BENUTZER)" "$(envwert STG_BASICAUTH_PASSWORT)" | curl -K - "$@"; }
 code() { curl -s -o /dev/null -w '%{http_code}' --max-time 20 "$@"; }
 
+# Direkt nach dem Einspielen holt der gemeinsame Caddy evtl. noch Zertifikate: bis zu 90 s auf Antwort warten
+for _ in $(seq 1 30); do [ "$(code "$SHOP_URL/robots.txt")" = 000 ] || break; sleep 3; done
 c=$(code "$SHOP_URL/"); [ "$c" = 401 ] && ok "Shop ohne Passwort: 401" || nok "Shop ohne Passwort gesperrt" "$c"
 c=$(code "$SHOP_URL/admin"); [ "$c" = 401 ] && ok "Verwaltung ohne Passwort: 401" || nok "Verwaltung ohne Passwort gesperrt" "$c"
 c=$(code "$LOGIN_URL/ui/console"); [ "$c" = 401 ] && ok "ZITADEL-Verwaltung ohne Passwort: 401" || nok "ZITADEL ohne Passwort gesperrt" "$c"

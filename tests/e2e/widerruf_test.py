@@ -13,7 +13,7 @@ import sys
 import time
 import urllib.parse
 
-from hilfen import ENV, SHOP, AdminApi, Browser, Ergebnis, interne_vermerke, json_anfrage, sql
+from hilfen import ENV, SHOP, STAGING, AdminApi, Browser, Ergebnis, interne_vermerke, json_anfrage, sql
 from lizenz_test import MAILPIT, angemeldeter_kunde, attrappe, bestellen, lizenz_zu, warte
 from anmeldung_test import gast_registrieren, in_den_warenkorb
 
@@ -31,7 +31,18 @@ def text_von(nachricht):
     return m.get("Text", "")
 
 
+_LETZTE = []
+
+
 def formular_senden(b, seite_url, felder):
+    # Shopware begrenzt das Formular je Adresse (3 in 30 s, danach Wartezeit). Lokal fällt das nicht ins Gewicht; gegen
+    # Staging laufen die Anfragen über eine Adresse, also höchstens 3 Erklärungen je 30 Sekunden absenden.
+    if STAGING:
+        jetzt = time.time()
+        while len([t for t in _LETZTE if jetzt - t < 31]) >= 3:
+            time.sleep(1)
+            jetzt = time.time()
+        _LETZTE.append(jetzt)
     b.get(seite_url)
     f = b.formular("/form/revocation/request")
     assert f is not None, "Widerrufsformular fehlt auf " + seite_url

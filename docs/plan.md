@@ -226,6 +226,10 @@ ordnet den Widerruf **keiner Bestellung zu** und speichert ihn nicht; die mitgel
   Widerrufsrecht kann erloschen sein, bitte prüfen“ (in der Mail und an der Bestellung). Wie damit umzugehen ist, klärt
   Ketteler (`docs/fragen-ketteler.md`).
 - Keine automatische Lizenzbeendigung.
+- **Verwaltung: „Widerruf bearbeitet“** (Karte „Widerruf“ in der Bestellung, Reiter Allgemein): Knopf speichert Zeit und
+  Bearbeiter, Kennzeichen wechselt von „Widerruf eingegangen“ zu „Widerruf bearbeitet“; zurücknehmbar; jede Änderung im
+  Verlauf an der Bestellung und im Shop-Protokoll. Nur mit dem Recht „Bestellungen bearbeiten“. Geht danach ein neuer
+  Widerruf ein, ist die Bestellung wieder offen.
 
 ## 1b. Umsatzsteuer (gebaut, `KettelerSteuern`)
 
@@ -244,7 +248,17 @@ Steuerberatung zu bestätigen“, Voreinstellung **nein**.
 steuerfrei stellen. Ergänzt: Abfrage bei VIES beim Speichern der Nummer, Ergebnis am Kunden. Steuerfrei nur bei
 bestätigter Nummer eines anderen EU-Landes, die zum Lieferland passt. Ungültig, nicht prüfbar (VIES nicht erreichbar) oder
 deutsch: keine Befreiung, Hinweis im Konto und in der Kasse. Erneut prüfen: Profil speichern oder
-`bin/console ketteler:steuern:anwenden --ustid`. Lokal antwortet eine VIES-Nachbildung (`KETTELER_VIES_URL`).
+`bin/console ketteler:steuern:anwenden --ustid`. Lokal antwortet eine VIES-Nachbildung (`KETTELER_VIES_URL`), auf
+Staging und Live die offizielle Schnittstelle der EU.
+
+**Nachweis der VIES-Prüfung:** Am Kunden stehen Zeit, Ergebnis, Name laut VIES und die Abfragenummer
+(`requestIdentifier`), dazu ein Verlauf der letzten 20 Prüfungen (frühere Bestätigungen gehen nicht verloren). Eine
+Abfragenummer liefert VIES nur, wenn Ketteler mit der eigenen USt-IdNr. als Anfragender fragt: Einstellung „Eigene
+USt-IdNr. als Anfragender“ (Erweiterungen > Ketteler Steuern), Wert von Ketteler (`docs/fragen-ketteler.md`). Ist die
+letzte erfolgreiche Prüfung älter als ein Jahr, prüft der Shop beim nächsten Kauf neu, mit denselben Regeln (scheitert die
+Prüfung, keine Befreiung). Jede Bestellung ohne Umsatzsteuer wegen USt-IdNr. hält den Nachweis fest, der beim Kauf galt
+(`ketteler_ustid_nachweis`). Beides ist in der Verwaltung sichtbar (Kunde: Karte „USt-IdNr.: Prüfung über VIES“;
+Bestellung: Karte „Ohne Umsatzsteuer: USt-IdNr. bestätigt“).
 
 ## 2. Anmeldung über ZITADEL (`KettelerAnmeldung`, lokal gebaut)
 
@@ -353,20 +367,20 @@ Beim Anbinden die Liste erzeugen und an Ketteler geben.
 
 ## 4. Weg zu Staging und Live
 
-### Staging (Tests mit Ketteler, Anbindung an Staging-Redaktionssystem und weclapp)
+### Staging (aufgebaut am 12.10.2026, Einzelheiten in `docs/staging.md`)
 
-- **Wann:** nachdem `stornieren` im Redaktionssystem umgesetzt ist und der Ketteler-Test des Redaktionssystems
-  abgeschlossen ist. Den Server vergrößert Atilla vorher bei Hetzner.
-- **Server:** der Staging-Server ist mit CPX22 (2 vCPU, 4 GB) heute schon voll. Vorher auf **CPX32** (4 vCPU, 8 GB)
-  umskalieren, „nur CPU und RAM“, damit ein Zurückstufen möglich bleibt; und laut `live-server-plan.md` alte
-  Analyse-Datenbanken und Docker-Bilder aufräumen.
-- **Aufbau:** eigener Stack `ketteler-shop-stg` (PHP-FPM, Worker für Warteschlange und geplante Aufgaben, MySQL 8.4 wie
-  Live, ohne OpenSearch, ohne Redis) hinter dem vorhandenen Caddy; Adresse `staging-shop.mocodev.de`.
-- **Verbindungen:** Lizenz-Schnittstelle von Staging (eigenes Geheimnis), Staging-ZITADEL (Anwendung „Shop“), weclapp
-  (echtes weclapp, lesend und schreibend; IP-Freigabe statt Passwortschutz; zuerst nur Artikel; Testbestellungen nur
-  mit dem Testkunden „TEST Studio Moco“, Ketteler wird vorher informiert).
-- **Einspielen:** nur aus GitHub (Deploy-Key nur lesend), Ablauf wie beim Redaktionssystem; Shopware
-  `deployment-helper` für Migrationen, Plugins und Theme; Theme und Verwaltung beim Bauen übersetzen, nicht auf dem Server.
+- **Server:** gemeinsamer Staging-Server `ketteler-01` (CPX32, 8 GB, 2 GB Swap), Regeln in `docs/staging-server.md` des
+  Redaktions-Repositorys. Shop als eigener Stack `ketteler-shop-stg` unter `/opt/ketteler-shop`, Speichergrenzen zusammen
+  2 400 MiB (erlaubt 2,5 GB), MySQL 8.4 wie lokal und Live, ohne OpenSearch.
+- **Adressen:** `ketteler-shop.mocodev.de` (Shop und Verwaltung), `ketteler-shop-login.mocodev.de` (Test-ZITADEL),
+  `ketteler-shop-mail.mocodev.de` (Mailpit). Alles hinter Passwortschutz, außer `/api/` (weclapp; später nur deren
+  IP-Adressen) und `robots.txt`; überall `X-Robots-Tag: noindex`.
+- **Verbindungen:** Lizenzen gegen die Attrappe im Stack, Anmeldung gegen den Test-ZITADEL im Stack, Mails nur in Mailpit
+  (Netz ohne Weg nach außen), VIES offiziell, PayPal nur Sandbox. Das Staging-Redaktionssystem und sein ZITADEL werden
+  nicht angebunden.
+- **Einspielen:** nur Tags `shop-staging-JJJJ-MM-TT.N` aus GitHub (Deploy-Key nur lesend) mit `ops/staging/ausliefern.sh`;
+  Sicherung vorher, automatisch zurück bei Fehlern (`zurueck.sh`), Redaktion vorher und nachher verglichen.
+- **weclapp:** Phase 3, erst nach Atillas Freigabe und Klärung der Kundendaten mit dem weclapp-Support.
 
 ### Live
 
@@ -422,9 +436,7 @@ Einrichtungsbefehl an (wie die Rechtstexte), danach pflegt Ketteler. Keine Seite
 
 ### An Atilla
 
-1. Widerruf: Soll die Verwaltung einen Widerruf zusätzlich in der Shopware-Verwaltung bestätigen können (Status an der
-   Bestellung), oder genügt das Zusatzfeld mit Kennzeichen?
-2. PayPal-Sandbox: Sobald die Werte in der `.env` stehen, `python3 tests/e2e/paypal_test.py` laufen lassen und eine
+1. PayPal-Sandbox: Sobald die Werte in der `.env` stehen, `python3 tests/e2e/paypal_test.py` laufen lassen und eine
    Zahlung von Hand durchspielen (`docs/paypal-sandbox.md`).
 
 ### An Ketteler

@@ -4,6 +4,7 @@ namespace Ketteler\Steuern\Steuern;
 
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
+use Shopware\Core\Framework\Adapter\Cache\CacheClearer;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
@@ -30,6 +31,7 @@ class Steuerregeln
         private readonly EntityRepository $laender,
         private readonly Connection $db,
         private readonly SystemConfigService $config,
+        private readonly ?CacheClearer $cache = null,
     ) {
     }
 
@@ -40,6 +42,8 @@ class Steuerregeln
         $steuern = $this->steuerIds($context);
         $this->db->executeStatement('DELETE FROM tax_rule WHERE tax_id IN (:t)', ['t' => Uuid::fromHexToBytesList(array_values($steuern))], ['t' => ArrayParameterType::BINARY]);
         if (!$oss) {
+            $this->cacheLeeren();
+
             return ['oss' => false, 'regeln' => 0];
         }
 
@@ -65,8 +69,19 @@ class Steuerregeln
             }
         }
         $this->regeln->upsert($zeilen, $context);
+        $this->cacheLeeren();
 
         return ['oss' => true, 'regeln' => \count($zeilen)];
+    }
+
+    /**
+     * Die Steuerregeln stecken im zwischengespeicherten Verkaufskanal-Kontext und in zwischengespeicherten Seiten. Das
+     * Löschen oben geht direkt an die Datenbank und löst keine Invalidierung aus: ohne Leeren rechnet der Shop (prod)
+     * nach dem Umschalten weiter mit den alten Sätzen. Wie „Caches leeren“ in der Verwaltung; der Schalter ist selten.
+     */
+    private function cacheLeeren(): void
+    {
+        $this->cache?->clear();
     }
 
     /** true, „true“, „1“, „ja“ = an; alles andere (auch der Text „false“) = aus */

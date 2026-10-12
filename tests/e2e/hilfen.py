@@ -75,7 +75,7 @@ def tunnel():
 
 
 class Passwortschutz(urllib.request.BaseHandler):
-    """Staging: Basic Auth für Shop, Anmeldung und Mailpit, außer für /api/ (dort meldet sich der Aufrufer selbst an)."""
+    """Staging: Basic Auth für Shop, Anmeldung und Mailpit, außer für /api/ des Shops (dort meldet sich der Aufrufer selbst an)."""
     handler_order = 400
 
     def __init__(self):
@@ -84,7 +84,8 @@ class Passwortschutz(urllib.request.BaseHandler):
 
     def https_request(self, req):
         teile = urllib.parse.urlparse(req.full_url)
-        if teile.hostname in GESCHUETZT and not teile.path.startswith("/api/") and not req.has_header("Authorization"):
+        shop_api = teile.hostname == urllib.parse.urlparse(SHOP).hostname and teile.path.startswith("/api/")
+        if teile.hostname in GESCHUETZT and not shop_api and not req.has_header("Authorization"):
             req.add_unredirected_header("Authorization", self.kopf)
         return req
 
