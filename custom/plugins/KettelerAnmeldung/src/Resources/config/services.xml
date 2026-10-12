@@ -61,6 +61,16 @@
             <argument type="service" id="translator"/>
             <tag name="kernel.event_subscriber"/>
         </service>
+        <service id="Ketteler\Anmeldung\Widerruf\WiderrufsanfrageRoute"
+                 decorates="Shopware\Core\Content\RevocationRequest\SalesChannel\RevocationRequestRoute" public="true">
+            <argument type="service" id=".inner"/>
+            <argument type="service" id="order.repository"/>
+            <argument type="service" id="logger"/>
+        </service>
+        <service id="Ketteler\Anmeldung\Widerruf\WiderrufTwig">
+            <argument type="service" id="order.repository"/>
+            <tag name="twig.extension"/>
+        </service>
         <service id="Ketteler\Anmeldung\Storefront\WiderrufTwig">
             <tag name="twig.extension"/>
         </service>

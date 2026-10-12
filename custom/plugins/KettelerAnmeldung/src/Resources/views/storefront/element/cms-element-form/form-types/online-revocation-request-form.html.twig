@@ -1,0 +1,25 @@
+{% sw_extends '@Storefront/storefront/element/cms-element-form/form-types/online-revocation-request-form.html.twig' %}
+
+{# Bestellnummer aus dem Link „Widerruf erklären“ vorbelegen; angemeldete Kunden wählen die Positionen ihrer Bestellung #}
+{% block cms_form_revocation_input_contract_number %}
+    {% set ktNummer = app.request.query.get('bestellung')|default('') %}
+    <div class="form-group col-md-12">
+        <label class="form-label" for="form-contractNumber">{{ 'revocationRequest.contractNumberLabel'|trans|sw_sanitize }} {{ 'general.required'|trans|sw_sanitize }}</label>
+        <input name="contractNumber" type="text" id="form-contractNumber" value="{{ ktNummer }}" required="required" class="form-control" autocomplete="off">
+    </div>
+    {% set ktPositionen = ketteler_widerruf_positionen(ktNummer, context) %}
+    {% if ktPositionen is not empty %}
+        <fieldset class="col-md-12 mt-2" data-kt="widerruf-positionen">
+            <legend class="form-label">{{ 'ketteler.widerrufsfunktion.positionen'|trans|sw_sanitize }}</legend>
+            {% for p in ktPositionen %}
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="kettelerPositionen[]" value="{{ p.id }}" id="kt-wp-{{ p.id }}">
+                    <label class="form-check-label" for="kt-wp-{{ p.id }}">{{ p.label }} ({{ p.nummer }}){% if p.online %}, {{ 'ketteler.widerrufsfunktion.online'|trans|sw_sanitize }}{% endif %}</label>
+                </div>
+            {% endfor %}
+            <p class="small text-muted mt-1">{{ 'ketteler.widerrufsfunktion.keineAuswahl'|trans|sw_sanitize }}</p>
+        </fieldset>
+    {% else %}
+        <p class="col-md-12 small text-muted" data-kt="widerruf-hinweis-gast">{{ 'ketteler.widerrufsfunktion.hinweisGast'|trans|sw_sanitize }}</p>
+    {% endif %}
+{% endblock %}

@@ -24,11 +24,23 @@ class PruefungTest extends TestCase
         self::assertNull($daten['nachricht']);
     }
 
+    public function testTelefonIstFreiwillig(): void
+    {
+        [$daten, $fehler] = Pruefung::pruefe(['telefon' => ''] + self::gueltig());
+        self::assertSame([], $fehler);
+        self::assertNull($daten['telefon']);
+    }
+
+    public function testEmailBleibtPflicht(): void
+    {
+        [, $fehler] = Pruefung::pruefe(['email' => ''] + self::gueltig());
+        self::assertArrayHasKey('email', $fehler);
+    }
+
     /** @return iterable<string, array{0: array<string, mixed>, 1: string}> */
     public static function ungueltig(): iterable
     {
         yield 'ohne Einrichtung' => [['einrichtung' => '   '], 'einrichtung'];
-        yield 'ohne Telefon' => [['telefon' => ''], 'telefon'];
         yield 'E-Mail kaputt' => [['email' => 'keine-mail'], 'email'];
         yield 'Anzahl 1' => [['anzahl' => '1'], 'anzahl'];
         yield 'Anzahl keine Zahl' => [['anzahl' => 'viele'], 'anzahl'];

@@ -194,6 +194,15 @@ def sql(abfrage):
     return [z.split("\t") for z in aus.splitlines() if z]
 
 
+def kontext_token(methode, url, daten, kopf):
+    """Wie json_anfrage, gibt aber das neue sw-context-token aus dem Antwort-Kopf zurück (z. B. nach dem Login)."""
+    k = {"Content-Type": "application/json", "Accept": "application/json"}
+    k.update(kopf or {})
+    req = urllib.request.Request(url, data=json.dumps(daten).encode(), headers=k, method=methode)
+    with urllib.request.urlopen(req, timeout=60) as a:
+        return a.headers.get("sw-context-token")
+
+
 def json_anfrage(methode, url, daten=None, kopf=None):
     k = {"Content-Type": "application/json", "Accept": "application/json"}
     k.update(kopf or {})
@@ -230,7 +239,12 @@ class AdminApi:
 
 class Ergebnis:
     def __init__(self):
-        self.gut, self.schlecht = 0, []
+        self.gut, self.schlecht, self.uebersprungen = 0, [], []
+
+    def ueberspringe(self, name, grund):
+        """Nicht ausgeführt; zählt weder als bestanden noch als fehlgeschlagen."""
+        self.uebersprungen.append((name, grund))
+        print("  übersprungen " + name + "  (" + grund + ")", flush=True)
 
     def pruefe(self, bedingung, name, info=""):
         if bedingung:
@@ -241,7 +255,15 @@ class Ergebnis:
             print("  FEHLER " + name + (("  (" + info + ")") if info else ""), flush=True)
 
     def ende(self):
-        print("\n%d bestanden, %d fehlgeschlagen" % (self.gut, len(self.schlecht)))
+        print("\n%d bestanden, %d fehlgeschlagen, %d übersprungen" % (self.gut, len(self.schlecht), len(self.uebersprungen)))
         for s in self.schlecht:
             print("  - " + s)
         return 0 if not self.schlecht else 1
+
+
+# Vermerke, die nur intern stehen dürfen (Plan, Prüfliste, Verwaltung), nie in Texten für Kunden
+INTERNE_VERMERKE = ("zu prüfen", "zu ergänzen", "von Ketteler", "Entwurf,")
+
+
+def interne_vermerke(text):
+    return [v for v in INTERNE_VERMERKE if v in text]

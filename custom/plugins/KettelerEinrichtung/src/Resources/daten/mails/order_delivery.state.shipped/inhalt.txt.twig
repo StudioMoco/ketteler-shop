@@ -1,6 +1,6 @@
 {% set lieferung = order.deliveries.first %}Guten Tag {{ order.orderCustomer.firstName }} {{ order.orderCustomer.lastName }},
 
-gute Nachricht: Wir haben Ihre Bestellung {{ order.orderNumber }} vom {{ order.orderDateTime|format_date('long', locale='de-DE') }} heute verschickt.
+gute Nachricht: Wir haben Ihre Bestellung {{ order.orderNumber }} vom {{ order.orderDateTime|format_date('long', locale='de-DE', timezone='Europe/Berlin') }} heute verschickt.
 {% if lieferung and lieferung.trackingCodes is not empty %}
 Sendungsnummer: {{ lieferung.trackingCodes|join(', ') }}
 {% endif %}{% if lieferung %}{% set an = lieferung.shippingOrderAddress %}

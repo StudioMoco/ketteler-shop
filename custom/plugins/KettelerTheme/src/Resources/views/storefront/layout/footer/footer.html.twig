@@ -6,6 +6,8 @@
         <div class="footer-column-content-inner">
             <p class="footer-contact-hotline">{{ 'ketteler.fuss.kundenservice'|trans|sw_sanitize }}</p>
         </div>
+        {# Knopf der EU-Widerrufsfunktion aus der Shopware-Vorlage (steht dort in diesem Block) #}
+        {{ block('layout_footer_navigation_revocation_button') }}
     </div>
 {% endblock %}
 

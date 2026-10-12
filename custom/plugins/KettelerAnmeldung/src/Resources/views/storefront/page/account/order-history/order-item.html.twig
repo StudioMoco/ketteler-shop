@@ -1,0 +1,12 @@
+{% sw_extends '@Storefront/storefront/page/account/order-history/order-item.html.twig' %}
+
+{# Widerruf zu dieser Bestellung erklären (EU-Widerrufsfunktion) #}
+{% block page_account_order_item_context_menu_reorder %}
+    {{ parent() }}
+    {% set ktSeite = config('core.basicInformation.revocationRequestPage') %}
+    {% if ktSeite %}
+        <a class="dropdown-item" data-kt="widerruf-link" href="{{ path('frontend.cms.page.full', {id: ktSeite}) }}?bestellung={{ order.orderNumber|url_encode }}">
+            {{ 'ketteler.widerrufsfunktion.link'|trans|sw_sanitize }}
+        </a>
+    {% endif %}
+{% endblock %}

@@ -1,7 +1,7 @@
 {% set waehrung = order.currency.isoCode %}{% set kunde = order.orderCustomer %}{% set rechnung = order.addresses.get(order.billingAddressId) %}{% set lieferung = order.deliveries.first %}{% set werke = [] %}{% set ohneWerk = false %}{% set abo = false %}{% for position in order.lineItems %}{% set felder = position.payload.customFields ?? {} %}{% if felder.ketteler_artikelart ?? null in ['online', 'bundle'] %}{% if felder.ketteler_produkt ?? null %}{% if felder.ketteler_produkt not in werke %}{% set werke = werke|merge([felder.ketteler_produkt]) %}{% endif %}{% else %}{% set ohneWerk = true %}{% endif %}{% endif %}{% if felder.ketteler_abo ?? null %}{% set abo = true %}{% endif %}{% endfor %}
 Guten Tag {{ kunde.firstName }} {{ kunde.lastName }},
 
-vielen Dank für Ihre Bestellung. Sie ist am {{ order.orderDateTime|format_datetime('long', 'short', locale='de-DE') }} bei uns eingegangen, wir bearbeiten sie jetzt.
+vielen Dank für Ihre Bestellung. Sie ist am {{ order.orderDateTime|format_datetime('long', 'short', locale='de-DE', timezone='Europe/Berlin') }} bei uns eingegangen, wir bearbeiten sie jetzt.
 
 Bestellnummer: {{ order.orderNumber }}
 
@@ -22,7 +22,7 @@ Wir schalten Ihren Zugang sofort frei. Sie lesen in unserer Bibliothek mit Ihrem
 {% if ohneWerk %}
 Wie Sie die digitale Ausgabe erhalten, teilen wir Ihnen gesondert mit.
 {% endif %}{% if order.customFields.ketteler_widerruf is defined %}
-Ihre Zustimmung: {{ order.customFields.ketteler_widerruf.text }} (bestätigt am {{ order.customFields.ketteler_widerruf.zugestimmt|format_datetime('medium', 'short', locale='de-DE') }})
+Ihre Zustimmung: {{ order.customFields.ketteler_widerruf.text }} (bestätigt am {{ order.customFields.ketteler_widerruf.zugestimmt|format_datetime('medium', 'short', locale='de-DE', timezone='Europe/Berlin') }})
 {% endif %}{% if abo %}
 Für Ihr Abonnement legen wir den Vertrag für Sie an. Sie erhalten dazu eine eigene Bestätigung.
 {% endif %}{% set zahlart = order.transactions.first.paymentMethod ?? null %}{% if zahlart %}

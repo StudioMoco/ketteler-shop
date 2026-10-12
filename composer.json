@@ -88,7 +88,9 @@
             "Ketteler\\Lizenzen\\": "custom/plugins/KettelerLizenzen/src/",
             "Ketteler\\Lizenzen\\Tests\\": "custom/plugins/KettelerLizenzen/tests/",
             "Ketteler\\Mehrplatz\\": "custom/plugins/KettelerMehrplatz/src/",
-            "Ketteler\\Mehrplatz\\Tests\\": "custom/plugins/KettelerMehrplatz/tests/"
+            "Ketteler\\Mehrplatz\\Tests\\": "custom/plugins/KettelerMehrplatz/tests/",
+            "Ketteler\\Steuern\\": "custom/plugins/KettelerSteuern/src/",
+            "Ketteler\\Steuern\\Tests\\": "custom/plugins/KettelerSteuern/tests/"
         }
     }
 }

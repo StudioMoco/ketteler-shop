@@ -5,9 +5,13 @@ nach, dazu die neue Art „stornieren“ (Beschreibung in docs/plan.md dieses Re
 Signatur (HMAC-SHA256 über Zeit + "." + Körper), Zeitfenster 300 s, Pflichtfelder, eine Lizenz je Bestellung und Produkt,
 Wiederholung derselben ereignis_id ohne erneute Wirkung.
 
+Zusätzlich eine Nachbildung der VIES-Prüfung der EU (POST /vies/check-vat-number, Aufbau wie die REST-Schnittstelle
+https://ec.europa.eu/taxation_customs/vies/rest-api/check-vat-number). Gültig sind nur die Nummern in VIES_GUELTIG.
+Im Modus „vies_ausfall“ antwortet sie wie VIES bei Ausfall eines Mitgliedstaats (MS_UNAVAILABLE).
+
 Steuerung für Tests (nicht Teil der echten Schnittstelle):
   GET  /_zustand          gespeicherte Ereignisse, Lizenzen, Protokoll, Zahl der Anfragen
-  POST /_modus            {"modus": "normal" | "fehler503" | "langsam" | "ablehnen"}
+  POST /_modus            {"modus": "normal" | "fehler503" | "langsam" | "ablehnen" | "vies_ausfall"}
                           (langsam = 15 s Pause vor der Antwort, ablehnen = 422 auf jede Anfrage)
   POST /_zuruecksetzen    alles löschen
 """
@@ -31,6 +35,10 @@ EMAIL = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 DATUM = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 sperre = threading.Lock()
+
+# Testnummern, die die VIES-Nachbildung als gültig meldet (keine echten Unternehmen)
+VIES_GUELTIG = {("AT", "U12345675"): "Testeinrichtung Wien", ("IT", "12345678903"): "Ente di prova Roma",
+                ("DE", "123456788"): "Testverlag Köln"}
 
 
 def leer():
@@ -188,6 +196,19 @@ class Handler(BaseHTTPRequestHandler):
             with sperre:
                 speichern(leer())
             return self.senden(200, {"ok": True})
+        if self.path == "/vies/check-vat-number":
+            with sperre:
+                modus = laden()["modus"]
+            if modus == "vies_ausfall":
+                return self.senden(200, {"actionSucceed": False, "errorWrappers": [{"error": "MS_UNAVAILABLE"}]})
+            try:
+                d = json.loads(roh)
+                land, nummer = str(d["countryCode"]).upper(), str(d["vatNumber"]).upper()
+            except (ValueError, KeyError):
+                return self.senden(400, {"actionSucceed": False, "errorWrappers": [{"error": "INVALID_INPUT"}]})
+            name = VIES_GUELTIG.get((land, nummer))
+            return self.senden(200, {"countryCode": land, "vatNumber": nummer, "valid": name is not None,
+                                     "requestDate": datetime.now(timezone.utc).isoformat(), "name": name or "---"})
         if self.path != "/api/shop/ereignisse":
             return self.senden(404, {"message": "Nicht gefunden"})
 

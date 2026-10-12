@@ -58,6 +58,7 @@ class EinrichtenCommand extends Command
         $zahlarten = $this->zahlarten();
         [$wurzel, $fuss] = $this->kategorien();
         $this->rechtstexte();
+        $this->widerrufsfunktion();
         $this->verkaufskanal($salesChannelId, $laender, $zahlarten, $versandPost, [$versandPost, $versandOnline], $wurzel, $fuss);
         $this->nummernkreise();
         $this->artikel($salesChannelId, $steuern, $lieferzeitPost, $lieferzeitSofort);
@@ -123,6 +124,8 @@ class EinrichtenCommand extends Command
                 'position' => $code === 'DE' ? 1 : 10,
                 'customerTax' => $steuerfrei(\in_array($code, $daten['steuerfrei_alle'], true)),
                 'companyTax' => $steuerfrei(\in_array($code, $daten['steuerfrei_firmen_mit_ustid'], true) || \in_array($code, $daten['steuerfrei_alle'], true)),
+                // Formatprüfung von Shopware; die Bestätigung über VIES macht KettelerSteuern
+                'checkVatIdPattern' => $code !== 'CH' && $code !== 'GB',
             ];
         }
         $this->repo('country')->update($zeilen, $this->context);
@@ -133,7 +136,7 @@ class EinrichtenCommand extends Command
 
     /**
      * Steuern laut steuern.json. Die beiden Druck-Steuern sind die Shopware-Vorgaben (19 % und 7 %), umbenannt.
-     * „Online“ ist eine eigene Steuer mit Regeln je EU-Land (Bestimmungslandprinzip für Privatkunden).
+     * „Online“ ist eine eigene Steuer. Die Länderregeln (OSS-Schalter, Sätze je Land) verwaltet KettelerSteuern.
      *
      * @param array<string, string> $laender
      *
@@ -152,27 +155,8 @@ class EinrichtenCommand extends Command
             $ergebnis[$schluessel] = $id;
         }
 
-        // Gedruckte Artikel: deutsche Umsatzsteuer für alle Lieferländer. Länderregeln, die Shopware bei der Installation an
-        // die Standardsteuern hängt (z. B. Österreich), entfernen (offene Frage Lieferschwelle, siehe docs/plan.md).
-        $this->db->executeStatement(
-            'DELETE FROM tax_rule WHERE tax_id IN (:t)',
-            ['t' => Uuid::fromHexToBytesList([$ergebnis['print19'], $ergebnis['print7']])],
-            ['t' => ArrayParameterType::BINARY],
-        );
-
-        $typ = $this->ersteId('tax_rule_type', (new Criteria())->addFilter(new EqualsFilter('technicalName', 'entire_country')));
-        $regeln = [];
-        foreach ($daten['online_je_land'] as $code => $satz) {
-            $regeln[] = [
-                'id' => $this->id('steuer.online.' . $code),
-                'taxId' => $onlineId,
-                'countryId' => $laender[$code],
-                'taxRuleTypeId' => $typ,
-                'taxRate' => (float) $satz,
-            ];
-        }
-        $this->repo('tax_rule')->upsert($regeln, $this->context);
-        $this->io->writeln(\sprintf('Steuern 19 %%, 7 %% und „Online“ mit %d Länderregeln (Platzhalter, mit weclapp abgleichen).', \count($regeln)));
+        // Länderregeln (OSS) setzt das Plugin KettelerSteuern (bin/console ketteler:steuern:anwenden)
+        $this->io->writeln('Steuern 19 %, 7 % und „Online“ angelegt (Länderregeln: KettelerSteuern).');
 
         return $ergebnis;
     }
@@ -524,6 +508,68 @@ class EinrichtenCommand extends Command
             }
             $vorher = $id;
         }
+    }
+
+    /**
+     * EU-Widerrufsfunktion (Shopware ab 6.6.10.14): Knopf im Fuß einschalten, Empfänger aus der .env
+     * (KETTELER_WIDERRUF_EMAIL) in das Formular eintragen, Bestätigungstext setzen, Seite mit der Fußzeile verknüpfen.
+     * Texte von Ketteler zu prüfen.
+     */
+    private function widerrufsfunktion(): void
+    {
+        // Die mitgelieferte Seite von Shopware ist gesperrt (nicht änderbar). Darum eine eigene Seite mit demselben
+        // Formular (Typ revocationRequest), eingetragen als Widerrufsseite in den Shop-Einstellungen.
+        $empfaenger = trim((string) ($_SERVER['KETTELER_WIDERRUF_EMAIL'] ?? getenv('KETTELER_WIDERRUF_EMAIL') ?: ''));
+        $seite = $this->id('cms.widerrufsfunktion');
+        $this->repo('cms_page')->upsert([[
+            'id' => $seite,
+            'type' => 'page',
+            'name' => 'Widerruf erklären (EU-Widerrufsfunktion, Texte von Ketteler zu prüfen)',
+            'sections' => [[
+                'id' => $this->id('cms.widerrufsfunktion.bereich'),
+                'type' => 'default',
+                'position' => 0,
+                'sizingMode' => 'boxed',
+                'blocks' => [
+                    [
+                        'id' => $this->id('cms.widerrufsfunktion.text'),
+                        'type' => 'text',
+                        'position' => 0,
+                        'sectionPosition' => 'main',
+                        'slots' => [[
+                            'id' => $this->id('cms.widerrufsfunktion.text.inhalt'),
+                            'type' => 'text',
+                            'slot' => 'content',
+                            'config' => ['content' => ['source' => 'static', 'value' => '<h1>Widerruf erklären</h1>'
+                                . '<p>Hier können Sie den Widerruf eines Vertrags erklären, den Sie in unserem Shop geschlossen haben. '
+                                . 'Bitte geben Sie die Bestellnummer an, sie steht in Ihrer Bestellbestätigung. Nach dem Absenden '
+                                . 'erhalten Sie eine Bestätigung per E-Mail.</p>']],
+                        ]],
+                    ],
+                    [
+                        'id' => $this->id('cms.widerrufsfunktion.formular'),
+                        'type' => 'form',
+                        'position' => 1,
+                        'sectionPosition' => 'main',
+                        'slots' => [[
+                            'id' => $this->id('cms.widerrufsfunktion.formular.feld'),
+                            'type' => 'form',
+                            'slot' => 'content',
+                            'config' => [
+                                'type' => ['source' => 'static', 'value' => 'revocationRequest'],
+                                'title' => ['source' => 'static', 'value' => ''],
+                                'mailReceiver' => ['source' => 'static', 'value' => $empfaenger !== '' ? [$empfaenger] : []],
+                                'confirmationText' => ['source' => 'static', 'value' => 'Vielen Dank. Ihr Widerruf ist bei uns eingegangen. Eine Bestätigung haben wir Ihnen per E-Mail geschickt.'],
+                            ],
+                        ]],
+                    ],
+                ],
+            ]],
+        ]], $this->context);
+        $this->config->set('core.basicInformation.revocationRequestPage', $seite);
+        $this->config->set('core.basicInformation.showRevocationButton', true);
+        $this->repo('category')->update([['id' => $this->id('kategorie.fuss-widerruf-erklaeren'), 'cmsPageId' => $seite, 'description' => null]], $this->context);
+        $this->io->writeln(\sprintf('Widerrufsfunktion eingeschaltet (Empfänger: %s).', $empfaenger !== '' ? 'aus KETTELER_WIDERRUF_EMAIL' : 'Shop-E-Mail, KETTELER_WIDERRUF_EMAIL fehlt'));
     }
 
     /**

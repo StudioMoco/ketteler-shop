@@ -1,0 +1,8 @@
+{# Stand der USt-IdNr.-Prüfung (VIES). Nur bei Kunden mit USt-IdNr. #}
+{% set ktUstid = ketteler_ustid(context) %}
+{% if ktUstid %}
+    {% set ktArt = ktUstid.status == 'gueltig' ? 'success' : (ktUstid.status == 'inland' ? 'info' : 'warning') %}
+    <div class="alert alert-{{ ktArt }}" role="status" data-kt="ustid-{{ ktUstid.status }}">
+        {{ ('ketteler.ustid.' ~ ktUstid.status)|trans({'%ustid%': ktUstid.ustid})|sw_sanitize }}
+    </div>
+{% endif %}

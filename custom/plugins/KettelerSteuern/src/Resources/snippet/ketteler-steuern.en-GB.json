@@ -1,0 +1,11 @@
+{
+    "ketteler": {
+        "ustid": {
+            "gueltig": "Ihre USt-IdNr. %ustid% ist von der EU-Datenbank (VIES) bestätigt. Lieferungen in Ihr Land berechnen wir ohne Umsatzsteuer.",
+            "ungueltig": "Ihre USt-IdNr. %ustid% wurde von der EU-Datenbank (VIES) nicht bestätigt. Wir berechnen deshalb Umsatzsteuer. Bitte prüfen Sie die Nummer in Ihrem persönlichen Profil.",
+            "nicht_pruefbar": "Ihre USt-IdNr. %ustid% konnte gerade nicht geprüft werden, weil die EU-Datenbank (VIES) nicht erreichbar war. Wir berechnen deshalb vorerst Umsatzsteuer. Bitte speichern Sie Ihr Profil später erneut oder wenden Sie sich an unseren Kundenservice.",
+            "inland": "Mit einer deutschen USt-IdNr. (%ustid%) berechnen wir die Umsatzsteuer wie gewohnt.",
+            "format": "Die USt-IdNr. %ustid% hat kein gültiges Format. Wir berechnen deshalb Umsatzsteuer. Bitte prüfen Sie die Nummer in Ihrem persönlichen Profil."
+        }
+    }
+}

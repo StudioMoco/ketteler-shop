@@ -72,12 +72,13 @@ konsole bin/console user:change-password admin --password="$(wert SHOP_ADMIN_PAS
 
 schritt "Eigene Plugins installieren"
 konsole bin/console plugin:refresh --no-interaction >/dev/null
-PLUGINS="SwagPayPal KettelerEinrichtung KettelerTheme KettelerAnmeldung KettelerLizenzen KettelerMehrplatz"
+PLUGINS="SwagPayPal KettelerEinrichtung KettelerTheme KettelerAnmeldung KettelerLizenzen KettelerMehrplatz KettelerSteuern"
 konsole bin/console plugin:install --activate --no-interaction $PLUGINS
 konsole bin/console plugin:update --no-interaction $PLUGINS >/dev/null 2>&1 || true
 
 schritt "Grundaufbau: Länder, Steuern, Zahlarten, Versand, Zusatzfelder, Kategorien, Testartikel, Mails, Rechtstexte"
 konsole bin/console ketteler:einrichten
+konsole bin/console ketteler:steuern:anwenden
 
 schritt "Anmeldung: lokalen ZITADEL einrichten (Kunden-Organisation, Anwendung Shop, Testkunden)"
 konsole bin/console ketteler:zitadel:einrichten

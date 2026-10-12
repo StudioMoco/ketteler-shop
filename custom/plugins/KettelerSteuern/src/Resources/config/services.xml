@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="Ketteler\Steuern\Steuern\Steuerregeln" public="true">
+            <argument type="service" id="tax.repository"/>
+            <argument type="service" id="tax_rule.repository"/>
+            <argument type="service" id="country.repository"/>
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+        </service>
+        <service id="Ketteler\Steuern\Steuern\KonfigSubscriber">
+            <argument type="service" id="Ketteler\Steuern\Steuern\Steuerregeln"/>
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="Ketteler\Steuern\Ustid\ViesClient">
+            <argument type="service" id="http_client"/>
+        </service>
+        <service id="Ketteler\Steuern\Ustid\UstIdPruefung" public="true">
+            <argument type="service" id="customer.repository"/>
+            <argument type="service" id="Ketteler\Steuern\Ustid\ViesClient"/>
+            <argument type="service" id="logger"/>
+            <tag name="kernel.event_subscriber"/>
+        </service>
+        <service id="Ketteler\Steuern\Ustid\KettelerTaxDetector" decorates="Shopware\Core\Checkout\Cart\Tax\TaxDetector">
+            <argument type="service" id=".inner"/>
+        </service>
+        <service id="Ketteler\Steuern\Ustid\UstIdTwig">
+            <tag name="twig.extension"/>
+        </service>
+
+        <service id="Ketteler\Steuern\Command\SteuernAnwendenCommand">
+            <argument type="service" id="Ketteler\Steuern\Steuern\Steuerregeln"/>
+            <argument type="service" id="Ketteler\Steuern\Ustid\UstIdPruefung"/>
+            <argument type="service" id="customer.repository"/>
+            <tag name="console.command"/>
+        </service>
+    </services>
+</container>

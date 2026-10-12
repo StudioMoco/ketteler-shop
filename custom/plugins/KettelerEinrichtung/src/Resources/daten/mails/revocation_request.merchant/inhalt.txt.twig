@@ -1,0 +1,14 @@
+{% set d = revocationRequestFormData %}{% if d.kettelerStatus|default('') != 'zugeordnet' %}NICHT ZUGEORDNET, BITTE VON HAND PRÜFEN. Der Widerruf ist trotzdem wirksam eingegangen.
+
+{% endif %}Über die Widerrufsfunktion im Shop ist ein Widerruf eingegangen.
+
+Eingegangen am: {{ d.submitTime|format_datetime('long', 'short', locale='de-DE', timezone='Europe/Berlin') }}
+Name: {{ d.firstName }} {{ d.lastName }}
+E-Mail-Adresse: {{ d.email }}
+Bestellnummer oder Vertragsnummer: {{ d.contractNumber }}
+Widerruf für: {{ d.kettelerUmfang|default('keine Auswahl (ganze Bestellung bzw. laut Nachricht)') }}
+{% if d.comment %}Nachricht: {{ d.comment }}
+{% endif %}
+Zuordnung im Shop: {{ d.kettelerZuordnung|default('keine Angabe') }}
+
+Der Widerruf steht an der Bestellung (Zusatzfeld „Widerruf eingegangen“, Kennzeichen „Widerruf eingegangen“). Eine Lizenz wird nicht automatisch beendet; wird die Bestellung storniert, beendet das die Lizenz.

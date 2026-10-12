@@ -1,6 +1,6 @@
 # Plan: Ketteler-Shop mit Shopware 6
 
-Stand 12.10.2026 (dritte Runde). Grundlage: `docs/shop-weclapp-analyse.md` (Branch `feature/shop-analyse` im
+Stand 12.10.2026 (vierte Runde). Grundlage: `docs/shop-weclapp-analyse.md` (Branch `feature/shop-analyse` im
 Redaktions-Repository), `docs/lizenzen/shop-schnittstelle.md` und `docs/lizenzen/shopware.md` (Redaktions-Repository,
 Branch `feature/stichtag`).
 
@@ -8,7 +8,8 @@ Branch `feature/stichtag`).
 Anmelde-Plugin `KettelerAnmeldung` mit eigenem ZITADEL-Container, Lizenz-Plugin `KettelerLizenzen` gegen eine Attrappe der
 Lizenz-Schnittstelle, „Jetzt lesen“, Mehrplatz-Anfrage (`KettelerMehrplatz`), Mails im Ketteler-Ton, Lieferländer mit
 Steuerregeln, Versand nach Gewicht, Rechnung und PayPal (Testmodus), Abo-Kennzeichnung, Widerruf-Häkchen, Rechtstexte als
-Entwurf. Tests: `make test` (Unit-Tests) und `make test-e2e` (Ende-zu-Ende).
+Entwurf, EU-Widerrufsfunktion mit Zuordnung zur Bestellung, Prüfung der USt-IdNr. über VIES und umschaltbare Steuerregel
+(`KettelerSteuern`). Tests: `make test` (Unit-Tests) und `make test-e2e` (Ende-zu-Ende).
 
 **Feste Entscheidungen** (Atilla, 12.10.2026):
 
@@ -50,6 +51,18 @@ Entwurf. Tests: `make test` (Unit-Tests) und `make test-e2e` (Ende-zu-Ende).
 - Rechtstexte aus dem heutigen Shop übernehmen, als „von Ketteler zu prüfen“ markieren, Anpassungsbedarf nur auflisten.
 - Inhalte und Design: eigene Startseite, Werkseiten für AVR, ZMV und Eichstätter, Storytelling-Seiten. Design und UX zuerst,
   gebaut wird danach.
+
+**Entscheidungen der vierten Runde** (Atilla, 12.10.2026):
+
+1. Rechnungsanschrift beim ersten Anmelden: alle 29 Lieferländer, USt-IdNr. optional. Steuerfreie Preise nur mit einer
+   **geprüften** USt-IdNr. (VIES, siehe unten).
+2. Mehrplatz-Formular: Telefon optional, E-Mail bleibt Pflicht (gebaut).
+3. PayPal: Studio Moco legt eine eigene PayPal-Sandbox an (Anleitung `docs/paypal-sandbox.md`). Kettelers echtes
+   Händlerkonto erst auf Staging bzw. Live.
+4. Steuerregeln gehen an Kettelers Steuerberatung, ergänzt um Lieferschwelle, Großbritannien und Schweiz
+   (`docs/fragen-ketteler.md`).
+5. Online-Zugänge ins EU-Ausland: Der Bruttopreis bleibt gleich, nur der Steueranteil ändert sich.
+6. Die EU-Widerrufsfunktion ist Pflicht und wird gebaut (gebaut, siehe unten). Ketteler klärt nur den Ablauf dahinter.
 
 ## 0. Shopware-Version
 
@@ -167,7 +180,7 @@ Verwaltung, 5xx und Zeitüberschreitung werden wie bei der Anlage wiederholt.
 | Fall | Wirkung |
 |---|---|
 | Widerruf (Privatkunden, 14 Tage) | Gebaut: Pflicht-Häkchen in der Kasse für Privatkunden mit Online-Zugang oder Bundle: „Ich stimme zu, dass der Online-Zugang sofort beginnt, und weiß, dass ich damit mein Widerrufsrecht verliere.“ (von Ketteler zu prüfen). Ohne Häkchen keine Bestellung (auch serverseitig geprüft); Zeitpunkt und Wortlaut stehen an der Bestellung und in der Bestellbestätigung. Firmenkunden und Bestellungen aus der Verwaltung sind ausgenommen. Widerruft trotzdem jemand, storniert die Verwaltung die Bestellung (dann greift `stornieren`). |
-| Widerrufsfunktion (EU, seit 19.06.2026) | Shopware 6.6.10 bringt eine Einstellung „Widerrufsanfrage“ mit (`core.basicInformation.revocationRequestPage`, Mails `revocation_request.*`). Noch nicht eingerichtet: mit Ketteler und der Rechtsberatung klären, ob und wie die Widerrufsfunktion im Shop angeboten werden muss. |
+| Widerrufsfunktion (EU, seit 19.06.2026) | Gebaut, siehe Abschnitt 1a. Ein Widerruf beendet die Lizenz nicht automatisch; die Verwaltung entscheidet, ein Storno beendet die Lizenz wie bisher. |
 | Rückgabe des Buchs aus einem Bundle | Lizenz bleibt, außer die Verwaltung storniert. Rückgaben bucht weclapp. |
 | Rechnung nicht bezahlt | Verwaltung sperrt die Lizenz in „Kunden & Lizenzen“. Kein automatischer Weg aus weclapp. |
 | Abo-Kündigung (AVR Digital, später ZMV) | wie heute: Kündigung in „Kunden & Lizenzen“ mit Ende der bezahlten Laufzeit. |
@@ -180,6 +193,58 @@ Online-Zugänge“. Das Formular fragt Einrichtung, Ansprechperson, E-Mail, Tele
 ab, ist mit dem Shopware-Captcha geschützt, speichert die Anfrage (Verwaltung: Kunden > Mehrplatz-Anfragen) und schickt sie
 an `KETTELER_KONTAKT_EMAIL` (Live: kontakt@ketteler-verlag.de, lokal Mailpit). Keine Bestellung, keine Lizenz. Die
 Verwaltung vergibt die Lizenzen in „Kunden & Lizenzen“.
+
+## 1a. EU-Widerrufsfunktion (gebaut)
+
+**Rechtsgrundlage:** Richtlinie (EU) 2023/2673, in Deutschland im BGB umgesetzt, Pflicht seit 19.06.2026.
+
+**Shopware:** Die Funktion gibt es ab **6.6.10.14** (veröffentlicht 05.03.2026), laut Release Notes „Online cancelation
+request (Elektronische Widerrufsfunktion)“, Issue #13348 (https://github.com/shopware/shopware/releases/tag/v6.6.10.14;
+im Hauptzweig Commit „feat: online revocation request (#14362)“ vom 27.02.2026). Installiert ist 6.6.10.29, kein Update
+nötig. Shopware bringt mit: Formular (Vorname, Nachname, E-Mail, Bestell- bzw. Vertragsnummer, Kommentar) mit Captcha und
+Ratenbegrenzung, Mail an den Händler (`revocation_request.merchant`), Eingangsbestätigung an den Kunden
+(`revocation_request.customer`), Knopf „Vertrag widerrufen“ im Fuß (`core.basicInformation.showRevocationButton`). Shopware
+ordnet den Widerruf **keiner Bestellung zu** und speichert ihn nicht; die mitgelieferte Seite ist gesperrt.
+
+**Ergänzt:**
+- Eigene Seite „Widerruf erklären“ mit dem Shopware-Formular, als Widerrufsseite eingetragen; Knopf im Fuß und in der
+  Fußzeile „Rechtliches“; in „Meine Bestellungen“ je Bestellung „Widerruf erklären“ (Bestellnummer vorbelegt).
+- Erreichbar für angemeldete Kunden und für Gäste (reines Print).
+- Empfänger als Einstellung: `KETTELER_WIDERRUF_EMAIL` (lokal Mailpit, später vermutlich kontakt@ketteler-verlag.de,
+  von Ketteler zu bestätigen).
+- Zuordnung zur Bestellung über Bestellnummer und E-Mail bzw. den angemeldeten Besteller. Angemeldete Kunden wählen die
+  Positionen; Gäste widerrufen die ganze Bestellung oder nennen Artikel in der Nachricht.
+- An der Bestellung in der Verwaltung: Zusatzfeld „Widerruf eingegangen“ (Zeitpunkt, Positionen, Kommentar) und
+  Kennzeichen „Widerruf eingegangen“.
+- **Nichts geht verloren:** Passt die Nummer oder die E-Mail nicht, geht die Erklärung trotzdem vollständig an den
+  Empfänger, gekennzeichnet „nicht zugeordnet, bitte von Hand prüfen“, und der Kunde bekommt seine Eingangsbestätigung.
+  Fehler bei der Zuordnung halten den Versand nie auf.
+- Eingangsbestätigung (dauerhafter Datenträger): Inhalt der Erklärung (Name, E-Mail, Nummer, Umfang, Nachricht), Datum und
+  Uhrzeit des Eingangs in deutscher Zeit. Texte im Ketteler-Ton, von Ketteler zu prüfen (Vermerk nur intern).
+- **Online-Zugang mit Zustimmung zum sofortigen Beginn:** Shopware nimmt auch für solche Bestellungen jeden Widerruf an und
+  prüft nichts. Wir sperren nichts; die Verwaltung bekommt den Hinweis „Online-Zugang mit Zustimmung zum sofortigen Beginn:
+  Widerrufsrecht kann erloschen sein, bitte prüfen“ (in der Mail und an der Bestellung). Wie damit umzugehen ist, klärt
+  Ketteler (`docs/fragen-ketteler.md`).
+- Keine automatische Lizenzbeendigung.
+
+## 1b. Umsatzsteuer (gebaut, `KettelerSteuern`)
+
+**OSS-Schalter** in der Verwaltung (Erweiterungen > Ketteler Steuern): „EU-Lieferschwelle überschritten (OSS), von der
+Steuerberatung zu bestätigen“, Voreinstellung **nein**.
+- nein: alle Lieferungen an Privatkunden in der EU mit deutscher Umsatzsteuer, Print und Online.
+- ja: Print und Online an Privatkunden in der EU mit dem Satz des Kundenlandes (Regelsatz, Buchsatz, Satz für elektronische
+  Veröffentlichungen).
+- Sätze je Land nur an einer Stelle: `custom/plugins/KettelerSteuern/src/Resources/daten/steuersaetze.json` (Platzhalter).
+- Der Bruttopreis bleibt immer gleich: Shopware rechnet im `GrossPriceCalculator` die Steuer aus dem Bruttopreis heraus.
+  Geprüft auf Artikelseite, Warenkorb, Kasse, Bestellung, Mail und in den Bestelldaten der Admin-API (die weclapp liest).
+- Schweiz und Großbritannien: aus deutscher Sicht ohne Umsatzsteuer. Ausländische Registrierungspflichten sind nicht
+  gebaut (Frage an die Steuerberatung).
+
+**USt-IdNr.:** Shopware 6.6 prüft nur das Format (Muster je Land; eingeschaltet) und würde jede formal richtige Nummer
+steuerfrei stellen. Ergänzt: Abfrage bei VIES beim Speichern der Nummer, Ergebnis am Kunden. Steuerfrei nur bei
+bestätigter Nummer eines anderen EU-Landes, die zum Lieferland passt. Ungültig, nicht prüfbar (VIES nicht erreichbar) oder
+deutsch: keine Befreiung, Hinweis im Konto und in der Kasse. Erneut prüfen: Profil speichern oder
+`bin/console ketteler:steuern:anwenden --ustid`. Lokal antwortet eine VIES-Nachbildung (`KETTELER_VIES_URL`).
 
 ## 2. Anmeldung über ZITADEL (`KettelerAnmeldung`, lokal gebaut)
 
@@ -357,15 +422,10 @@ Einrichtungsbefehl an (wie die Rechtstexte), danach pflegt Ketteler. Keine Seite
 
 ### An Atilla
 
-1. Rechnungsanschrift beim ersten Anmelden: Gebaut sind alle 29 Lieferländer mit optionaler USt-IdNr. für Einrichtungen. Passt das?
-2. Mehrplatz-Anfrage: Telefon ist Pflichtfeld, Nachricht freiwillig. So lassen?
-3. PayPal lokal testen: Soll Studio Moco eine eigene PayPal-Sandbox-App anlegen (Zugangsdaten nur in der lokalen `.env`)?
-   Ohne sie erscheint PayPal lokal nicht in der Kasse.
-4. Steuern: Für Print an Privatkunden im EU-Ausland bleibt die deutsche Umsatzsteuer (Lieferschwelle 10.000 Euro im Jahr).
-   Für die Schweiz und Großbritannien sind alle Preise ohne deutsche Umsatzsteuer (Ausfuhr). Bitte mit der Steuerberatung
-   von Ketteler bestätigen; die Sätze für Online-Zugänge je Land sind Platzhalter (`daten/steuern.json`).
-5. Preise bei Online-Zugängen ins EU-Ausland: Shopware hält den Bruttopreis gleich (89,90 Euro bleiben 89,90 Euro, die
-   Steuer darin ändert sich). Gewünscht, oder soll der Nettopreis gleich bleiben?
+1. Widerruf: Soll die Verwaltung einen Widerruf zusätzlich in der Shopware-Verwaltung bestätigen können (Status an der
+   Bestellung), oder genügt das Zusatzfeld mit Kennzeichen?
+2. PayPal-Sandbox: Sobald die Werte in der `.env` stehen, `python3 tests/e2e/paypal_test.py` laufen lassen und eine
+   Zahlung von Hand durchspielen (`docs/paypal-sandbox.md`).
 
 ### An Ketteler
 

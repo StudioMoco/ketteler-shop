@@ -9,7 +9,7 @@ import sys
 import time
 import urllib.parse
 
-from hilfen import ENV, SHOP, AdminApi, Browser, Ergebnis, json_anfrage, sql
+from hilfen import ENV, SHOP, AdminApi, Browser, Ergebnis, interne_vermerke, json_anfrage, sql
 from lizenz_test import MAILPIT, angemeldeter_kunde, artikel_id, attrappe, bestellen, lizenz_zu, stand, warte
 
 GEDANKENSTRICH = re.compile("[–—]| - ")
@@ -53,6 +53,7 @@ def pruefe_mail(e, name, suche):
     e.pruefe("Guten Tag" in text and "Sie " in text and " du " not in text.lower(), name + ": Sie-Form")
     e.pruefe("09972 94 14-51" in text and "kontakt@ketteler-verlag.de" in text, name + ": Kundenservice im Fuß")
     e.pruefe(not GEDANKENSTRICH.search(text + " " + gefunden[0].get("Subject", "")), name + ": ohne Gedankenstrich")
+    e.pruefe(not interne_vermerke(text + html + gefunden[0].get("Subject", "")), name + ": keine internen Vermerke", str(interne_vermerke(text + html)))
     return text, html
 
 
@@ -71,7 +72,7 @@ def main():
     e.pruefe(korb["deliveries"][0]["shippingCosts"]["totalPrice"] == 6.5, "Österreich (EU) bis 0,5 kg: 6,50 Euro")
     e.pruefe([t["taxRate"] for t in korb["price"]["calculatedTaxes"]] == [7], "Print nach Österreich: deutsche 7 %")
     korb, verfuegbar = warenkorb("AT", "TEST-O-EK")
-    e.pruefe([t["taxRate"] for t in korb["price"]["calculatedTaxes"]] == [10], "Online-Zugang nach Österreich: 10 % (Satz des Kundenlandes)")
+    e.pruefe([t["taxRate"] for t in korb["price"]["calculatedTaxes"]] == [7], "Online-Zugang nach Österreich: deutsche 7 % (OSS aus, Matrix in steuern_test.py)")
     e.pruefe(verfuegbar == ["Ohne Versand (Online-Zugang)"], "Online nur: ohne Versand")
     korb, _ = warenkorb("CH", "TEST-P-001")
     e.pruefe(korb["price"]["taxStatus"] == "tax-free" and korb["deliveries"][0]["shippingCosts"]["totalPrice"] > 0, "Schweiz: ohne Umsatzsteuer, mit Versand")
@@ -79,6 +80,11 @@ def main():
     e.pruefe(korb["price"]["taxStatus"] == "tax-free", "Großbritannien: ohne Umsatzsteuer")
     laender = sql("SELECT COUNT(*) FROM sales_channel_country sc JOIN sales_channel s ON s.id=sc.sales_channel_id WHERE s.type_id=UNHEX('8A243080F92E4C719546314B577CF82B')")[0][0]
     e.pruefe(laender == "29", "29 Lieferländer (EU, Schweiz, Großbritannien)", laender)
+
+    print("Rechtstexte ohne interne Vermerke")
+    for pfad in ("/Rechtliches/Impressum/", "/Rechtliches/AGB/", "/Rechtliches/Widerrufsbelehrung/", "/Rechtliches/Datenschutzerklaerung/", "/Service/Versand-und-Lieferung/"):
+        seite = Browser().get(SHOP + pfad)
+        e.pruefe(seite.status == 200 and not interne_vermerke(seite.html), "Seite %s ohne „von Ketteler zu prüfen“" % pfad, str(interne_vermerke(seite.html)))
 
     print("Zahlarten")
     zahlarten = sql("SELECT pm.technical_name FROM sales_channel_payment_method sp JOIN payment_method pm ON pm.id=sp.payment_method_id "
@@ -101,7 +107,8 @@ def main():
     m = Browser()
     m.get(SHOP + "/mehrplatz-anfrage?werk=avr&artikel=TEST-O-AVR")
     m.absenden("/mehrplatz-anfrage", {"einrichtung": "", "ansprechperson": "Petra Test", "email": "kaputt", "telefon": "", "anzahl": "1"})
-    e.pruefe('data-kt="mehrplatz-fehler"' in m.html and m.html.count("is-invalid") >= 4, "Pflichtfelder und Anzahl ab 2 geprüft")
+    e.pruefe('data-kt="mehrplatz-fehler"' in m.html and m.html.count("is-invalid") == 3, "Pflichtfelder (Einrichtung, E-Mail) und Anzahl ab 2 geprüft, Telefon freiwillig")
+    e.pruefe(re.search(r'name="telefon"[^>]*required', m.html) is None, "Telefon im Formular nicht als Pflichtfeld markiert")
     vorher = sql("SELECT COUNT(*) FROM ketteler_mehrplatz_anfrage")[0][0]
     bestellungen_vorher = sql("SELECT COUNT(*) FROM `order`")[0][0]
     m.absenden("/mehrplatz-anfrage", {"einrichtung": "Caritasverband Teststadt", "ansprechperson": "Petra Test", "email": "petra@ketteler.test",
@@ -112,6 +119,16 @@ def main():
     e.pruefe(sql("SELECT COUNT(*) FROM `order`")[0][0] == bestellungen_vorher, "keine Bestellung entstanden")
     anfrage_mail = warte(lambda: [x for x in mails("to:" + ENV["KETTELER_KONTAKT_EMAIL"]) if "Caritasverband Teststadt" in x.get("Subject", "")], 20)
     e.pruefe(len(anfrage_mail) == 1, "Mail an den Kundenservice")
+    print("Mehrplatz-Anfrage ohne Telefon")
+    vorher2 = int(sql("SELECT COUNT(*) FROM ketteler_mehrplatz_anfrage")[0][0])
+    m2 = Browser()
+    m2.get(SHOP + "/mehrplatz-anfrage?werk=eichstaetter")
+    m2.absenden("/mehrplatz-anfrage", {"einrichtung": "Pfarrei Ohne Telefon", "ansprechperson": "Paul Test", "email": "paul@ketteler.test",
+                                       "telefon": "", "anzahl": "3", "nachricht": ""})
+    e.pruefe('data-kt="mehrplatz-gesendet"' in m2.html and int(sql("SELECT COUNT(*) FROM ketteler_mehrplatz_anfrage")[0][0]) == vorher2 + 1,
+             "Anfrage ohne Telefon angenommen und gespeichert")
+    ohne_tel = warte(lambda: [x for x in mails("to:" + ENV["KETTELER_KONTAKT_EMAIL"]) if "Pfarrei Ohne Telefon" in x.get("Subject", "")], 20)
+    e.pruefe(len(ohne_tel) == 1, "Mail ohne Telefon an den Empfänger aus der Einstellung (KETTELER_KONTAKT_EMAIL)")
     status, liste = api("POST", "/search/ketteler-mehrplatz-anfrage", {"filter": [{"type": "equals", "field": "email", "value": "petra@ketteler.test"}]})
     e.pruefe(status == 200 and liste["total"] >= 1 and liste["data"][0]["anzahl"] == 12, "in der Verwaltung abrufbar (Admin-API)", str(status))
     status, info = api("GET", "/_info/config")
@@ -182,8 +199,9 @@ def main():
         e.pruefe(len(warte(lambda: lizenz_zu(bestellung["orderNumber"]))) == 1, "Lizenz zur Bestellung aus der Verwaltung angelegt")
 
     print("Eichstätter Online-Zugang ohne Bestandsprüfung")
-    e.pruefe(sql("SELECT stock FROM product WHERE product_number='TEST-O-EK'")[0][0] in ("0", "-1", "-2", "-3") and
-             sql("SELECT is_closeout FROM product WHERE product_number='TEST-O-EK'")[0][0] == "0", "Bestand 0 und trotzdem bestellbar")
+    bestand = int(sql("SELECT stock FROM product WHERE product_number='TEST-O-EK'")[0][0])
+    produkt = store_api("kt-bestand-%d" % time.time(), "product/" + artikel_id("TEST-O-EK"))["product"]
+    e.pruefe(bestand <= 0 and produkt["available"] and not produkt["isCloseout"], "Bestand %d und trotzdem bestellbar" % bestand)
     return e.ende()
 
 

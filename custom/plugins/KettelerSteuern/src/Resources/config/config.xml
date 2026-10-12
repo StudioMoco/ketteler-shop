@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/trunk/src/Core/System/SystemConfig/Schema/config.xsd">
+    <card>
+        <title>EU-Lieferschwelle (OSS)</title>
+        <title lang="de-DE">EU-Lieferschwelle (OSS)</title>
+        <input-field type="bool">
+            <name>ossAktiv</name>
+            <label>EU delivery threshold exceeded (OSS)</label>
+            <label lang="de-DE">EU-Lieferschwelle überschritten (OSS), von der Steuerberatung zu bestätigen</label>
+            <defaultValue>false</defaultValue>
+            <helpText lang="de-DE">Nein: Alle Lieferungen an Privatkunden in der EU mit deutscher Umsatzsteuer, Print und Online. Ja: Print und Online an Privatkunden in der EU mit dem Satz des Kundenlandes (OSS). Die Schwelle von 10.000 Euro im Jahr gilt für Waren und elektronische Leistungen zusammen. Der Bruttopreis bleibt in beiden Fällen gleich, nur der Steueranteil ändert sich.</helpText>
+        </input-field>
+    </card>
+</config>

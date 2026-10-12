@@ -1,0 +1,27 @@
+{
+    "name": "ketteler/steuern",
+    "description": "Umsatzsteuer: OSS-Schalter (EU-Lieferschwelle), Steuersätze je Land, Prüfung der USt-IdNr. über VIES",
+    "type": "shopware-platform-plugin",
+    "version": "0.1.0",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "Ketteler\\Steuern\\": "src/"
+        }
+    },
+    "require": {
+        "shopware/core": "~6.6.10",
+        "shopware/storefront": "~6.6.10"
+    },
+    "extra": {
+        "shopware-plugin-class": "Ketteler\\Steuern\\KettelerSteuern",
+        "label": {
+            "de-DE": "Ketteler Steuern",
+            "en-GB": "Ketteler taxes"
+        },
+        "description": {
+            "de-DE": "OSS-Schalter, Steuersätze je EU-Land, steuerfrei für Einrichtungen nur mit bestätigter USt-IdNr. (VIES)",
+            "en-GB": "OSS switch and VAT ID check"
+        }
+    }
+}

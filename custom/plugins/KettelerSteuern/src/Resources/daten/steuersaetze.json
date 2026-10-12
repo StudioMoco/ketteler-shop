@@ -1,0 +1,31 @@
+{
+  "_hinweis": "PLATZHALTER, UNGEPRÜFT. Die einzige Stelle für Umsatzsteuersätze je EU-Land. Verwendet nur, wenn die EU-Lieferschwelle überschritten ist (OSS). standard = Regelsatz (Artikel mit 19 % in Deutschland), buch = ermäßigter Satz für gedruckte Bücher und Zeitschriften (Artikel mit 7 %), elektronisch = Satz für elektronische Bücher und Datenbanken (Online-Zugänge). Vor dem Livegang mit weclapp und der Steuerberatung abgleichen.",
+  "laender": {
+    "AT": { "standard": 20, "buch": 10, "elektronisch": 10 },
+    "BE": { "standard": 21, "buch": 6, "elektronisch": 6 },
+    "BG": { "standard": 20, "buch": 9, "elektronisch": 9 },
+    "HR": { "standard": 25, "buch": 5, "elektronisch": 5 },
+    "CY": { "standard": 19, "buch": 5, "elektronisch": 5 },
+    "CZ": { "standard": 21, "buch": 0, "elektronisch": 0 },
+    "DK": { "standard": 25, "buch": 25, "elektronisch": 25 },
+    "EE": { "standard": 24, "buch": 9, "elektronisch": 9 },
+    "FI": { "standard": 25.5, "buch": 14, "elektronisch": 14 },
+    "FR": { "standard": 20, "buch": 5.5, "elektronisch": 5.5 },
+    "GR": { "standard": 24, "buch": 6, "elektronisch": 6 },
+    "HU": { "standard": 27, "buch": 5, "elektronisch": 5 },
+    "IE": { "standard": 23, "buch": 0, "elektronisch": 0 },
+    "IT": { "standard": 22, "buch": 4, "elektronisch": 4 },
+    "LV": { "standard": 21, "buch": 12, "elektronisch": 5 },
+    "LT": { "standard": 21, "buch": 9, "elektronisch": 9 },
+    "LU": { "standard": 17, "buch": 3, "elektronisch": 3 },
+    "MT": { "standard": 18, "buch": 5, "elektronisch": 5 },
+    "NL": { "standard": 21, "buch": 9, "elektronisch": 9 },
+    "PL": { "standard": 23, "buch": 5, "elektronisch": 5 },
+    "PT": { "standard": 23, "buch": 6, "elektronisch": 6 },
+    "RO": { "standard": 21, "buch": 11, "elektronisch": 11 },
+    "SK": { "standard": 23, "buch": 5, "elektronisch": 5 },
+    "SI": { "standard": 22, "buch": 5, "elektronisch": 5 },
+    "ES": { "standard": 21, "buch": 4, "elektronisch": 4 },
+    "SE": { "standard": 25, "buch": 6, "elektronisch": 6 }
+  }
+}

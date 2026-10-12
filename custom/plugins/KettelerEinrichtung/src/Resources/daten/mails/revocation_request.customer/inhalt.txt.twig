@@ -1,0 +1,14 @@
+{% set d = revocationRequestFormData %}Guten Tag{% if d.firstName or d.lastName %} {{ d.firstName }} {{ d.lastName }}{% endif %},
+
+Ihr Widerruf ist bei uns eingegangen. Mit dieser E-Mail bestätigen wir Ihnen den Eingang.
+
+Eingegangen am: {{ d.submitTime|format_datetime('long', 'short', locale='de-DE', timezone='Europe/Berlin') }}
+Bestellnummer oder Vertragsnummer: {{ d.contractNumber }}
+E-Mail-Adresse: {{ d.email }}
+Widerruf für: {{ d.kettelerUmfang|default('die gesamte Bestellung bzw. die in Ihrer Nachricht genannten Artikel') }}
+{% if d.comment %}Ihre Nachricht: {{ d.comment }}
+{% endif %}
+Wir prüfen Ihren Widerruf und melden uns bei Ihnen. Haben Sie gedruckte Artikel erhalten, senden Sie diese bitte erst zurück, wenn wir Ihnen geschrieben haben, wohin.
+
+Freundliche Grüße
+Ihr KETTELER-Verlag

@@ -10,6 +10,7 @@
             <directory>custom/plugins/KettelerAnmeldung/tests</directory>
             <directory>custom/plugins/KettelerLizenzen/tests</directory>
             <directory>custom/plugins/KettelerMehrplatz/tests</directory>
+            <directory>custom/plugins/KettelerSteuern/tests</directory>
         </testsuite>
     </testsuites>
 </phpunit>

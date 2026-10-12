@@ -13,7 +13,7 @@
     {% if felder.ketteler_abo ?? null %}{% set abo = true %}{% endif %}
 {% endfor %}
 <p>Guten Tag {{ kunde.firstName }} {{ kunde.lastName }},</p>
-<p>vielen Dank für Ihre Bestellung. Sie ist am {{ order.orderDateTime|format_datetime('long', 'short', locale='de-DE') }} bei uns eingegangen, wir bearbeiten sie jetzt.</p>
+<p>vielen Dank für Ihre Bestellung. Sie ist am {{ order.orderDateTime|format_datetime('long', 'short', locale='de-DE', timezone='Europe/Berlin') }} bei uns eingegangen, wir bearbeiten sie jetzt.</p>
 <p><strong>Bestellnummer: {{ order.orderNumber }}</strong></p>
 
 <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
@@ -52,7 +52,7 @@
     <p>Wie Sie die digitale Ausgabe erhalten, teilen wir Ihnen gesondert mit.</p>
 {% endif %}
 {% if order.customFields.ketteler_widerruf is defined %}
-    <p style="font-size: 13px;"><strong>Ihre Zustimmung:</strong> {{ order.customFields.ketteler_widerruf.text }} (bestätigt am {{ order.customFields.ketteler_widerruf.zugestimmt|format_datetime('medium', 'short', locale='de-DE') }})</p>
+    <p style="font-size: 13px;"><strong>Ihre Zustimmung:</strong> {{ order.customFields.ketteler_widerruf.text }} (bestätigt am {{ order.customFields.ketteler_widerruf.zugestimmt|format_datetime('medium', 'short', locale='de-DE', timezone='Europe/Berlin') }})</p>
 {% endif %}
 {% if abo %}
     <p>Für Ihr Abonnement legen wir den Vertrag für Sie an. Sie erhalten dazu eine eigene Bestätigung.</p>

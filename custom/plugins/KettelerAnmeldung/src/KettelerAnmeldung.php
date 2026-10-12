@@ -44,5 +44,27 @@ class KettelerAnmeldung extends Plugin
                 ],
             ]],
         ]], $context);
+
+        // An der Bestellung: Eingang von Widerrufen (lesbar für die Verwaltung)
+        $this->container->get('custom_field_set.repository')->upsert([[
+            'id' => Uuid::fromStringToHex('ketteler.zusatzfelder.bestellung'),
+            'name' => 'ketteler_bestellung',
+            'config' => ['label' => ['de-DE' => 'Ketteler', 'en-GB' => 'Ketteler']],
+            'relations' => [['id' => Uuid::fromStringToHex('ketteler.zusatzfelder.bestellung.order'), 'entityName' => 'order']],
+            'customFields' => [[
+                'id' => Uuid::fromStringToHex('ketteler.zusatzfeld.widerruf-eingang'),
+                'name' => 'ketteler_widerruf_eingang',
+                'type' => CustomFieldTypes::TEXT,
+                'allowCustomerWrite' => false,
+                'config' => [
+                    'label' => ['de-DE' => 'Widerruf eingegangen (Widerrufsfunktion)', 'en-GB' => 'Revocation received'],
+                    'helpText' => ['de-DE' => 'Wird beim Eingang eines Widerrufs über das Formular im Shop gefüllt: Zeitpunkt, Positionen, Kommentar. Die Lizenz wird nicht automatisch beendet.'],
+                    'componentName' => 'sw-field',
+                    'customFieldType' => 'textarea',
+                    'type' => 'textarea',
+                    'customFieldPosition' => 1,
+                ],
+            ]],
+        ]], $context);
     }
 }

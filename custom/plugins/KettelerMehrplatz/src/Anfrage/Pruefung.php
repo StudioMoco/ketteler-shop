@@ -27,7 +27,7 @@ final class Pruefung
             'werk' => $text('werk', 50),
         ];
         $fehler = [];
-        foreach (['einrichtung', 'ansprechperson', 'telefon'] as $pflicht) {
+        foreach (['einrichtung', 'ansprechperson'] as $pflicht) {
             if ($daten[$pflicht] === '') {
                 $fehler[$pflicht] = 'ketteler.mehrplatz.fehler.pflicht';
             }

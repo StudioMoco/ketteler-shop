@@ -1,0 +1,12 @@
+{% set d = revocationRequestFormData %}
+<p>Guten Tag{% if d.firstName or d.lastName %} {{ d.firstName }} {{ d.lastName }}{% endif %},</p>
+<p>Ihr Widerruf ist bei uns eingegangen. Mit dieser E-Mail bestätigen wir Ihnen den Eingang.</p>
+<table style="font-size: 14px;">
+    <tr><td style="padding: 2px 12px 2px 0;">Eingegangen am</td><td>{{ d.submitTime|format_datetime('long', 'short', locale='de-DE', timezone='Europe/Berlin') }}</td></tr>
+    <tr><td style="padding: 2px 12px 2px 0;">Bestellnummer oder Vertragsnummer</td><td>{{ d.contractNumber }}</td></tr>
+    <tr><td style="padding: 2px 12px 2px 0;">E-Mail-Adresse</td><td>{{ d.email }}</td></tr>
+    <tr><td style="padding: 2px 12px 2px 0; vertical-align: top;">Widerruf für</td><td>{{ d.kettelerUmfang|default('die gesamte Bestellung bzw. die in Ihrer Nachricht genannten Artikel') }}</td></tr>
+    {% if d.comment %}<tr><td style="padding: 2px 12px 2px 0; vertical-align: top;">Ihre Nachricht</td><td>{{ d.comment|nl2br }}</td></tr>{% endif %}
+</table>
+<p>Wir prüfen Ihren Widerruf und melden uns bei Ihnen. Haben Sie gedruckte Artikel erhalten, senden Sie diese bitte erst zurück, wenn wir Ihnen geschrieben haben, wohin.</p>
+<p>Freundliche Grüße<br>Ihr KETTELER-Verlag</p>

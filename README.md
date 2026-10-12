@@ -98,7 +98,7 @@ Bestätigung und im Kundenkonto; lokal zeigt der Link auf eine Platzhalter-Adres
 | `make einrichten` | nur den Grundaufbau erneut anwenden (Kategorien, Testartikel) |
 | `make neu` | Datenbank dieses Rechners verwerfen und alles frisch aufbauen (fragt vorher) |
 | `make test` | Unit-Tests der eigenen Plugins (wenige Sekunden) |
-| `make test-e2e` | Ende-zu-Ende-Tests gegen den laufenden Shop: Anmeldung, Lizenzen, Kasse, Mails (etwa 4 Minuten) |
+| `make test-e2e` | Ende-zu-Ende-Tests gegen den laufenden Shop: Anmeldung, Lizenzen, Kasse, Widerruf, Steuern, PayPal (etwa 8 Minuten; PayPal nur mit Sandbox-Zugangsdaten, sonst übersprungen) |
 | `make konsole` | Kommandozeile im Shop-Container (z. B. `bin/console`) |
 | `make logs` | Protokolle ansehen |
 
@@ -120,6 +120,7 @@ Dateien unten.
 | `custom/plugins/KettelerEinrichtung/src/Resources/daten/artikel.json` | Testartikel mit Platzhaltertexten |
 | `custom/plugins/KettelerAnmeldung` | Anmeldung über ZITADEL (PKCE, Abmelden auch bei ZITADEL, Verknüpfung der Konten), Gastbestellung nur für Print, Befehl `ketteler:zitadel:einrichten` (nur lokal) |
 | `custom/plugins/KettelerLizenzen` | Lizenz beim Online-Kauf über die Warteschlange, Storno, „Jetzt lesen“, Kundenkonto „Meine Online-Zugänge“, Befehl `ketteler:lizenz:erneut` |
+| `custom/plugins/KettelerSteuern` | Schalter „EU-Lieferschwelle überschritten (OSS)“, Steuersätze je EU-Land (`daten/steuersaetze.json`, Platzhalter), Prüfung der USt-IdNr. über VIES |
 | `custom/plugins/KettelerMehrplatz` | „Mehrere Lizenzen anfragen“: Formular, Mail an den Kundenservice, Liste in der Verwaltung (Kunden > Mehrplatz-Anfragen) |
 | `custom/plugins/KettelerEinrichtung/src/Resources/daten/` | `laender.json`, `steuern.json` (Platzhalter), `versand.json` (Platzhalter), `mails/` (Mailtexte), `rechtstexte/` (aus `content/` erzeugt) |
 | `content/` | Inhalte des heutigen Shops als Rohmaterial für das Design (Eigentum Ketteler), Übersicht in `content/README.md` |
@@ -156,9 +157,18 @@ nächsten `make einrichten` übernommen.
 ## PayPal im Testmodus
 
 PayPal ist eingerichtet, erscheint lokal aber erst, wenn Zugangsdaten einer eigenen **PayPal-Sandbox-App** in der `.env`
-stehen (`PAYPAL_SANDBOX_CLIENT_ID`, `PAYPAL_SANDBOX_CLIENT_SECRET`, `PAYPAL_SANDBOX_MERCHANT_ID`; anlegen unter
-developer.paypal.com). Danach `make einrichten`. Nie Kettelers Zugangsdaten verwenden; das Händlerkonto verbindet Ketteler
-später selbst auf Staging bzw. Live.
+stehen. Schritt für Schritt: [docs/paypal-sandbox.md](docs/paypal-sandbox.md). Nie Kettelers Zugangsdaten verwenden; das
+Händlerkonto verbindet Ketteler später selbst auf Staging bzw. Live.
+
+## Widerruf, Steuern, USt-IdNr.
+
+- **Widerruf erklären:** Knopf „Vertrag widerrufen“ im Fuß, Seite unter Rechtliches > Widerruf erklären, in „Meine
+  Bestellungen“ je Bestellung. Eingang an `KETTELER_WIDERRUF_EMAIL` (lokal Mailpit), Vermerk an der Bestellung
+  (Verwaltung: Zusatzfeld und Kennzeichen „Widerruf eingegangen“).
+- **OSS-Schalter:** Verwaltung > Erweiterungen > Ketteler Steuern. Voreinstellung nein (deutsche Umsatzsteuer für alle
+  Privatkunden in der EU).
+- **USt-IdNr.:** Lokal prüft eine Nachbildung von VIES (`KETTELER_VIES_URL`). Gültige Testnummern: `ATU12345675`,
+  `IT12345678903`; jede andere AT-Nummer gilt als ungültig.
 
 ## Wenn etwas nicht klappt
 

@@ -1,0 +1,6 @@
+{% sw_extends '@Storefront/storefront/page/account/index.html.twig' %}
+
+{% block page_account_overview_profile %}
+    {% sw_include '@KettelerSteuern/storefront/component/ketteler/ustid-hinweis.html.twig' %}
+    {{ parent() }}
+{% endblock %}

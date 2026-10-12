@@ -34,6 +34,13 @@
         "widerruf": {
             "zustimmung": "Ich stimme zu, dass der Online-Zugang sofort beginnt, und weiß, dass ich damit mein Widerrufsrecht verliere.",
             "fehlt": "Bitte bestätigen Sie, dass der Online-Zugang sofort beginnen soll."
+        },
+        "widerrufsfunktion": {
+            "link": "Widerruf erklären",
+            "positionen": "Welche Artikel möchten Sie widerrufen?",
+            "online": "Online-Zugang",
+            "keineAuswahl": "Wenn Sie nichts auswählen, gilt Ihr Widerruf für die ganze Bestellung.",
+            "hinweisGast": "Möchten Sie nur einzelne Artikel widerrufen? Dann nennen Sie diese bitte im Kommentar. Ohne Angabe gilt Ihr Widerruf für die ganze Bestellung."
         }
     },
     "checkout": {

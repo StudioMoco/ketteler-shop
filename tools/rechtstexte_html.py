@@ -1,7 +1,7 @@
 """Wandelt die Rechtstexte aus content/rechtstexte/*.md (Rohmaterial aus dem bisherigen Shop) in HTML für Shopware um.
 
 Aufruf nach Änderungen an den Texten: python3 tools/rechtstexte_html.py, danach make einrichten.
-Der Wortlaut bleibt unverändert; oben steht ein Hinweis, dass Ketteler den Text noch prüfen muss.
+Der Wortlaut bleibt unverändert.
 Nur Standardbibliothek. Unterstützt: Überschriften, Absätze (einfache Zeilenumbrüche = <br>), Listen, Tabellen,
 **fett**, *kursiv*, Links, *** als Trenner.
 """
@@ -14,15 +14,14 @@ WURZEL = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 QUELLE = os.path.join(WURZEL, "content", "rechtstexte")
 ZIEL = os.path.join(WURZEL, "custom", "plugins", "KettelerEinrichtung", "src", "Resources", "daten", "rechtstexte")
 TEXTE = ["impressum", "agb", "widerruf", "datenschutz", "versand-lieferung"]
-HINWEIS = ('<div class="kt-rechtstext-hinweis" style="padding:10px 14px;margin-bottom:24px;border-left:3px solid #b4541a;'
-           'background:#f4f5f7"><strong>Entwurf, von Ketteler zu prüfen.</strong> Text aus dem bisherigen Shop übernommen '
-           '(Stand {stand}). Stellen, die für den neuen Shop angepasst werden müssen, stehen in docs/rechtstexte-pruefliste.md.</div>')
+# Kein Vermerk auf der Seite selbst (auch nicht im Quelltext): Kunden sehen sie. „Entwurf, von Ketteler zu prüfen“
+# steht im Seitennamen in der Verwaltung, in docs/plan.md und in docs/rechtstexte-pruefliste.md.
 
 
 def inline(text):
     text = html.escape(text, quote=False)
     text = re.sub(r"\[([^\]]+)\]\(([^)\s]+)\)", lambda m: '<a href="%s">%s</a>' % (html.escape(m.group(2)), m.group(1)), text)
-    text = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", text)
+    text = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", text, flags=re.S)
     text = re.sub(r"(?<![\w*])\*(?!\s)(.+?)(?<!\s)\*(?![\w*])", r"<em>\1</em>", text)
     return text
 
@@ -35,7 +34,8 @@ def umwandeln(markdown):
     def schliessen():
         nonlocal absatz, liste, tabelle
         if absatz:
-            aus.append("<p>" + "<br>".join(inline(z) for z in absatz) + "</p>")
+            # erst zusammenfügen, dann umwandeln: Fettdruck kann über mehrere Zeilen gehen
+            aus.append("<p>" + inline("\n".join(absatz)).replace("\n", "<br>") + "</p>")
             absatz = []
         if liste:
             typ, punkte = liste
@@ -91,8 +91,7 @@ def main():
     for name in TEXTE:
         with open(os.path.join(QUELLE, name + ".md"), encoding="utf-8") as f:
             inhalt = f.read()
-        stand = re.search(r"^abgerufen:\s*(\S+)", inhalt, re.M)
-        ergebnis = HINWEIS.format(stand="abgerufen " + (stand.group(1) if stand else "unbekannt")) + "\n" + umwandeln(inhalt)
+        ergebnis = umwandeln(inhalt)
         with open(os.path.join(ZIEL, name + ".html"), "w", encoding="utf-8") as f:
             f.write(ergebnis + "\n")
         print("%s.html: %d Zeichen" % (name, len(ergebnis)))

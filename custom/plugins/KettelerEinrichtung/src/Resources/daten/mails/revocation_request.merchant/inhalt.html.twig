@@ -1,0 +1,13 @@
+{% set d = revocationRequestFormData %}
+{% if d.kettelerStatus|default('') != 'zugeordnet' %}<p style="padding: 8px 12px; border-left: 3px solid #b4541a; background: #f4f5f7;"><strong>Nicht zugeordnet, bitte von Hand prüfen.</strong> Der Widerruf ist trotzdem wirksam eingegangen.</p>{% endif %}
+<p>Über die Widerrufsfunktion im Shop ist ein Widerruf eingegangen.</p>
+<table style="font-size: 14px;">
+    <tr><td style="padding: 2px 12px 2px 0;">Eingegangen am</td><td>{{ d.submitTime|format_datetime('long', 'short', locale='de-DE', timezone='Europe/Berlin') }}</td></tr>
+    <tr><td style="padding: 2px 12px 2px 0;">Name</td><td>{{ d.firstName }} {{ d.lastName }}</td></tr>
+    <tr><td style="padding: 2px 12px 2px 0;">E-Mail-Adresse</td><td>{{ d.email }}</td></tr>
+    <tr><td style="padding: 2px 12px 2px 0;">Bestellnummer oder Vertragsnummer</td><td>{{ d.contractNumber }}</td></tr>
+    <tr><td style="padding: 2px 12px 2px 0; vertical-align: top;">Widerruf für</td><td>{{ d.kettelerUmfang|default('keine Auswahl (ganze Bestellung bzw. laut Nachricht)') }}</td></tr>
+    {% if d.comment %}<tr><td style="padding: 2px 12px 2px 0; vertical-align: top;">Nachricht</td><td>{{ d.comment|nl2br }}</td></tr>{% endif %}
+</table>
+<p><strong>Zuordnung im Shop:</strong> {{ d.kettelerZuordnung|default('keine Angabe') }}</p>
+<p>Der Widerruf steht an der Bestellung (Zusatzfeld „Widerruf eingegangen“, Kennzeichen „Widerruf eingegangen“). Eine Lizenz wird nicht automatisch beendet; wird die Bestellung storniert, beendet das die Lizenz.</p>

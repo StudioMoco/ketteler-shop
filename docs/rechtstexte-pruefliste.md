@@ -156,8 +156,8 @@ ihn liefert.
    Widerrufsrechts (§ 356 Abs. 5 BGB); dazu die Frage, ob die Bestellbestätigung diese Zustimmung wiedergeben muss.
 9. **Widerrufsbelehrung für digitale Inhalte und Abos** (Online-Zugang, ZMV Digital, AVR Digital), einschließlich der
    Frage nach einem passenden Muster.
-10. **Elektronische Widerrufsfunktion**: Braucht der Shop seit Juni 2026 eine eigene Funktion, mit der Verbraucher
-    online widerrufen können?
+10. **Elektronische Widerrufsfunktion**: inzwischen gebaut (siehe Abschnitt „Neu im Shop“ unten). Der Hinweis darauf
+    fehlt noch in Widerrufsbelehrung und AGB.
 11. **Online-Zugang beim Einmalkauf**: Laufzeit, Ende bei Storno oder Widerruf, Sperre bei nicht bezahlter Rechnung
     (so im Plan vorgesehen), Hinweis „Zugang wird eingerichtet“.
 12. **Gastbestellung**: Hinweis, dass Online-Artikel ein Konto voraussetzen und Gäste nur Print bestellen können.
@@ -168,3 +168,30 @@ ihn liefert.
 16. **Lieferzeit für Online-Zugänge** (sofort) auf der Seite Versand & Lieferung.
 17. **Barrierefreiheit**: Gilt für den Verlag eine Pflicht nach dem Barrierefreiheitsstärkungsgesetz, und braucht der
     Shop dazu Angaben?
+
+## Neu im Shop: Widerrufsfunktion und Prüfung der USt-IdNr.
+
+Stand 12.10.2026, vierte Runde. Beides ist im Shop gebaut; die Texte dazu sind Entwürfe. Hier nur die Stellen, die
+Ketteler prüfen oder ergänzen sollte, keine neuen Formulierungen.
+
+### Widerrufsfunktion (Formular „Widerruf erklären“, Knopf „Vertrag widerrufen“)
+
+| Nr. | Stelle | Grund | Zu prüfen |
+|---|---|---|---|
+| W1 | Widerrufsbelehrung und Muster-Widerrufsformular (`widerruf.md`, AGB Ziffer 18) | Widerrufsfunktion | Muss die Belehrung auf das Formular im Shop hinweisen, und wie heißt es dort? |
+| W2 | Eingangsbestätigung an den Kunden (Mail „Wir haben Ihren Widerruf erhalten“) | Widerrufsfunktion | Genügen Inhalt (Name, E-Mail, Nummer, Umfang, Nachricht, Datum und Uhrzeit) und Wortlaut als Bestätigung auf einem dauerhaften Datenträger? |
+| W3 | Satz in der Eingangsbestätigung zur Rücksendung („erst zurücksenden, wenn wir Ihnen geschrieben haben, wohin“) | Widerrufsfunktion | Passt das zum Ablauf bei Ketteler und zur Widerrufsbelehrung (Rücksendefrist 14 Tage)? |
+| W4 | Online-Zugänge mit Zustimmung zum sofortigen Beginn | Online-Zugang/Bibliothek | Das Formular nimmt auch hier jeden Widerruf an; die Verwaltung entscheidet. Braucht es dazu einen Hinweis im Formular oder in den AGB? |
+| W5 | Bestätigungstext auf der Seite nach dem Absenden | Widerrufsfunktion | Wortlaut „Vielen Dank. Ihr Widerruf ist bei uns eingegangen. Eine Bestätigung haben wir Ihnen per E-Mail geschickt.“ |
+| W6 | Datenschutzerklärung | Widerrufsfunktion | Verarbeitung der Angaben aus dem Widerrufsformular (Zweck, Speicherdauer, Empfänger). |
+| W7 | Abonnements (ZMV, AVR Digital) | Abos | Gilt die Widerrufsfunktion auch für die Kündigung von Abos, oder braucht es dafür den Weg „Verträge hier kündigen“ (Kündigungsbutton) zusätzlich? |
+
+### Prüfung der USt-IdNr. (VIES)
+
+| Nr. | Stelle | Grund | Zu prüfen |
+|---|---|---|---|
+| U1 | AGB Ziffer 5 (Preise) | Steuern | Hinweis, dass Einrichtungen in anderen EU-Ländern nur mit gültiger, geprüfter USt-IdNr. ohne Umsatzsteuer beliefert werden (Steuerschuldnerschaft des Empfängers)? |
+| U2 | Datenschutzerklärung | Steuern | Abfrage der USt-IdNr. bei der EU-Kommission (VIES): Übermittlung, Zweck, Speicherung des Ergebnisses am Kundenkonto. |
+| U3 | Hinweise im Kundenkonto und in der Kasse (gültig, ungültig, nicht prüfbar, deutsch) | Steuern | Wortlaut der Hinweise; Umgang, wenn VIES länger nicht erreichbar ist. |
+| U4 | Preisangaben im Shop („inkl. MwSt.“) bei OSS | Steuern | Bleibt der Hinweis passend, wenn je nach Land ein anderer Steuersatz im Preis enthalten ist? |
+

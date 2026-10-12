@@ -1,0 +1,1 @@
+Widerruf eingegangen: {{ revocationRequestFormData.contractNumber }}{% if revocationRequestFormData.kettelerStatus|default('') != 'zugeordnet' %} (nicht zugeordnet, bitte von Hand prüfen){% endif %}
