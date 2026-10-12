@@ -3,15 +3,17 @@
 Prüft: Knopf im Fuß, Formular für angemeldete Kunden (mit Positionen) und Gäste, Eingangsbestätigung an den Kunden,
 Mail an den Empfänger aus KETTELER_WIDERRUF_EMAIL mit Zuordnung, Speicherung an der Bestellung (Zeitpunkt, Positionen,
 Kennzeichen), Hinweis bei Online-Zugang mit Zustimmung, keine automatische Lizenzbeendigung, falsche E-Mail.
+Dazu die Verwaltung: Knopf „Widerruf bearbeitet“ (Zeit, Bearbeiter, Kennzeichen, Rücknahme, Verlauf, Rechte).
 """
 
 import json
+import os
 import re
 import sys
 import time
 import urllib.parse
 
-from hilfen import ENV, SHOP, Browser, Ergebnis, interne_vermerke, json_anfrage, sql
+from hilfen import ENV, SHOP, AdminApi, Browser, Ergebnis, interne_vermerke, json_anfrage, sql
 from lizenz_test import MAILPIT, angemeldeter_kunde, attrappe, bestellen, lizenz_zu, warte
 from anmeldung_test import gast_registrieren, in_den_warenkorb
 
@@ -69,6 +71,51 @@ def hat_kennzeichen(order_id):
                "AND ot.order_version_id=UNHEX('%s') AND t.name='Widerruf eingegangen'" % (order_id, LIVE))[0][0] == "1"
 
 
+def kennzeichen(order_id):
+    return sorted(z[0] for z in sql("SELECT t.name FROM order_tag ot JOIN tag t ON t.id=ot.tag_id WHERE ot.order_id=UNHEX('%s') "
+                                     "AND ot.order_version_id=UNHEX('%s') AND t.name LIKE 'Widerruf%%'" % (order_id, LIVE)))
+
+
+def bearbeitung(order_id):
+    zeile = sql("SELECT IFNULL(JSON_EXTRACT(custom_fields,'$.ketteler_widerruf_bearbeitung'),'null') FROM `order` "
+                "WHERE id=UNHEX('%s') AND version_id=UNHEX('%s')" % (order_id, LIVE))
+    return json.loads(zeile[0][0]) if zeile else None
+
+
+def verwaltung_bearbeitet(e, oid, nr, seite, k):
+    """Knopf „Widerruf bearbeitet“ über die Schnittstelle, die auch die Verwaltung benutzt."""
+    api = AdminApi()
+    pfad = "/_action/ketteler/widerruf/%s/bearbeitung" % oid
+    status, _ = json_anfrage("GET", SHOP + "/bundles/ketteleranmeldung/administration/js/ketteler-anmeldung.js")
+    e.pruefe(status == 200, "Verwaltung: Karte „Widerruf“ wird geladen (Skript erreichbar)", str(status))
+    status, stand = api("POST", pfad, {"bearbeitet": True})
+    e.pruefe(status == 200 and stand.get("bearbeitet") and stand.get("zeit") and "admin" in (stand.get("benutzer") or ""),
+             "„Widerruf bearbeitet“: Zeit und Bearbeiter gespeichert", str(stand)[:200])
+    e.pruefe(kennzeichen(oid) == ["Widerruf bearbeitet"], "Kennzeichen wechselt zu „Widerruf bearbeitet“", str(kennzeichen(oid)))
+    status, _ = api("POST", pfad, {"bearbeitet": True})
+    e.pruefe(status == 409, "doppelt markieren wird abgelehnt", str(status))
+    status, stand = api("POST", pfad, {"bearbeitet": False})
+    e.pruefe(status == 200 and not stand.get("bearbeitet") and kennzeichen(oid) == ["Widerruf eingegangen"],
+             "Rücknahme: wieder offen, Kennzeichen „Widerruf eingegangen“", str(kennzeichen(oid)))
+    aktionen = [v["aktion"] for v in (bearbeitung(oid) or {}).get("verlauf", [])]
+    e.pruefe(aktionen == ["bearbeitet", "zurueckgenommen"], "Verlauf an der Bestellung protokolliert", str(aktionen))
+    api("POST", pfad, {"bearbeitet": True})
+    formular_senden(k, seite + "?bestellung=" + nr, {
+        "firstName": "Tessa", "lastName": "Testkundin", "email": "testkunde@ketteler.test", "contractNumber": nr, "comment": "Noch ein Widerruf."})
+    stand = warte(lambda: (bearbeitung(oid) or {}).get("verlauf", [{}])[-1].get("aktion") == "neuer_widerruf" and bearbeitung(oid), 20) or {}
+    e.pruefe(not stand.get("bearbeitet") and kennzeichen(oid) == ["Widerruf eingegangen"], "neuer Widerruf öffnet die bearbeitete Bestellung wieder", str(kennzeichen(oid)))
+    # Ohne Recht „Bestellungen bearbeiten“ (Integration ohne Rolle): abgelehnt
+    zugang, geheimnis = "SWIA" + os.urandom(10).hex().upper(), os.urandom(24).hex()
+    integration = os.urandom(16).hex()
+    api("POST", "/integration", {"id": integration, "label": "e2e ohne Rechte", "accessKey": zugang, "secretAccessKey": geheimnis, "admin": False})
+    try:
+        _, token = json_anfrage("POST", SHOP + "/api/oauth/token", {"grant_type": "client_credentials", "client_id": zugang, "client_secret": geheimnis})
+        status, _ = json_anfrage("POST", SHOP + "/api" + pfad, {"bearbeitet": True}, {"Authorization": "Bearer " + token["access_token"]})
+        e.pruefe(status == 403, "ohne Recht „Bestellungen bearbeiten“: abgelehnt", str(status))
+    finally:
+        api("DELETE", "/integration/" + integration)
+
+
 def main():
     e = Ergebnis()
     attrappe("/_zuruecksetzen", {})
@@ -122,6 +169,9 @@ def main():
     liste, _ = widerrufe(oid)
     e.pruefe(len(liste) == 2 and liste[1]["alle"] and liste[1]["online_mit_zustimmung"], "zweiter Eintrag: ganze Bestellung, Online mit Zustimmung")
     e.pruefe((lizenz_zu(nr) or [{}])[0].get("status") == "aktiv", "Lizenz bleibt auch dann bestehen")
+
+    print("Verwaltung: Widerruf bearbeitet")
+    verwaltung_bearbeitet(e, oid, nr, seite, k)
 
     print("Gast mit reinem Print")
     g = Browser()

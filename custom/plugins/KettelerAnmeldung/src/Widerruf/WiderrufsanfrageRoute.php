@@ -29,6 +29,7 @@ class WiderrufsanfrageRoute extends AbstractRevocationRequestRoute
     public function __construct(
         private readonly AbstractRevocationRequestRoute $inner,
         private readonly EntityRepository $bestellungen,
+        private readonly EntityRepository $bestellungKennzeichen,
         private readonly LoggerInterface $logger,
     ) {
     }
@@ -139,9 +140,16 @@ class WiderrufsanfrageRoute extends AbstractRevocationRequestRoute
             . ($e['online_mit_zustimmung'] ? '. Online-Zugang mit Zustimmung zum sofortigen Beginn: Widerrufsrecht prüfen.' : '.')
             . ($e['kommentar'] !== '' ? ' Kommentar: ' . $e['kommentar'] : ''), $liste));
 
+        $felder = [self::FELD_LISTE => $liste, self::FELD_TEXT => $text];
+        // War die Bestellung schon als bearbeitet markiert, ist sie mit dem neuen Widerruf wieder offen
+        $offen = Bearbeitung::neuerEingang($bestellung instanceof OrderEntity ? ($bestellung->getCustomFields()[Bearbeitung::FELD] ?? null) : null, new \DateTimeImmutable());
+        if ($offen !== null) {
+            $felder[Bearbeitung::FELD] = $offen;
+            $this->bestellungKennzeichen->delete([['orderId' => $a->orderId, 'tagId' => Bearbeitung::tagId()]], $context);
+        }
         $this->bestellungen->update([[
             'id' => $a->orderId,
-            'customFields' => [self::FELD_LISTE => $liste, self::FELD_TEXT => $text],
+            'customFields' => $felder,
             'tags' => [['id' => self::tagId(), 'name' => 'Widerruf eingegangen']],
         ]], $context);
         $this->logger->info('Ketteler-Widerruf: an Bestellung gespeichert.', ['bestellung' => $a->bestellnummer]);

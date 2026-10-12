@@ -110,7 +110,7 @@ Dateien unten.
 
 | Pfad | Inhalt |
 |---|---|
-| `compose.yaml` | Container: `web` (Shopware-Entwicklungsbild mit PHP 8.3, Caddy), `worker` (Warteschlange), `database` (MariaDB 11.4), `mailer` (Mailpit), `zitadel` und `zitadel-db` (Anmeldung), `lizenz-attrappe` |
+| `compose.yaml` | Container: `web` (Shopware-Entwicklungsbild mit PHP 8.3, Caddy), `worker` (Warteschlange), `database` (MySQL 8.4 wie Staging und Live), `mailer` (Mailpit), `zitadel` und `zitadel-db` (Anmeldung), `lizenz-attrappe` |
 | `scripts/setup.sh`, `Makefile` | Aufbau und Bedienung |
 | `.env.example` | Vorlage für die lokale `.env` (ohne Geheimnisse) |
 | `composer.json`, `composer.lock` | Shopware-Version 6.6.10.29 und PHP-Pakete, fest |

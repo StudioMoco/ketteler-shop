@@ -9,12 +9,11 @@ Die Steuersätze je Land sind Platzhalter (steuersaetze.json); der Test liest si
 
 import json
 import os
-import subprocess
 import sys
 import time
 import urllib.parse
 
-from hilfen import ENV, SHOP, WURZEL, AdminApi, Browser, Ergebnis, json_anfrage, kontext_token, sql
+from hilfen import ENV, SHOP, STAGING, WURZEL, AdminApi, Browser, Ergebnis, json_anfrage, konsole, kontext_token, sql
 from lizenz_test import MAILPIT, artikel_id, attrappe, warte
 
 SAETZE = json.load(open(os.path.join(WURZEL, "custom/plugins/KettelerSteuern/src/Resources/daten/steuersaetze.json")))["laender"]
@@ -23,10 +22,6 @@ DE_SATZ = {"print7": 7, "print19": 19, "online": 7}
 KORB = {"Print": ["TEST-P-001", "TEST-P-002"], "Online": ["TEST-O-EK"], "gemischt": ["TEST-P-001", "TEST-O-EK"]}
 KANAL = None
 SCHLUESSEL = None
-
-
-def konsole(*befehl):
-    return subprocess.run(["docker", "compose", "exec", "-T", "web", "bin/console", *befehl], cwd=WURZEL, capture_output=True, text=True).stdout
 
 
 def oss(an):
@@ -132,32 +127,95 @@ def main():
     api = AdminApi()
     KANAL = sql("SELECT LOWER(HEX(id)) FROM sales_channel WHERE type_id=UNHEX('8A243080F92E4C719546314B577CF82B')")[0][0]
     SCHLUESSEL = sql("SELECT access_key FROM sales_channel WHERE id=UNHEX('%s')" % KANAL)[0][0]
-    attrappe("/_modus", {"modus": "normal"})
+    if not STAGING:
+        attrappe("/_modus", {"modus": "normal"})
+    # Lokal die Nachbildung (feste Testnummern); auf Staging die offizielle VIES-Schnittstelle: dort nur echte Nummern.
+    gueltige_at = ENV.get("KETTELER_TEST_USTID_AT", "") if STAGING else "ATU 1234 5675"
+    token_at = None
 
-    print("USt-IdNr. (VIES-Nachbildung)")
-    firma_at, token_at = kunde_anlegen(api, "steuer-at-firma@ketteler.test", "AT", "ATU 1234 5675")
-    stand = warte(lambda: ustid_stand(firma_at), 10)
-    e.pruefe(stand and stand["status"] == "gueltig" and stand["ustid"] == "ATU12345675" and stand["land"] == "AT", "gültige Nummer aus AT: bestätigt", str(stand))
+    print("USt-IdNr. (%s)" % ("offizielle VIES-Schnittstelle" if STAGING else "VIES-Nachbildung"))
+    if gueltige_at:
+        firma_at, token_at = kunde_anlegen(api, "steuer-at-firma@ketteler.test", "AT", gueltige_at)
+        stand = warte(lambda: ustid_stand(firma_at), 10)
+        e.pruefe(stand and stand["status"] == "gueltig" and stand["ustid"] == gueltige_at.replace(" ", "") and stand["land"] == "AT", "gültige Nummer aus AT: bestätigt", str(stand))
+        e.pruefe(stand and stand.get("geprueft") and len(stand.get("verlauf", [])) == 1, "Nachweis: Prüfzeit und Verlauf am Kunden")
+    else:
+        e.ueberspringe("gültige Nummer aus AT und alle Fälle mit Einrichtung AT", "auf Staging keine echte gültige Test-USt-IdNr. eingetragen (KETTELER_TEST_USTID_AT)")
     firma_falsch, token_falsch = kunde_anlegen(api, "steuer-at-falsch@ketteler.test", "AT", "ATU99999999")
-    e.pruefe((ustid_stand(firma_falsch) or {}).get("status") == "ungueltig", "ungültige Nummer: nicht bestätigt")
+    e.pruefe((ustid_stand(firma_falsch) or {}).get("status") == "ungueltig", "ungültige Nummer: nicht bestätigt", str(ustid_stand(firma_falsch)))
     firma_de, token_de = kunde_anlegen(api, "steuer-de-firma@ketteler.test", "DE", "DE123456788")
     e.pruefe((ustid_stand(firma_de) or {}).get("status") == "inland", "deutsche Nummer: keine Befreiung (inland)")
-    attrappe("/_modus", {"modus": "vies_ausfall"})
-    firma_aus, token_aus = kunde_anlegen(api, "steuer-at-ausfall@ketteler.test", "AT", "ATU12345675")
-    attrappe("/_modus", {"modus": "normal"})
-    e.pruefe((ustid_stand(firma_aus) or {}).get("status") == "nicht_pruefbar", "VIES nicht erreichbar: nicht prüfbar")
-    for name, token, steuerfrei in [("gültig", token_at, True), ("ungültig", token_falsch, False), ("deutsch", token_de, False), ("VIES-Ausfall", token_aus, False)]:
+    faelle = [("ungültig", token_falsch, False), ("deutsch", token_de, False)]
+    if gueltige_at:
+        faelle.insert(0, ("gültig", token_at, True))
+    if STAGING:
+        e.ueberspringe("VIES nicht erreichbar", "Ausfall der offiziellen Schnittstelle lässt sich nicht herbeiführen (lokal mit der Nachbildung geprüft)")
+    else:
+        attrappe("/_modus", {"modus": "vies_ausfall"})
+        firma_aus, token_aus = kunde_anlegen(api, "steuer-at-ausfall@ketteler.test", "AT", "ATU12345675")
+        attrappe("/_modus", {"modus": "normal"})
+        e.pruefe((ustid_stand(firma_aus) or {}).get("status") == "nicht_pruefbar", "VIES nicht erreichbar: nicht prüfbar")
+        faelle.append(("VIES-Ausfall", token_aus, False))
+    for name, token, steuerfrei in faelle:
         korb = korb_fuer(token, ["TEST-P-001"])
         e.pruefe((korb["price"]["taxStatus"] == "tax-free") == steuerfrei, "Warenkorb Einrichtung (%s): %s" % (name, "steuerfrei" if steuerfrei else "mit Umsatzsteuer"))
     b = als_kunde(api, firma_falsch)
     b.get(SHOP + "/account")
     e.pruefe('data-kt="ustid-ungueltig"' in b.html, "Konto: klare Meldung bei ungültiger Nummer")
-    b = als_kunde(api, firma_aus)
-    b.get(SHOP + "/account")
-    e.pruefe('data-kt="ustid-nicht_pruefbar"' in b.html and "nicht erreichbar" in b.html, "Konto: Hinweis bei VIES-Ausfall")
-    # Nach dem Ausfall erneut prüfen (Profil speichern bzw. Befehl): jetzt bestätigt
-    api("PATCH", "/customer/" + firma_aus, {"vatIds": ["ATU12345675"]})
-    e.pruefe((ustid_stand(firma_aus) or {}).get("status") == "gueltig", "nach dem Ausfall erneut geprüft: bestätigt")
+    if not STAGING:
+        b = als_kunde(api, firma_aus)
+        b.get(SHOP + "/account")
+        e.pruefe('data-kt="ustid-nicht_pruefbar"' in b.html and "nicht erreichbar" in b.html, "Konto: Hinweis bei VIES-Ausfall")
+        # Nach dem Ausfall erneut prüfen (Profil speichern bzw. Befehl): jetzt bestätigt
+        api("PATCH", "/customer/" + firma_aus, {"vatIds": ["ATU12345675"]})
+        e.pruefe((ustid_stand(firma_aus) or {}).get("status") == "gueltig", "nach dem Ausfall erneut geprüft: bestätigt")
+        e.pruefe([v["status"] for v in (ustid_stand(firma_aus) or {}).get("verlauf", [])] == ["gueltig", "nicht_pruefbar"],
+                 "Verlauf: frühere Prüfung bleibt erhalten")
+
+    print("Nachweis: Abfragenummer, erneute Prüfung nach einem Jahr, Nachweis an der Bestellung")
+    if STAGING:
+        e.ueberspringe("Abfragenummer von VIES", "eigene USt-IdNr. von Ketteler als Anfragender noch offen (Frage an Ketteler)")
+    else:
+        konsole("system:config:set", "KettelerSteuern.config.anfragendeUstId", "DE123456788")
+        api("PATCH", "/customer/" + firma_at, {"vatIds": ["ATU12345675"]})
+        stand = ustid_stand(firma_at) or {}
+        e.pruefe(str(stand.get("anfrageNummer", "")).startswith("WAPI") and stand.get("anfragende") == "DE123456788",
+                 "mit eigener USt-IdNr. als Anfragender: Abfragenummer gespeichert", str(stand.get("anfrageNummer")))
+        konsole("system:config:set", "KettelerSteuern.config.anfragendeUstId", "")
+    if gueltige_at:
+        def altern():
+            alt = dict(ustid_stand(firma_at))
+            alt["geprueft"] = "2024-01-15T10:00:00+00:00"
+            api("PATCH", "/customer/" + firma_at, {"customFields": {"ketteler_ustid": alt}})
+        altern()
+        anzahl = len(ustid_stand(firma_at).get("verlauf", []))
+        store(token_at, "checkout/cart", methode="DELETE")
+        korb = korb_fuer(token_at, ["TEST-P-001"])
+        stand = ustid_stand(firma_at) or {}
+        e.pruefe(korb["price"]["taxStatus"] == "tax-free" and stand.get("geprueft", "").startswith(time.strftime("%Y-")) and len(stand.get("verlauf", [])) == anzahl + 1,
+                 "Bestätigung älter als ein Jahr: beim Kauf neu geprüft, weiter steuerfrei", str(stand.get("geprueft")))
+        if STAGING:
+            e.ueberspringe("erneute Prüfung scheitert: keine Befreiung", "Ausfall der offiziellen Schnittstelle lässt sich nicht herbeiführen (lokal geprüft)")
+        else:
+            altern()
+            attrappe("/_modus", {"modus": "vies_ausfall"})
+            store(token_at, "checkout/cart", methode="DELETE")
+            korb = korb_fuer(token_at, ["TEST-P-001"])
+            attrappe("/_modus", {"modus": "normal"})
+            e.pruefe(korb["price"]["taxStatus"] != "tax-free" and (ustid_stand(firma_at) or {}).get("status") == "nicht_pruefbar",
+                     "erneute Prüfung scheitert: keine Befreiung", korb["price"]["taxStatus"])
+            api("PATCH", "/customer/" + firma_at, {"vatIds": ["ATU12345675"]})
+        store(token_at, "checkout/cart", methode="DELETE")
+        korb_fuer(token_at, ["TEST-P-001"])
+        status, bestellung = store(token_at, "checkout/order", {"tos": True})
+        nachweis = None
+        if status == 200:
+            zeile = sql("SELECT IFNULL(JSON_EXTRACT(custom_fields,'$.ketteler_ustid_nachweis'),'null') FROM `order` WHERE order_number='%s'" % bestellung["orderNumber"])
+            nachweis = json.loads(zeile[0][0]) if zeile else None
+        e.pruefe(status == 200 and nachweis and nachweis.get("status") == "gueltig" and nachweis.get("geprueft"),
+                 "Bestellung ohne Umsatzsteuer: Nachweis der Prüfung an der Bestellung", str(nachweis))
+        status, _ = json_anfrage("GET", SHOP + "/bundles/kettelersteuern/administration/js/ketteler-steuern.js")
+        e.pruefe(status == 200, "Verwaltung: Anzeige des Nachweises wird geladen (Skript erreichbar)", str(status))
 
     privat_at, token_privat_at = kunde_anlegen(api, "steuer-at-privat@ketteler.test", "AT")
     for an in (False, True):
@@ -169,7 +227,7 @@ def main():
                 store(token, "context", {"countryId": land_id(iso)}, "PATCH")
                 korb = korb_fuer(token, nummern)
                 pruefe_korb(e, "Privat %s, %s" % (iso, korb_name), korb, iso, an, iso in ("CH", "GB"))
-        for korb_name, nummern in KORB.items():
+        for korb_name, nummern in (KORB.items() if token_at else []):
             store(token_at, "checkout/cart", methode="DELETE")
             korb = korb_fuer(token_at, nummern)
             pruefe_korb(e, "Einrichtung AT mit gültiger USt-IdNr., %s" % korb_name, korb, "AT", an, True)

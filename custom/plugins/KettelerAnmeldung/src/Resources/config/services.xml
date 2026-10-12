@@ -65,6 +65,13 @@
                  decorates="Shopware\Core\Content\RevocationRequest\SalesChannel\RevocationRequestRoute" public="true">
             <argument type="service" id=".inner"/>
             <argument type="service" id="order.repository"/>
+            <argument type="service" id="order_tag.repository"/>
+            <argument type="service" id="logger"/>
+        </service>
+        <service id="Ketteler\Anmeldung\Widerruf\BearbeitungController" public="true">
+            <argument type="service" id="order.repository"/>
+            <argument type="service" id="order_tag.repository"/>
+            <argument type="service" id="user.repository"/>
             <argument type="service" id="logger"/>
         </service>
         <service id="Ketteler\Anmeldung\Widerruf\WiderrufTwig">

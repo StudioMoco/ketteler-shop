@@ -10,10 +10,11 @@ use Shopware\Core\System\SalesChannel\SalesChannelContext;
 /**
  * Wie der TaxDetector von Shopware, aber steuerfrei für Firmenkunden nur mit einer über VIES bestätigten USt-IdNr.
  * eines anderen EU-Landes, und nur wenn deren Land das Lieferland ist. Shopware selbst prüft nur das Format.
+ * Ist die Bestätigung älter als ein Jahr, wird beim Kauf (Berechnung des Warenkorbs) einmal neu geprüft.
  */
 class KettelerTaxDetector extends AbstractTaxDetector
 {
-    public function __construct(private readonly AbstractTaxDetector $inner)
+    public function __construct(private readonly AbstractTaxDetector $inner, private readonly ?UstIdPruefung $pruefung = null)
     {
     }
 
@@ -49,7 +50,14 @@ class KettelerTaxDetector extends AbstractTaxDetector
             return false;
         }
 
-        return self::bestaetigt($context->getCustomer()?->getVatIds() ?? [], $context->getCustomer()?->getCustomFields()[UstIdPruefung::FELD] ?? null, (string) $shippingLocationCountry->getIso());
+        $kunde = $context->getCustomer();
+        $stand = $kunde?->getCustomFields()[UstIdPruefung::FELD] ?? null;
+        $land = (string) $shippingLocationCountry->getIso();
+        if ($kunde !== null && $this->pruefung !== null && self::bestaetigt($kunde->getVatIds() ?? [], $stand, $land)) {
+            $stand = $this->pruefung->nachpruefenWennFaellig($kunde->getId(), $stand, $context->getContext());
+        }
+
+        return self::bestaetigt($kunde?->getVatIds() ?? [], $stand, $land);
     }
 
     /**

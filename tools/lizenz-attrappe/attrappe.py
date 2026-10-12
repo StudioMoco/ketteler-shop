@@ -19,6 +19,7 @@ Steuerung für Tests (nicht Teil der echten Schnittstelle):
 import hashlib
 import hmac
 import json
+import uuid
 import os
 import re
 import threading
@@ -207,8 +208,12 @@ class Handler(BaseHTTPRequestHandler):
             except (ValueError, KeyError):
                 return self.senden(400, {"actionSucceed": False, "errorWrappers": [{"error": "INVALID_INPUT"}]})
             name = VIES_GUELTIG.get((land, nummer))
-            return self.senden(200, {"countryCode": land, "vatNumber": nummer, "valid": name is not None,
-                                     "requestDate": datetime.now(timezone.utc).isoformat(), "name": name or "---"})
+            antwort = {"countryCode": land, "vatNumber": nummer, "valid": name is not None,
+                       "requestDate": datetime.now(timezone.utc).isoformat(), "name": name or "---"}
+            # Wie VIES: Abfragenummer nur, wenn der Anfragende seine eigene USt-IdNr. mitschickt
+            if d.get("requesterMemberStateCode") and d.get("requesterNumber"):
+                antwort["requestIdentifier"] = "WAPIATTRAPPE" + uuid.uuid4().hex[:12].upper()
+            return self.senden(200, antwort)
         if self.path != "/api/shop/ereignisse":
             return self.senden(404, {"message": "Nicht gefunden"})
 

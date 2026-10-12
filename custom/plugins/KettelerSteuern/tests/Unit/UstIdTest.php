@@ -6,6 +6,7 @@ use Ketteler\Steuern\Steuern\Steuerregeln;
 use Ketteler\Steuern\Ustid\Ergebnis;
 use Ketteler\Steuern\Ustid\KettelerTaxDetector;
 use Ketteler\Steuern\Ustid\UstId;
+use Ketteler\Steuern\Ustid\UstIdPruefung;
 use Ketteler\Steuern\Ustid\ViesClient;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
@@ -83,6 +84,48 @@ class UstIdTest extends TestCase
     public function testSteuerfreiNurMitBestaetigung(array $ustids, ?array $pruefung, string $land, bool $erwartet): void
     {
         self::assertSame($erwartet, KettelerTaxDetector::bestaetigt($ustids, $pruefung, $land));
+    }
+
+    public function testAbfragenummerNurMitEigenerUstId(): void
+    {
+        $antwort = '{"valid":true,"name":"Testeinrichtung","requestDate":"2026-10-12T10:00:00.000Z","requestIdentifier":"WAPIAAAAXYZ"}';
+        $e = $this->vies(new MockResponse($antwort), $gesendet)->pruefen('ATU12345675', 'DE 123 456 788');
+        self::assertSame(['countryCode' => 'AT', 'vatNumber' => 'U12345675', 'requesterMemberStateCode' => 'DE', 'requesterNumber' => '123456788'], $gesendet);
+        self::assertSame('WAPIAAAAXYZ', $e->alsFeld()['anfrageNummer']);
+        self::assertSame('2026-10-12T10:00:00.000Z', $e->alsFeld()['viesDatum']);
+        self::assertSame('DE123456788', $e->alsFeld()['anfragende']);
+
+        $ohne = $this->vies(new MockResponse('{"valid":true}'), $gesendet)->pruefen('ATU12345675');
+        self::assertArrayNotHasKey('requesterNumber', $gesendet);
+        self::assertNull($ohne->alsFeld()['anfrageNummer']);
+    }
+
+    public function testVerlaufBehaeltFruehereBestaetigungen(): void
+    {
+        $erste = new Ergebnis(Ergebnis::GUELTIG, 'ATU12345675', 'AT', '2025-01-01T00:00:00+00:00', 'X', null, 'WAPI1');
+        $stand = UstIdPruefung::neuerStand(null, $erste);
+        $zweite = new Ergebnis(Ergebnis::NICHT_PRUEFBAR, 'ATU12345675', 'AT', '2026-02-01T00:00:00+00:00', null, 'VIES nicht erreichbar');
+        $stand = UstIdPruefung::neuerStand($stand, $zweite);
+
+        self::assertSame('nicht_pruefbar', $stand['status']);
+        self::assertSame(['2026-02-01T00:00:00+00:00', '2025-01-01T00:00:00+00:00'], array_column($stand['verlauf'], 'geprueft'));
+        self::assertSame('WAPI1', $stand['verlauf'][1]['anfrageNummer']);
+        for ($i = 0; $i < 30; ++$i) {
+            $stand = UstIdPruefung::neuerStand($stand, $zweite);
+        }
+        self::assertCount(UstIdPruefung::VERLAUF_MAX, $stand['verlauf']);
+    }
+
+    public function testNachpruefungNachEinemJahr(): void
+    {
+        $jetzt = new \DateTimeImmutable('2026-10-12T12:00:00+00:00');
+        $gueltig = ['status' => 'gueltig', 'ustid' => 'ATU12345675', 'land' => 'AT'];
+        self::assertFalse(UstIdPruefung::nachpruefungFaellig($gueltig + ['geprueft' => '2026-01-01T00:00:00+00:00'], $jetzt));
+        self::assertTrue(UstIdPruefung::nachpruefungFaellig($gueltig + ['geprueft' => '2025-10-12T12:00:00+00:00'], $jetzt));
+        self::assertTrue(UstIdPruefung::nachpruefungFaellig($gueltig + ['geprueft' => '2024-05-01T00:00:00+00:00'], $jetzt));
+        // Nicht bestätigte Nummern werden nicht beim Kauf nachgeprüft (keine Befreiung ohnehin)
+        self::assertFalse(UstIdPruefung::nachpruefungFaellig(['status' => 'ungueltig', 'geprueft' => '2024-01-01T00:00:00+00:00'], $jetzt));
+        self::assertFalse(UstIdPruefung::nachpruefungFaellig(null, $jetzt));
     }
 
     public function testOssSchalter(): void

@@ -59,7 +59,7 @@ schritt "PHP-Abhängigkeiten installieren (composer install)"
 konsole composer install --no-interaction --no-progress
 
 # 3. Shopware installieren, falls die Datenbank leer ist
-if docker compose exec -T database sh -c 'MYSQL_PWD="$MARIADB_PASSWORD" mariadb -ushopware shopware -e "SELECT 1 FROM migration LIMIT 1"' >/dev/null 2>&1; then
+if docker compose exec -T database sh -c 'MYSQL_PWD="$MYSQL_PASSWORD" mysql -ushopware shopware -e "SELECT 1 FROM migration LIMIT 1"' >/dev/null 2>&1; then
   schritt "Shopware ist schon installiert, Datenbank aktualisieren"
   konsole bin/console system:update:finish --no-interaction
 else

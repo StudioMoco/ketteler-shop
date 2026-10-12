@@ -1,13 +1,20 @@
-"""Hilfen für die End-to-End-Tests gegen die lokale Umgebung (Shop, ZITADEL, Lizenz-Attrappe).
+"""Hilfen für die End-to-End-Tests gegen die lokale Umgebung (Shop, ZITADEL, Lizenz-Attrappe) oder gegen Staging.
 
-Nur Python-Standardbibliothek. Zugangsdaten liest das Skript aus der .env des Repositorys; sie werden nie ausgegeben.
+Nur Python-Standardbibliothek. Zugangsdaten liest das Skript aus der .env des Repositorys (lokal) bzw. zur Laufzeit per SSH
+aus /opt/ketteler-shop/.env auf dem Server (KETTELER_ZIEL=staging); sie werden nie ausgegeben oder gespeichert.
+Staging: Passwortschutz (Basic Auth) für alles außer /api/, Datenbank und Konsole per SSH, Attrappe per SSH-Tunnel.
 """
 
+import atexit
+import base64
 import http.cookiejar
 import json
 import os
 import re
+import shlex
+import socket
 import subprocess
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -20,21 +27,82 @@ os.environ["PATH"] = os.pathsep.join([os.environ.get("PATH", ""), "/usr/local/bi
                                       "/Applications/Docker.app/Contents/Resources/bin"])
 
 
-def env():
+ZIEL = os.environ.get("KETTELER_ZIEL", "lokal")
+STAGING = ZIEL == "staging"
+SERVER = os.environ.get("KETTELER_SERVER", "ketteler")          # SSH-Name des Staging-Servers (~/.ssh/config)
+STG = "ketteler-shop-stg"                                        # Compose-Projekt auf dem Server
+STG_ATTRAPPE_PORT = 18090                                        # 127.0.0.1 auf dem Server, nur für den SSH-Tunnel
+
+
+def env_zeilen(text):
     werte = {}
-    with open(os.path.join(WURZEL, ".env"), encoding="utf-8") as f:
-        for zeile in f:
-            zeile = zeile.strip()
-            if zeile and not zeile.startswith("#") and "=" in zeile:
-                k, v = zeile.split("=", 1)
-                werte[k] = v
+    for zeile in text.splitlines():
+        zeile = zeile.strip()
+        if zeile and not zeile.startswith("#") and "=" in zeile:
+            k, v = zeile.split("=", 1)
+            werte[k] = v
     return werte
+
+
+def env():
+    if STAGING:
+        return env_zeilen(subprocess.run(["ssh", SERVER, "cat /opt/ketteler-shop/.env"], capture_output=True, text=True, check=True).stdout)
+    with open(os.path.join(WURZEL, ".env"), encoding="utf-8") as f:
+        return env_zeilen(f.read())
 
 
 ENV = env()
 SHOP = ENV.get("APP_URL", "http://localhost:8000").rstrip("/")
 ZITADEL = ENV.get("KETTELER_ZITADEL_URL", "http://localhost:8080").rstrip("/")
-ATTRAPPE = "http://localhost:" + ENV.get("ATTRAPPE_PORT", "8090")
+MAILPIT = ENV.get("KETTELER_MAILPIT_URL", "").rstrip("/") or "http://localhost:" + ENV.get("MAILPIT_PORT", "8025")
+ATTRAPPE = "http://127.0.0.1:%d" % STG_ATTRAPPE_PORT if STAGING else "http://localhost:" + ENV.get("ATTRAPPE_PORT", "8090")
+GESCHUETZT = {urllib.parse.urlparse(u).hostname for u in (SHOP, ZITADEL, MAILPIT)} if STAGING else set()
+
+
+def tunnel():
+    """Staging: SSH-Tunnel zur Lizenz-Attrappe (auf dem Server nur an 127.0.0.1 gebunden)."""
+    with socket.socket() as s:
+        if s.connect_ex(("127.0.0.1", STG_ATTRAPPE_PORT)) == 0:
+            return
+    p = subprocess.Popen(["ssh", "-N", "-o", "ExitOnForwardFailure=yes", "-L", "%d:127.0.0.1:%d" % (STG_ATTRAPPE_PORT, STG_ATTRAPPE_PORT), SERVER])
+    atexit.register(p.terminate)
+    for _ in range(50):
+        with socket.socket() as s:
+            if s.connect_ex(("127.0.0.1", STG_ATTRAPPE_PORT)) == 0:
+                return
+        time.sleep(0.2)
+    raise RuntimeError("SSH-Tunnel zur Attrappe kommt nicht zustande")
+
+
+class Passwortschutz(urllib.request.BaseHandler):
+    """Staging: Basic Auth für Shop, Anmeldung und Mailpit, außer für /api/ (dort meldet sich der Aufrufer selbst an)."""
+    handler_order = 400
+
+    def __init__(self):
+        roh = "%s:%s" % (ENV.get("STG_BASICAUTH_BENUTZER", ""), ENV.get("STG_BASICAUTH_PASSWORT", ""))
+        self.kopf = "Basic " + base64.b64encode(roh.encode()).decode()
+
+    def https_request(self, req):
+        teile = urllib.parse.urlparse(req.full_url)
+        if teile.hostname in GESCHUETZT and not teile.path.startswith("/api/") and not req.has_header("Authorization"):
+            req.add_unredirected_header("Authorization", self.kopf)
+        return req
+
+    http_request = https_request
+
+
+if STAGING:
+    tunnel()
+    urllib.request.install_opener(urllib.request.build_opener(Passwortschutz()))
+
+
+def konsole(*befehl, pruefen=False):
+    """bin/console im Shop-Container (lokal: docker compose, Staging: per SSH). Gibt die Ausgabe zurück."""
+    if STAGING:
+        aufruf = ["ssh", SERVER, "docker exec -u www-data %s-web-1 php bin/console %s" % (STG, " ".join(shlex.quote(b) for b in befehl))]
+    else:
+        aufruf = ["docker", "compose", "exec", "-T", "web", "bin/console", *befehl]
+    return subprocess.run(aufruf, cwd=WURZEL, capture_output=True, text=True, check=pruefen).stdout
 
 
 class Formulare(HTMLParser):
@@ -103,7 +171,8 @@ class Browser:
 
     def __init__(self):
         self.cookies = http.cookiejar.CookieJar(LokaleCookies())
-        self.opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(self.cookies), OhneWeiterleitung())
+        zusatz = [Passwortschutz()] if STAGING else []
+        self.opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(self.cookies), OhneWeiterleitung(), *zusatz)
         self.verlauf = []
         self.url = None
         self.status = None
@@ -191,10 +260,13 @@ def zitadel_anmelden(b, email, passwort):
 
 
 def sql(abfrage):
-    """Abfrage in der Shop-Datenbank (Container database). Gibt Zeilen als Listen zurück."""
-    befehl = ["docker", "compose", "exec", "-T", "database", "sh", "-c",
-              'MYSQL_PWD="$MARIADB_PASSWORD" mariadb -ushopware shopware -N -B -r -e "$0"', abfrage]
-    aus = subprocess.run(befehl, cwd=WURZEL, capture_output=True, text=True, check=True).stdout
+    """Abfrage in der Shop-Datenbank (lokal Container database, Staging per SSH). Gibt Zeilen als Listen zurück."""
+    mysql = 'MYSQL_PWD="$MYSQL_PASSWORD" mysql --default-character-set=utf8mb4 -ushopware shopware -N -B -r'
+    if STAGING:
+        befehl = ["ssh", SERVER, "docker exec -i %s-datenbank-1 sh -c %s" % (STG, shlex.quote(mysql))]
+    else:
+        befehl = ["docker", "compose", "exec", "-T", "database", "sh", "-c", mysql]
+    aus = subprocess.run(befehl, cwd=WURZEL, input=abfrage, capture_output=True, text=True, check=True).stdout
     return [z.split("\t") for z in aus.splitlines() if z]
 
 

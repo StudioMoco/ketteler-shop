@@ -22,10 +22,17 @@
             <argument type="service" id="customer.repository"/>
             <argument type="service" id="Ketteler\Steuern\Ustid\ViesClient"/>
             <argument type="service" id="logger"/>
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
             <tag name="kernel.event_subscriber"/>
+            <tag name="kernel.reset" method="reset"/>
         </service>
         <service id="Ketteler\Steuern\Ustid\KettelerTaxDetector" decorates="Shopware\Core\Checkout\Cart\Tax\TaxDetector">
             <argument type="service" id=".inner"/>
+            <argument type="service" id="Ketteler\Steuern\Ustid\UstIdPruefung"/>
+        </service>
+        <service id="Ketteler\Steuern\Ustid\NachweisSubscriber">
+            <argument type="service" id="Ketteler\Steuern\Ustid\UstIdPruefung"/>
+            <tag name="kernel.event_subscriber"/>
         </service>
         <service id="Ketteler\Steuern\Ustid\UstIdTwig">
             <tag name="twig.extension"/>

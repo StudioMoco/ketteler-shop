@@ -6,14 +6,12 @@ Dauert etwa zwei Minuten, weil die erste Wiederholung nach einem Ausfall planmä
 import hashlib
 import hmac
 import json
-import subprocess
 import sys
 import time
 
-from hilfen import ATTRAPPE, ENV, SHOP, WURZEL, AdminApi, Browser, Ergebnis, json_anfrage, sql, zitadel_anmelden
+from hilfen import ATTRAPPE, ENV, MAILPIT, SHOP, AdminApi, Browser, Ergebnis, json_anfrage, konsole, sql, zitadel_anmelden
 
 PASSWORT = ENV["KETTELER_TESTKUNDE_PASSWORT"]
-MAILPIT = "http://localhost:" + ENV.get("MAILPIT_PORT", "8025")
 
 
 def artikel_id(nummer):
@@ -120,8 +118,7 @@ def main():
     e.pruefe(len(warte(lambda: lizenz_zu(nr_b))) == 1, "Lizenz zum Bundle angelegt")
 
     print("Doppelte Zustellung derselben Nachricht")
-    subprocess.run(["docker", "compose", "exec", "-T", "web", "bin/console", "ketteler:lizenz:erneut", nr, "--erzwingen"],
-                   cwd=WURZEL, check=True, capture_output=True)
+    konsole("ketteler:lizenz:erneut", nr, "--erzwingen", pruefen=True)
     s = warte(lambda: stand(oid)["TEST-O-EK"].get("status") == "angelegt" and stand(oid))
     zustand = attrappe("/_zustand")
     e.pruefe(len(lizenz_zu(nr)) == 1, "weiterhin genau eine Lizenz")

@@ -18,12 +18,24 @@ final class Ergebnis
         public readonly string $geprueft,
         public readonly ?string $name = null,
         public readonly ?string $fehler = null,
+        public readonly ?string $anfrageNummer = null,
+        public readonly ?string $viesDatum = null,
+        public readonly ?string $anfragende = null,
     ) {
     }
 
-    /** @return array<string, string|null> für das Zusatzfeld ketteler_ustid am Kunden */
+    /**
+     * Nachweis für das Zusatzfeld ketteler_ustid am Kunden: Zeit der Prüfung, Ergebnis, Abfragenummer von VIES
+     * (requestIdentifier, nur wenn Ketteler als Anfragender mit eigener USt-IdNr. fragt), Datum laut VIES.
+     *
+     * @return array<string, string|null>
+     */
     public function alsFeld(): array
     {
-        return ['status' => $this->status, 'ustid' => $this->ustid, 'land' => $this->iso, 'geprueft' => $this->geprueft, 'name' => $this->name, 'fehler' => $this->fehler];
+        return [
+            'status' => $this->status, 'ustid' => $this->ustid, 'land' => $this->iso, 'geprueft' => $this->geprueft,
+            'name' => $this->name, 'fehler' => $this->fehler, 'anfrageNummer' => $this->anfrageNummer,
+            'viesDatum' => $this->viesDatum, 'anfragende' => $this->anfragende,
+        ];
     }
 }
