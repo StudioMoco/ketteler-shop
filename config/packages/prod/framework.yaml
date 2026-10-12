@@ -1,0 +1,5 @@
+# Nur Staging und Live: Der Shop steht hinter zwei Caddy-Ebenen (gemeinsamer Caddy, Caddy des Stacks). Ohne diese
+# Angabe hält Shopware die Anfragen für http und erzeugt falsche Adressen. SYMFONY_TRUSTED_PROXIES steht in der .env.
+framework:
+    trusted_proxies: '%env(default::SYMFONY_TRUSTED_PROXIES)%'
+    trusted_headers: ['x-forwarded-for', 'x-forwarded-proto', 'x-forwarded-port']

@@ -1,0 +1,76 @@
+# Caddy des Shop-Stacks (Container front) hinter dem gemeinsamen Caddy des Staging-Servers. Hier und nur hier:
+# Passwortschutz, noindex, robots.txt, Ausnahme /api/ für weclapp. Zugangsdaten kommen aus der .env (nur auf dem Server).
+{
+	admin off
+	auto_https off
+	servers {
+		# Der gemeinsame Caddy (privates Docker-Netz) setzt X-Forwarded-For/-Proto; nur ihm glauben
+		trusted_proxies static private_ranges
+		client_ip_headers X-Forwarded-For
+	}
+}
+
+(shop_kopf) {
+	header {
+		X-Robots-Tag "noindex, nofollow"
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+	# Sperre für Suchmaschinen, ohne Passwort lesbar (sonst sieht sie keine Suchmaschine). Kommt vom Caddy, nicht vom Shop.
+	handle /robots.txt {
+		respond "User-agent: *
+Disallow: /
+" 200
+	}
+}
+
+(shop_passwort) {
+	basic_auth {
+		{$STG_BASICAUTH_BENUTZER} {$STG_BASICAUTH_HASH}
+	}
+}
+
+# Shop und Verwaltung
+http://ketteler-shop.mocodev.de {
+	import shop_kopf
+	log
+
+	# Admin-API: ohne Passwortschutz, weil weclapp sie mit eigener Anmeldung nutzt (und die Verwaltung im Browser ihren
+	# eigenen Bearer-Token schickt). Sobald WECLAPP_IPS gesetzt ist, nur noch für diese Adressen und für Browser, die
+	# vorher den Passwortschutz passiert haben (Zugangs-Cookie, siehe unten).
+	@api path /api /api/*
+	handle @api {
+		@fremd {
+			not client_ip {$WECLAPP_IPS}
+			not header_regexp Cookie (^|;\s*)shop_stg_zugang={$STG_ZUGANG}(;|$)
+		}
+		respond @fremd "Kein Zugriff" 403
+		reverse_proxy shop-web:8000
+	}
+
+	handle {
+		import shop_passwort
+		header +Set-Cookie "shop_stg_zugang={$STG_ZUGANG}; Path=/; Secure; HttpOnly; SameSite=Lax"
+		reverse_proxy shop-web:8000
+	}
+}
+
+# Anmeldung (Test-ZITADEL des Shops), ganz hinter dem Passwortschutz; der Shop spricht ZITADEL intern an
+http://ketteler-shop-login.mocodev.de {
+	import shop_kopf
+	handle {
+		import shop_passwort
+		reverse_proxy h2c://shop-zitadel:8080
+	}
+}
+
+# Test-Postfach (Mailpit), ganz hinter dem Passwortschutz
+http://ketteler-shop-mail.mocodev.de {
+	import shop_kopf
+	handle {
+		import shop_passwort
+		reverse_proxy shop-mailer:8025
+	}
+}

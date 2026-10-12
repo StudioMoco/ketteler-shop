@@ -1,0 +1,9 @@
+# Ketteler-Shop (Staging), Repository StudioMoco/ketteler-shop. Eigene Datei im gemeinsamen Caddy (Regeln:
+# docs/staging-server.md im Redaktions-Repository). Einspielen nur mit
+#   bash /opt/ketteler/ops/staging-server/caddy-datei.sh ketteler-shop /opt/ketteler-shop/repo/ops/staging/ketteler-shop.caddy
+# Nur Weiterleitung an den Caddy des Shop-Stacks (Container front, Name ketteler-shop-front im Netz ketteler_web).
+# Passwortschutz, noindex und robots.txt liegen dort, damit Zugangsdaten nur in der .env des Shops stehen.
+# Keine Bausteine (Snippets) in dieser Datei, damit nichts mit anderen Instanzen kollidiert.
+ketteler-shop.mocodev.de, ketteler-shop-login.mocodev.de, ketteler-shop-mail.mocodev.de {
+	reverse_proxy ketteler-shop-front:80
+}

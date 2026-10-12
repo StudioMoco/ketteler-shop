@@ -1,0 +1,5 @@
+# Nur Staging und Live (APP_ENV=prod): Tokens der Admin-API mit APP_SECRET signieren, keine Schlüsseldateien nötig
+shopware:
+    api:
+        jwt_key:
+            use_app_secret: true

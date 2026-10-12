@@ -1,0 +1,242 @@
+# Ketteler-Shop auf dem gemeinsamen Staging-Server ketteler-01 (Regeln: docs/staging-server.md im Redaktions-Repository,
+# Plan: docs/staging.md). Eigenes Compose-Projekt, eigene Netze und Volumes, nur „front“ hängt zusätzlich am Netz
+# ketteler_web des gemeinsamen Caddy. Aufruf nur über ops/staging/*.sh (Projektordner /opt/ketteler-shop).
+#
+# Speichergrenzen (Summe 2 400 MiB, erlaubt 2,5 GB): front 48, web 640, worker 256, datenbank 600, zitadel 384,
+# zitadel-db 160, mailer 64, lizenz-attrappe 48, sicherung-shop 64, sicherung-zitadel 64 (Werte in MiB, siehe unten).
+name: ketteler-shop-stg
+
+x-protokoll: &protokoll
+  logging:
+    driver: json-file
+    options: { max-size: 10m, max-file: "3" }
+
+x-shop: &shop
+  image: ketteler-shop:${SHOP_TAG:?SHOP_TAG fehlt}
+  env_file: .env
+  environment:
+    KETTELER_ZITADEL_PAT_DATEI: /zitadel-bootstrap/einrichtung.pat
+  volumes:
+    - medien:/var/www/html/public/media
+    - vorschaubilder:/var/www/html/public/thumbnail
+    - dateien:/var/www/html/files
+    - zitadel-bootstrap:/zitadel-bootstrap:ro
+  restart: unless-stopped
+  <<: *protokoll
+
+services:
+  front:
+    # Caddy des Shops: Passwortschutz (außer /api/), noindex, robots.txt, Weiterleitung an Shop, Anmeldung, Mailpit.
+    # Ohne eigene Ports: erreichbar nur über den gemeinsamen Caddy (Netz ketteler_web, Name ketteler-shop-front).
+    image: caddy:2.10-alpine
+    environment:
+      STG_BASICAUTH_BENUTZER: ${STG_BASICAUTH_BENUTZER:?fehlt}
+      STG_BASICAUTH_HASH: ${STG_BASICAUTH_HASH:?fehlt}
+      STG_ZUGANG: ${STG_ZUGANG:?fehlt}
+      # Leer = /api/ für alle offen (nur mit Shopware-Zugangsdaten). Später die Adressen von weclapp, durch Leerzeichen getrennt.
+      WECLAPP_IPS: ${WECLAPP_IPS:-0.0.0.0/0 ::/0}
+    volumes:
+      - ./repo/ops/staging/front/Caddyfile:/etc/caddy/Caddyfile:ro
+    networks:
+      intern:
+        aliases: [shop-front]
+      ketteler_web:
+        aliases: [ketteler-shop-front]
+    mem_limit: 48m
+    restart: unless-stopped
+    <<: *protokoll
+
+  web:
+    <<: *shop
+    networks:
+      intern:
+        aliases: [shop-web]
+      aussen: {}
+    mem_limit: 640m
+    depends_on: [datenbank]
+
+  worker:
+    <<: *shop
+    command: ["worker"]
+    networks: [intern, aussen]
+    mem_limit: 256m
+    depends_on: [datenbank]
+
+  datenbank:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: shopware
+      MYSQL_USER: shopware
+      MYSQL_PASSWORD: ${DB_PASSWORT:?fehlt}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORT:?fehlt}
+    command:
+      - --sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+      - --log_bin_trust_function_creators=1
+      - --group_concat_max_len=320000
+      - --default-time-zone=+00:00
+      - --skip-log-bin
+      # Passt sicher in 600 MiB: Puffer 192 MiB, ohne performance_schema, wenige Verbindungen
+      - --innodb_buffer_pool_size=192M
+      - --innodb_log_buffer_size=8M
+      - --performance_schema=OFF
+      - --max_connections=40
+      - --table_open_cache=400
+      - --tmp_table_size=32M
+      - --max_heap_table_size=32M
+    volumes:
+      - datenbank:/var/lib/mysql
+    networks: [intern]
+    mem_limit: 600m
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=\"$$MYSQL_PASSWORD\" mysql -h127.0.0.1 -ushopware -e 'SELECT 1' shopware"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    restart: unless-stopped
+    <<: *protokoll
+
+  mailer:
+    # Test-Postfach: nimmt alle Mails an, leitet nichts weiter. Nur im internen Netz ohne Weg nach außen.
+    image: axllent/mailpit:v1.27
+    environment:
+      MP_MAX_MESSAGES: "2000"
+    volumes:
+      - mailpit:/data
+    command: ["--database", "/data/mailpit.db"]
+    networks:
+      intern:
+        aliases: [shop-mailer]
+    mem_limit: 64m
+    restart: unless-stopped
+    <<: *protokoll
+
+  zitadel-db:
+    image: postgres:17.10-alpine
+    environment:
+      POSTGRES_USER: zitadel
+      POSTGRES_PASSWORD: ${ZITADEL_DB_PASSWORT:?fehlt}
+      POSTGRES_DB: zitadel
+    command: ["postgres", "-c", "shared_buffers=32MB", "-c", "max_connections=30"]
+    volumes:
+      - zitadel-db:/var/lib/postgresql/data
+    networks: [intern]
+    mem_limit: 160m
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d zitadel -U zitadel"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+    restart: unless-stopped
+    <<: *protokoll
+
+  zitadel:
+    # Test-ZITADEL nur für den Shop (nicht der ZITADEL der Redaktion). Gleiche Version wie lokal.
+    image: ghcr.io/zitadel/zitadel:v4.19.4
+    user: "0"
+    command: start-from-init --masterkeyFromEnv --tlsMode external
+    environment:
+      ZITADEL_MASTERKEY: ${ZITADEL_MASTERKEY:?fehlt}
+      ZITADEL_PORT: 8080
+      ZITADEL_EXTERNALDOMAIN: ketteler-shop-login.mocodev.de
+      ZITADEL_EXTERNALPORT: 443
+      ZITADEL_EXTERNALSECURE: "true"
+      ZITADEL_TLS_ENABLED: "false"
+      ZITADEL_DATABASE_POSTGRES_DSN: postgresql://zitadel:${ZITADEL_DB_PASSWORT}@zitadel-db:5432/zitadel?sslmode=disable
+      ZITADEL_FIRSTINSTANCE_INSTANCENAME: KETTELER-Shop-Staging
+      ZITADEL_FIRSTINSTANCE_DEFAULTLANGUAGE: de
+      ZITADEL_FIRSTINSTANCE_ORG_NAME: KETTELER
+      ZITADEL_FIRSTINSTANCE_ORG_HUMAN_USERNAME: zitadel-admin@ketteler.test
+      ZITADEL_FIRSTINSTANCE_ORG_HUMAN_EMAIL_ADDRESS: zitadel-admin@ketteler.test
+      ZITADEL_FIRSTINSTANCE_ORG_HUMAN_EMAIL_VERIFIED: "true"
+      ZITADEL_FIRSTINSTANCE_ORG_HUMAN_PASSWORD: ${ZITADEL_ADMIN_PASSWORT:?fehlt}
+      ZITADEL_FIRSTINSTANCE_ORG_HUMAN_PASSWORDCHANGEREQUIRED: "false"
+      ZITADEL_FIRSTINSTANCE_ORG_MACHINE_MACHINE_USERNAME: ketteler-einrichtung
+      ZITADEL_FIRSTINSTANCE_ORG_MACHINE_MACHINE_NAME: Einrichtung (Dienstkonto)
+      ZITADEL_FIRSTINSTANCE_ORG_MACHINE_PAT_EXPIRATIONDATE: "2099-01-01T00:00:00Z"
+      ZITADEL_FIRSTINSTANCE_PATPATH: /zitadel/bootstrap/einrichtung.pat
+      ZITADEL_DEFAULTINSTANCE_FEATURES_LOGINV2_REQUIRED: "false"
+      ZITADEL_LOGSTORE_ACCESS_STDOUT_ENABLED: "false"
+      GOMEMLIMIT: 300MiB
+    volumes:
+      - zitadel-bootstrap:/zitadel/bootstrap
+    networks:
+      intern:
+        aliases: [shop-zitadel]
+    mem_limit: 384m
+    healthcheck:
+      test: ["CMD", "/app/zitadel", "ready"]
+      interval: 10s
+      timeout: 10s
+      retries: 60
+      start_period: 30s
+    depends_on:
+      zitadel-db:
+        condition: service_healthy
+    restart: unless-stopped
+    <<: *protokoll
+
+  lizenz-attrappe:
+    # Nachbildung der Lizenz-Schnittstelle der Redaktion (wie lokal). Port nur an 127.0.0.1 für den SSH-Tunnel der Tests.
+    image: python:3.13-alpine
+    environment:
+      KETTELER_LIZENZ_GEHEIMNIS: ${KETTELER_LIZENZ_GEHEIMNIS:?fehlt}
+      ATTRAPPE_DATEN: /daten
+    command: ["python", "-u", "/app/attrappe.py"]
+    volumes:
+      - ./repo/tools/lizenz-attrappe:/app:ro
+      - lizenz-attrappe:/daten
+    ports:
+      - "127.0.0.1:18090:8090"
+    networks: [intern, aussen]
+    mem_limit: 48m
+    restart: unless-stopped
+    <<: *protokoll
+
+  sicherung-shop:
+    # Tägliche Sicherung der Shop-Datenbank (03:40 Uhr deutsche Zeit, 14 Stände) und auf Abruf vor jeder Auslieferung
+    image: mysql:8.4
+    entrypoint: ["sh", "/sicherung/sicherung.sh", "dienst", "shop"]
+    environment:
+      MYSQL_PWD: ${DB_ROOT_PASSWORT:?fehlt}
+      TZ: Europe/Berlin
+    volumes:
+      - ./repo/ops/staging/sicherung.sh:/sicherung/sicherung.sh:ro
+      - ./sicherungen:/sicherungen
+    networks: [intern]
+    mem_limit: 64m
+    restart: unless-stopped
+    <<: *protokoll
+
+  sicherung-zitadel:
+    image: postgres:17.10-alpine
+    entrypoint: ["sh", "/sicherung/sicherung.sh", "dienst", "zitadel"]
+    environment:
+      PGPASSWORD: ${ZITADEL_DB_PASSWORT:?fehlt}
+      TZ: Europe/Berlin
+    volumes:
+      - ./repo/ops/staging/sicherung.sh:/sicherung/sicherung.sh:ro
+      - ./sicherungen:/sicherungen
+    networks: [intern]
+    mem_limit: 64m
+    restart: unless-stopped
+    <<: *protokoll
+
+networks:
+  # Ohne Weg nach außen: Datenbanken, Mailpit, ZITADEL. So kann keine Mail den Server verlassen.
+  intern:
+    internal: true
+  # Weg nach außen nur für Shop und Worker (VIES, PayPal-Sandbox) und die Attrappe (Port für den Tunnel)
+  aussen: {}
+  ketteler_web:
+    external: true
+
+volumes:
+  datenbank:
+  medien:
+  vorschaubilder:
+  dateien:
+  mailpit:
+  zitadel-db:
+  zitadel-bootstrap:
+  lizenz-attrappe:

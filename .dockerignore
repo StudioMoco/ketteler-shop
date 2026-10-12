@@ -1,0 +1,22 @@
+# Bauen des Staging-/Live-Bildes (ops/staging/Dockerfile): nur Quelltext, nichts Lokales
+.git
+.env
+.env.*
+!.env.example
+vendor
+var
+files
+node_modules
+public/bundles
+public/theme
+public/media
+public/thumbnail
+public/sitemap
+install.lock
+config/jwt/*.pem
+tests
+docs
+content
+tools
+.phpunit.cache
+**/.DS_Store

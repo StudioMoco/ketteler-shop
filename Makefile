@@ -4,7 +4,7 @@
 export PATH := $(PATH):/usr/local/bin:$(HOME)/.docker/bin:/Applications/Docker.app/Contents/Resources/bin
 # Docker Desktop legt "docker" je nach Einstellung an verschiedene Stellen
 DOCKER := $(firstword $(wildcard $(addsuffix /docker,$(subst :, ,$(PATH)))) docker)
-.PHONY: hilfe setup start stop status einrichten konsole logs neu test test-e2e
+.PHONY: hilfe setup start stop status einrichten konsole logs neu test test-e2e test-staging
 
 hilfe: ## Diese Übersicht
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  make %-12s %s\n", $$1, $$2}'
@@ -36,6 +36,9 @@ test-e2e: ## Ende-zu-Ende-Tests gegen die laufende Umgebung (Anmeldung, Lizenzen
 	@python3 tests/e2e/widerruf_test.py
 	@python3 tests/e2e/steuern_test.py
 	@python3 tests/e2e/paypal_test.py
+
+test-staging: ## Dieselben Ende-zu-Ende-Tests gegen Staging (SSH-Zugang ketteler nötig; Zugangsdaten nur zur Laufzeit)
+	@rc=0; for t in anmeldung lizenz shop widerruf steuern paypal; do echo "== $$t"; KETTELER_ZIEL=staging python3 tests/e2e/$${t}_test.py || rc=1; done; exit $$rc
 
 konsole: ## Kommandozeile im Shop-Container öffnen
 	@$(DOCKER) compose exec web bash
