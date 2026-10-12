@@ -1,0 +1,10 @@
+{% sw_extends '@Storefront/storefront/page/account/register/index.html.twig' %}
+
+{# Kein Shopware-Passwort: Anmelden und Konto anlegen nur über das Ketteler-Konto #}
+{% block page_account_register_inner %}
+    <div class="row justify-content-md-center">
+        <div class="col-md-8 col-lg-6">
+            {% sw_include '@KettelerAnmeldung/storefront/component/ketteler/anmelden-karte.html.twig' with { ziel: null } %}
+        </div>
+    </div>
+{% endblock %}

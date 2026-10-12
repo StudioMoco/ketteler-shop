@@ -1,0 +1,58 @@
+{% sw_extends '@Storefront/storefront/page/account/_page.html.twig' %}
+
+{% block base_content %}
+    <div class="row justify-content-md-center">
+        <div class="col-md-8 col-lg-6">
+            <h1 class="h3">{{ 'ketteler.anmeldung.vervollstaendigenTitel'|trans|sw_sanitize }}</h1>
+            <p>{{ 'ketteler.anmeldung.vervollstaendigenText'|trans|sw_sanitize }}</p>
+
+            {% if formViolations %}
+                <div class="alert alert-danger" role="alert" data-kt="formularfehler">
+                    <ul class="mb-0">
+                        {% for verstoss in formViolations.violations %}
+                            <li>{{ verstoss.message }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            <form method="post" action="{{ path('frontend.ketteler.vervollstaendigen') }}" data-kt="vervollstaendigen">
+                <div class="mb-3">
+                    <label class="form-label">{{ 'ketteler.anmeldung.name'|trans|sw_sanitize }}</label>
+                    <input class="form-control" type="text" value="{{ identitaet.vorname }} {{ identitaet.nachname }}" readonly>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">{{ 'ketteler.anmeldung.email'|trans|sw_sanitize }}</label>
+                    <input class="form-control" type="email" value="{{ identitaet.email }}" readonly>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="kt-kontotyp">{{ 'ketteler.anmeldung.kontotyp'|trans|sw_sanitize }}</label>
+                    <select class="form-select" id="kt-kontotyp" name="kontotyp">
+                        <option value="privat" {% if daten.kontotyp|default('privat') == 'privat' %}selected{% endif %}>{{ 'ketteler.anmeldung.privat'|trans|sw_sanitize }}</option>
+                        <option value="firma" {% if daten.kontotyp|default('') == 'firma' %}selected{% endif %}>{{ 'ketteler.anmeldung.firma'|trans|sw_sanitize }}</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="kt-firma">{{ 'ketteler.anmeldung.firmenname'|trans|sw_sanitize }}</label>
+                    <input class="form-control" type="text" id="kt-firma" name="firma" value="{{ daten.firma|default('') }}" autocomplete="organization">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="kt-strasse">{{ 'ketteler.anmeldung.strasse'|trans|sw_sanitize }}*</label>
+                    <input class="form-control" type="text" id="kt-strasse" name="strasse" value="{{ daten.strasse|default('') }}" required autocomplete="street-address">
+                </div>
+                <div class="row">
+                    <div class="col-4 mb-3">
+                        <label class="form-label" for="kt-plz">{{ 'ketteler.anmeldung.plz'|trans|sw_sanitize }}*</label>
+                        <input class="form-control" type="text" id="kt-plz" name="plz" value="{{ daten.plz|default('') }}" required autocomplete="postal-code">
+                    </div>
+                    <div class="col-8 mb-3">
+                        <label class="form-label" for="kt-ort">{{ 'ketteler.anmeldung.ort'|trans|sw_sanitize }}*</label>
+                        <input class="form-control" type="text" id="kt-ort" name="ort" value="{{ daten.ort|default('') }}" required autocomplete="address-level2">
+                    </div>
+                </div>
+                <p class="text-muted small">{{ 'ketteler.anmeldung.land'|trans|sw_sanitize }}</p>
+                <button class="btn btn-primary" type="submit">{{ 'ketteler.anmeldung.kontoAnlegen'|trans|sw_sanitize }}</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

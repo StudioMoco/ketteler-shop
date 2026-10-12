@@ -1,0 +1,14 @@
+# Eigene Warteschlange für Lizenz-Ereignisse. Wiederholung bei Ausfall der Schnittstelle:
+# nach 1, 5, 25 Minuten, dann stündlich; 27 Versuche ≈ 24 Stunden. Danach Meldung an die Verwaltung.
+framework:
+    messenger:
+        transports:
+            ketteler_lizenz:
+                dsn: 'doctrine://default?queue_name=ketteler_lizenz&auto_setup=false'
+                retry_strategy:
+                    max_retries: 27
+                    delay: 60000
+                    multiplier: 5
+                    max_delay: 3600000
+        routing:
+            'Ketteler\Lizenzen\Nachricht\LizenzEreignis': ketteler_lizenz

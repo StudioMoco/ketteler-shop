@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/trunk/src/Core/System/SystemConfig/Schema/config.xsd">
+    <card>
+        <title>ZITADEL</title>
+        <title lang="de-DE">ZITADEL</title>
+        <input-field>
+            <name>clientId</name>
+            <label>Client ID of the "Shop" application</label>
+            <label lang="de-DE">Client-ID der Anwendung „Shop“</label>
+            <helpText lang="de-DE">Lokal trägt ketteler:zitadel:einrichten den Wert ein. Die Adresse von ZITADEL steht in der .env (KETTELER_ZITADEL_URL).</helpText>
+        </input-field>
+        <input-field>
+            <name>organisationId</name>
+            <label>Customer organisation ID</label>
+            <label lang="de-DE">ID der Organisation „KETTELER Kunden“</label>
+        </input-field>
+    </card>
+</config>

@@ -1,0 +1,67 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <defaults public="false"/>
+
+        <service id="Ketteler\Anmeldung\Oidc\Konfiguration">
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+        </service>
+        <service id="Ketteler\Anmeldung\Oidc\ZitadelClient">
+            <argument type="service" id="http_client"/>
+            <argument type="service" id="Ketteler\Anmeldung\Oidc\Konfiguration"/>
+        </service>
+        <service id="Ketteler\Anmeldung\Oidc\IdTokenPruefer"/>
+
+        <service id="Ketteler\Anmeldung\Konto\DalKundenSpeicher">
+            <argument type="service" id="customer.repository"/>
+        </service>
+        <service id="Ketteler\Anmeldung\Konto\Verknuepfung">
+            <argument type="service" id="Ketteler\Anmeldung\Konto\DalKundenSpeicher"/>
+        </service>
+        <service id="Ketteler\Anmeldung\Konto\KontoAnlage">
+            <argument type="service" id="Shopware\Core\Checkout\Customer\SalesChannel\RegisterRoute"/>
+            <argument type="service" id="Ketteler\Anmeldung\Konto\DalKundenSpeicher"/>
+            <argument type="service" id="salutation.repository"/>
+            <argument type="service" id="country.repository"/>
+        </service>
+
+        <service id="Ketteler\Anmeldung\Storefront\AnmeldungController" public="true">
+            <argument type="service" id="Ketteler\Anmeldung\Oidc\Konfiguration"/>
+            <argument type="service" id="Ketteler\Anmeldung\Oidc\ZitadelClient"/>
+            <argument type="service" id="Ketteler\Anmeldung\Oidc\IdTokenPruefer"/>
+            <argument type="service" id="Ketteler\Anmeldung\Konto\Verknuepfung"/>
+            <argument type="service" id="Ketteler\Anmeldung\Konto\KontoAnlage"/>
+            <argument type="service" id="Shopware\Core\Checkout\Customer\SalesChannel\AccountService"/>
+            <argument type="service" id="logger"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+            <call method="setTwig">
+                <argument type="service" id="twig"/>
+            </call>
+        </service>
+
+        <service id="Ketteler\Anmeldung\Storefront\PasswortWegeSubscriber">
+            <argument type="service" id="router"/>
+            <argument type="service" id="Ketteler\Anmeldung\Oidc\ZitadelClient"/>
+            <argument type="service" id="logger"/>
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="Ketteler\Anmeldung\Checkout\OnlineNurMitKonto">
+            <tag name="shopware.cart.validator"/>
+        </service>
+
+        <service id="Ketteler\Anmeldung\Storefront\TwigErweiterung">
+            <tag name="twig.extension"/>
+        </service>
+
+        <service id="Ketteler\Anmeldung\Command\ZitadelEinrichtenCommand">
+            <argument type="service" id="http_client"/>
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+            <tag name="console.command"/>
+        </service>
+    </services>
+</container>

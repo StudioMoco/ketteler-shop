@@ -1,14 +1,28 @@
 # Plan: Ketteler-Shop mit Shopware 6
 
-Stand 12.10.2026. Nur Plan, noch nichts davon gebaut. Grundlage: `docs/shop-weclapp-analyse.md` (Branch
-`feature/shop-analyse` im Redaktions-Repository), `docs/lizenzen/shop-schnittstelle.md` und `docs/lizenzen/shopware.md`
-(Redaktions-Repository, Branch `feature/stichtag`).
+Stand 12.10.2026 (zweite Runde). Grundlage: `docs/shop-weclapp-analyse.md` (Branch `feature/shop-analyse` im
+Redaktions-Repository), `docs/lizenzen/shop-schnittstelle.md` und `docs/lizenzen/shopware.md` (Redaktions-Repository,
+Branch `feature/stichtag`).
 
-**Feste Entscheidungen** (Atilla, 12.10.2026): Shopware 6 ersetzt den NCE-Shop ganz (auch Print), Adresse später
-`ketteler-verlag.de`. weclapp so wenig wie möglich: nur die offizielle weclapp-Integration (Artikel, Preise, Bestände
-nach Shopware, Aufträge nach weclapp). Lizenzen nur in der Lizenzverwaltung des Redaktionssystems; ein Online-Kauf
-vergibt die Lizenz sofort, auch bei Kauf auf Rechnung. Einfache Artikel ohne Varianten. Anmeldung über ZITADEL
-(`login.ketteler-verlag.de`), ein Konto für Shop und Bibliothek.
+**Lokal gebaut** (nur auf den Entwicklungsrechnern, keine Verbindung zu Staging, Live oder weclapp): Grundaufbau, Theme,
+Anmelde-Plugin `KettelerAnmeldung` mit eigenem ZITADEL-Container, Lizenz-Plugin `KettelerLizenzen` gegen eine Attrappe der
+Lizenz-Schnittstelle, „Jetzt lesen“. Tests: `make test` (Unit-Tests) und `make test-e2e` (Ende-zu-Ende).
+
+**Feste Entscheidungen** (Atilla, 12.10.2026):
+
+- Shopware 6 ersetzt den NCE-Shop ganz (auch Print), Adresse später `ketteler-verlag.de`.
+- weclapp so wenig wie möglich: nur die offizielle weclapp-Integration (Artikel, Preise, Bestände nach Shopware, Aufträge
+  nach weclapp).
+- Lizenzen nur in der Lizenzverwaltung des Redaktionssystems; ein Online-Kauf vergibt die Lizenz sofort, auch bei Kauf auf
+  Rechnung. Einfache Artikel ohne Varianten.
+- **Shopware 6.6 bleibt, bis weclapp 6.7 freigibt.**
+- **Eigenes Anmelde-Plugin für ZITADEL** (`login.ketteler-verlag.de`), ein Konto für Shop und Bibliothek.
+- **Storno:** neue Art `stornieren` in der Lizenz-Schnittstelle (Beschreibung unten). Ein Storno im Shop beendet die Lizenz
+  und hinterlässt einen Eintrag im Protokoll. Die Änderung am Redaktionssystem macht die andere Sitzung.
+- **Mehrplatz läuft zum Start über die Verwaltung.**
+- **Gastbestellung nur für Print.** Mit Online-Artikel im Warenkorb braucht es ein Konto.
+- Staging-Server wird vergrößert, wenn das Shop-Staging ansteht (Bestellung bei Hetzner macht Atilla). Adresse
+  `staging-shop.mocodev.de`.
 
 ## 0. Shopware-Version
 
@@ -16,121 +30,175 @@ vergibt die Lizenz sofort, auch bei Kauf auf Rechnung. Einfache Artikel ohne Var
 |---|---|
 | weclapp-Doku „Shopware 6“ (Stand 26.08.2025, abgerufen 12.10.2026) | „weclapp unterstützt alle Shopware 6.5 & 6.6-Versionen“; Major-Updates erst nach Freigabe durch weclapp |
 | Shopware Store, weclapp-App | Kompatibilität bis 6.7.15.1 angezeigt; das ist die Store-App für Shopware Cloud und keine Freigabe der eingebauten Anbindung |
-| aktuelle Shopware-Versionen | 6.7.15.1 (aktuell), **6.6.10.29** (Extended Support: Fehler- und Sicherheitskorrekturen bis 6.8 erscheint), 6.8 noch nicht erschienen |
+| aktuelle Shopware-Versionen | 6.7.15.1 (aktuell), **6.6.10.29** (Extended Support), 6.8 noch nicht erschienen |
 
-**Gewählt: 6.6.10.29.** Das ist die neueste Version, die weclapp schriftlich unterstützt. Sobald weclapp 6.7 freigibt
-(beim Support schriftlich anfragen), auf 6.7 wechseln, **vor** dem Livegang. Der Wechsel ist klein, solange nur
-Theme, Einrichtung und zwei kleine Plugins bestehen. Nach 6.8 bekommt 6.6 nur noch Sicherheitskorrekturen über das
-Shopware-Sicherheits-Plugin.
+**Gewählt: 6.6.10.29.** Sobald weclapp 6.7 freigibt (Ketteler fragt beim Support schriftlich an), auf 6.7 wechseln,
+möglichst **vor** dem Livegang.
 
-## 1. Lizenz-Plugin (`KettelerLizenzen`)
+**Wie lange bekommt 6.6 noch Korrekturen?** Quelle: Shopware Release Policy, Versionsübersicht
+(https://developer.shopware.com/release-notes/, Grafik
+https://shopware-platform-assets.s3.eu-central-1.amazonaws.com/release-schedule/schedule.svg, abgerufen 12.10.2026):
+
+| Zeitraum (laut Grafik) | Stand von 6.6.10 |
+|---|---|
+| bis etwa **Ende Februar 2027** | Extended Support: ausgewählte Fehlerkorrekturen und Sicherheitskorrekturen als normale Updates |
+| bis etwa **Ende Februar 2028** | nur Sicherheitskorrekturen, und zwar über das Shopware-Sicherheits-Plugin, nicht als Update |
+| danach | keine Korrekturen mehr |
+
+Shopware schreibt dazu, dass die Übergänge an die großen Versionen gebunden sind, nicht an feste Termine: Extended Support
+endet, wenn 6.8 erscheint. Die Daten oben sind aus der Grafik abgelesen (Balkenlänge), also auf wenige Wochen genau.
+**Sicherheitskorrekturen gibt es damit bis etwa Februar 2028, also über Mitte 2027 hinaus.** Ab etwa März 2027 kommen
+sie aber nur noch über das Sicherheits-Plugin. Deshalb sollten wir möglichst bis Anfang 2027 auf 6.7 sein.
+
+## 1. Lizenz-Plugin (`KettelerLizenzen`, lokal gebaut)
 
 ### Ablauf beim Kauf
 
 ```
-Kunde bestellt (Rechnung)            Shopware                         Redaktionssystem
+Kunde bestellt (Rechnung)            Shopware                          Redaktionssystem
   └─ Bestellung abgeschlossen ──▶ Ereignis checkout.order.placed
-                                   je Position mit ketteler_produkt
-                                   (Online oder Bundle)
+                                   je Position mit Online-Werk
+                                   (Online-Zugang oder Bundle)
                                    └─ Nachricht in die Warteschlange
-                                      (Message Queue, eigener Worker)
+                                      ketteler_lizenz (Worker)
                                           └─ POST /api/shop/ereignisse ──▶ Kunde finden/anlegen,
                                              HMAC-signiert                   ZITADEL-Konto (Einladung),
                                                                              Lizenz anlegen, Mail
                                                                              „Zugang freigeschaltet“
 ```
 
-- **Auslöser:** „Bestellung abgeschlossen“ (`checkout.order.placed`), nicht „bezahlt“: Rechnungskauf ist der
-  Normalfall (≈ 85 %), die Lizenz kommt laut Entscheidung sofort. Dazu eine eigene Flow-Builder-Aktion „Ketteler: Lizenz
-  vergeben“, damit die Verwaltung bei Bestellungen aus der Shopware-Verwaltung denselben Weg auslösen kann.
-- **Welche Positionen:** Artikel-Zusatzfeld `ketteler_produkt` (heute `avr` oder `eichstaetter`, im Grundaufbau angelegt).
-  Print-Artikel haben es leer. Bundle (Buch und Zugang) hat es gesetzt: Lizenz sofort, Buch geht über weclapp in den Versand.
-- **Anfrage** genau nach `shop-schnittstelle.md`:
-  `ereignis_id = order-<orderId>-<lineItemId>-lizenz`, `art = lizenz_anlegen`, `email` = E-Mail des Shop-Kontos (= ZITADEL-
-  Anmeldename), `name`, `produkt`, `typ = einzel`, `bestellnummer` (SW100000 ff.). `weclapp_kundennummer` ist beim
-  Bestellen noch nicht bekannt und bleibt leer.
-- **Zuverlässigkeit:** Senden immer über die Warteschlange. Bei 5xx oder Zeitüberschreitung mit derselben `ereignis_id`
-  nach 1, 5, 30 Minuten und dann stündlich bis 24 Stunden erneut; die Schnittstelle ist idempotent. Bei 4xx nicht
-  wiederholen, sondern Mail an die Verwaltung und Vermerk an der Bestellung (Zusatzfeld `ketteler_lizenz_status`:
-  offen, angelegt, fehler). Ergebnis (`lizenz_id`) an der Bestellposition speichern.
-- **Geheimnis:** `KETTELER_LIZENZ_GEHEIMNIS` und `KETTELER_LIZENZ_URL` nur in der `.env` des jeweiligen Servers.
-- **Bestellbestätigung:** Hinweis „Ihr Online-Zugang wird freigeschaltet, Sie erhalten eine Mail“ und Knopf „Jetzt lesen“
-  (siehe Abschnitt 2).
-- **Lokal testen:** eine kleine Attrappe der Schnittstelle als eigener Container (prüft Signatur, antwortet wie das
-  Original), keine Verbindung zu Staging.
+- **Auslöser:** „Bestellung abgeschlossen“, nicht „bezahlt“: Rechnungskauf ist der Normalfall, die Lizenz kommt sofort.
+- **Welche Positionen:** Zusatzfelder am Artikel `ketteler_artikelart` (online oder bundle) und `ketteler_produkt`
+  (`avr`, `eichstaetter`; das ist zugleich der Adressteil der Bibliothek `/bibliothek/<werk>`). Beide Felder sind für den
+  Warenkorb freigegeben, damit sie an der Bestellposition stehen.
+- **Anfrage** genau nach `shop-schnittstelle.md`: `ereignis_id = order-<orderId>-<positionId>-lizenz`,
+  `art = lizenz_anlegen`, `email` = E-Mail des Kontos (= ZITADEL-Anmeldename), `name`, `produkt`, `typ = einzel`,
+  `beginn` = Bestelldatum, `bestellnummer` (SW100000 ff.). `weclapp_kundennummer` ist beim Bestellen nicht bekannt.
+- **Stand je Position** im Zusatzfeld `ketteler_lizenz` der Bestellposition: `offen` → `angelegt` (mit `lizenz_id`),
+  `wartet` (Schnittstelle nicht erreichbar, wird wiederholt, mit `versuche` und `fehler`), `fehler` (abgelehnt oder alle
+  Versuche erfolglos), `storniert`.
+- **Wiederholung:** eigene Warteschlange `ketteler_lizenz` (Doctrine) mit Wiederholung nach 1, 5, 25 Minuten, dann
+  stündlich, 27 Versuche ≈ 24 Stunden, immer mit derselben `ereignis_id`. Danach Stand `fehler` und Mail an die Verwaltung.
+- **Ablehnung (4xx):** keine Wiederholung, Stand `fehler` mit Grund, Mail an die Verwaltung (`KETTELER_VERWALTUNG_EMAIL`).
+- **Doppelte Zustellung:** Gilt die Position schon als `angelegt`, sendet das Plugin nichts. Wurde gesendet, aber der Stand
+  nicht mehr gespeichert (Absturz), schickt die zweite Zustellung dieselbe `ereignis_id`; die Schnittstelle antwortet mit
+  dem gespeicherten Ergebnis (`"wiederholt": true`), es entsteht keine zweite Lizenz.
+- **Menge größer 1:** Online-Zugänge haben im Shop Höchstmenge 1. Kommt doch eine größere Menge an (z. B. Bundle), wird
+  eine Einzellizenz angelegt und die Verwaltung per Mail um die weiteren Plätze gebeten (Mehrplatz über die Verwaltung).
+- **Erneut senden** (z. B. nachdem die Verwaltung einen abgelehnten Fall geklärt hat):
+  `bin/console ketteler:lizenz:erneut <Bestellnummer>` (Optionen `--stornieren`, `--erzwingen`).
+- **Geheimnis:** `KETTELER_LIZENZ_GEHEIMNIS` und `KETTELER_LIZENZ_URL` nur in der `.env` des jeweiligen Servers. Lokal
+  zeigt die Adresse auf die Attrappe `tools/lizenz-attrappe` (eigener Container), die Format, Signatur, Zeitfenster und
+  Wiederholungen wie das Original prüft.
+- **Offen:** Bestellungen, die die Verwaltung in der Shopware-Verwaltung anlegt, lösen `checkout.order.placed` nicht aus.
+  Dafür eine Flow-Builder-Aktion „Ketteler: Lizenz vergeben“ ergänzen, sobald das gebraucht wird.
 
-### Storno und Rückgabe
+### Storno: neue Art `stornieren` (für die Umsetzung im Redaktionssystem)
 
-Die Schnittstelle kennt heute `lizenz_anlegen`, `probe_anlegen` und `kuendigen` (mit Enddatum). Vorschlag:
+Auslöser im Shop: Bestellstatus wechselt auf „storniert“ (in der Shopware-Verwaltung oder später aus weclapp
+zurückgemeldet). Das Plugin sendet für jede Position mit angelegter Lizenz ein Ereignis. Ist die Lizenz noch nicht
+angelegt (Stand `offen` oder `wartet`), sendet es nichts und verhindert die spätere Anlage.
 
-| Fall | Woher | Wirkung |
+**Anfrage:** wie alle Ereignisse `POST /api/shop/ereignisse`, gleiche Kopfzeilen (`X-Ketteler-Zeit`,
+`X-Ketteler-Signatur`), gleiche Signatur, gleiches Zeitfenster.
+
+| Feld | Pflicht | Bedeutung |
 |---|---|---|
-| Storno vor oder kurz nach der Bestellung (Bestellstatus „storniert“, in Shopware oder aus weclapp zurückgemeldet) | Ereignis `state_enter.order.state.cancelled` | **neue Art `stornieren`** an die Schnittstelle: Lizenz sofort beenden, Mail „Zugang beendet“ statt „gekündigt“. Braucht eine kleine Erweiterung im Redaktionssystem (heute würde `kuendigen` mit Ende heute die falsche Mail schicken). |
-| Widerruf (Privatkunden, 14 Tage) | Verwaltung | Online-Zugang: Im Checkout für Privatkunden Zustimmung „sofortiger Beginn, Widerrufsrecht erlischt“ (§ 356 Abs. 5 BGB) abfragen. Widerruft trotzdem jemand, beendet die Verwaltung die Lizenz in „Kunden & Lizenzen“. |
-| Rückgabe des Buchs aus einem Bundle | Verwaltung | Lizenz bleibt, außer die Verwaltung beendet sie. Rückgaben bucht weclapp; Shopware Community kennt keine Retourenverwaltung. |
-| Rechnung nicht bezahlt | Verwaltung | Lizenz **sperren** in „Kunden & Lizenzen“ (Status gesperrt gibt es schon). Kein automatischer Weg aus weclapp, weil wir nichts aus weclapp lesen. |
-| Abo-Kündigung (AVR Digital, später ZMV) | Verwaltung | wie heute: Kündigung in „Kunden & Lizenzen“ mit Ende der bezahlten Laufzeit. Der Vertrag liegt in weclapp. |
+| `ereignis_id` | ja | `order-<orderId>-<positionId>-storno`, eindeutig; Wiederholung derselben ID wirkt nicht erneut |
+| `art` | ja | `stornieren` |
+| `email` | ja | E-Mail des Kontos; muss zur Lizenz passen |
+| `produkt` | ja | `avr` oder `eichstaetter` |
+| `bestellnummer` | ja | Shopware-Bestellnummer; mit `produkt` wird die Lizenz gefunden (Herkunft *Shop*) |
+| `grund` | nein | kurzer Text für das Protokoll, höchstens 200 Zeichen (der Shop sendet „Storno der Bestellung im Shop“) |
+
+**Wirkung:** Lizenz sofort beenden (Status *beendet*, `ende` = heute), auch wenn sie *gekündigt* oder *gesperrt* ist.
+Eintrag im Protokoll („Shop-Ereignis: Storno“, Person *System*, mit Lizenz, Bestellnummer, vorherigem Status und Grund).
+Das Konto bleibt bestehen, andere Lizenzen des Kunden bleiben unberührt. Vorschlag: keine Mail an den Kunden (er hat
+selbst storniert oder wurde von der Verwaltung informiert); falls doch gewünscht, eine neue Mail „Zugang beendet“, nicht
+die Mail „gekündigt“.
+
+**Antworten:**
+
+| Status | Wann | Körper |
+|---|---|---|
+| 200 | Lizenz beendet | `{"lizenz_id":9,"kunde_id":7,"status":"beendet","ende":"2026-10-12"}` |
+| 200 | Lizenz war schon beendet (z. B. zweiter Storno mit anderer ID) | wie oben, keine erneute Wirkung, kein neuer Protokolleintrag |
+| 200 | Wiederholung derselben `ereignis_id` | gespeichertes Ergebnis + `"wiederholt":true` |
+| 401 | Signatur falsch, fehlt, Zeitstempel außerhalb von 5 Minuten | |
+| 404 | zu `bestellnummer` und `produkt` keine Lizenz | `{"message":"…"}` |
+| 422 | Felder ungültig, `grund` zu lang, E-Mail passt nicht zur Lizenz | `errors` / `message` |
+| 503 | Geheimnis nicht eingerichtet | |
+
+**Verhalten des Shops:** 404 gilt als erledigt (Stand `storniert` mit Hinweis), andere 4xx gehen per Mail an die
+Verwaltung, 5xx und Zeitüberschreitung werden wie bei der Anlage wiederholt.
+
+### Weitere Fälle
+
+| Fall | Wirkung |
+|---|---|
+| Widerruf (Privatkunden, 14 Tage) | Im Checkout für Privatkunden Zustimmung „sofortiger Beginn, Widerrufsrecht erlischt“ (§ 356 Abs. 5 BGB) abfragen (noch nicht gebaut, Text von Ketteler). Widerruft trotzdem jemand, storniert die Verwaltung die Bestellung (dann greift `stornieren`) oder beendet die Lizenz in „Kunden & Lizenzen“. |
+| Rückgabe des Buchs aus einem Bundle | Lizenz bleibt, außer die Verwaltung storniert. Rückgaben bucht weclapp. |
+| Rechnung nicht bezahlt | Verwaltung sperrt die Lizenz in „Kunden & Lizenzen“. Kein automatischer Weg aus weclapp. |
+| Abo-Kündigung (AVR Digital, später ZMV) | wie heute: Kündigung in „Kunden & Lizenzen“ mit Ende der bezahlten Laufzeit. |
 
 ### Mehrplatz
 
-Die Schnittstelle vergibt vom Shop aus nur **Einzellizenzen**, höchstens eine je Bestellung und Produkt; IP-Lizenzen
-vergibt nur die Verwaltung. Vorschlag in zwei Stufen:
+Zum Start über die Verwaltung (Entscheidung): Online-Zugänge im Shop einzeln (Höchstmenge 1); Mehrplatz-Artikel (z. B.
+„Zusätzliche digitale Lizenzen“, Eichstätter ab 3 oder 5 Zugängen) bekommen später ein Kennzeichen, bei dem das Plugin
+keine Lizenz anlegt, sondern die Verwaltung per Mail informiert. Die Verwaltung vergibt Einzel- oder IP-Lizenzen in
+„Kunden & Lizenzen“. Später möglich: Leser-E-Mails im Checkout, je Leser ein `lizenz_anlegen`; dafür müsste die
+Schnittstelle mehrere Lizenzen je Bestellung und Produkt zulassen.
 
-1. **Zum Start:** Online-Artikel im Shop mit Höchstmenge 1. Mehrplatz (z. B. „Zusätzliche digitale Lizenzen“ 05029-M,
-   Eichstätter ab 3 oder 5 Zugängen) als eigener Artikel mit Zusatzfeld `ketteler_lizenz = verwaltung`: Das Plugin legt
-   dafür **keine** Lizenz an, sondern meldet die Bestellung per Mail an die Verwaltung. Die Verwaltung vergibt Einzel- oder
-   IP-Lizenzen in „Kunden & Lizenzen“. Einrichtungen mit festen Netzen bekommen weiter IP-Lizenzen.
-2. **Später:** Leser-E-Mails im Checkout (eine je Platz). Das Plugin sendet je Leser ein `lizenz_anlegen` mit
-   `ereignis_id …-lizenz-<n>`. Dafür muss das Redaktionssystem mehrere Lizenzen je Bestellung und Produkt zulassen
-   (Schlüssel Bestellnummer, Produkt, laufende Nummer). Erst bauen, wenn Ketteler das will (Frage unten).
-
-## 2. Anmeldung über ZITADEL
+## 2. Anmeldung über ZITADEL (`KettelerAnmeldung`, lokal gebaut)
 
 ### Plugin
 
-Shopware 6.6 hat für Kunden (Storefront) kein OpenID Connect. Geprüfte Möglichkeiten:
+Shopware 6.6 hat für Kunden kein OpenID Connect. Geprüft wurden `tinect/oauth2-storefront-login` (MIT), `MartinKuhl/
+shopware6-oidc-sso` (MIT, Version 0.1), moorl (≈ 189 €/Jahr), PremSoft (≈ 361 €/Jahr). Entschieden: **eigenes Plugin**.
 
-| Plugin | Lizenz, Preis | Eignung |
-|---|---|---|
-| `tinect/oauth2-storefront-login` (GitHub, v2.3.1, 6.6 und 6.7) | MIT, kostenlos | allgemeines OIDC mit Discovery, Verknüpfung über `sub`, sonst E-Mail; PKCE und Abmelden bei ZITADEL (`end_session`) nicht dokumentiert |
-| `MartinKuhl/shopware6-oidc-sso` | MIT, kostenlos | PKCE und Abmelden vorhanden, aber Version 0.1, nur 6.7, kaum erprobt |
-| moorl „Login with … Keycloak and more“ (Store) | ≈ 189 €/Jahr | eigener OAuth2-Anbieter möglich, Verknüpfung über E-Mail, PKCE und Abmelden nicht beschrieben |
-| PremSoft „SSO Single Sign-On Login“ (Store) | ≈ 361 €/Jahr | PKCE, Abmelde-Adresse; ab 6.6.6 |
+Gebaut (lokal):
 
-**Empfehlung: eigenes kleines Plugin `KettelerAnmeldung`**, im Aufbau angelehnt an das MIT-Plugin von tinect. Gründe: Es
-geht um Anmeldung und damit um Sicherheit, der Umfang ist klein (Weiterleitung, Rückkehr, Konto finden oder anlegen,
-Abmelden), und wir brauchen ZITADEL-Eigenheiten, die kein fertiges Plugin abdeckt: Organisation „KETTELER Kunden“ per
-Scope `urn:zitadel:iam:org:id:<id>`, PKCE, `end_session`, nur bestätigte E-Mails, keine Shopware-Passwörter. Keine
-laufenden Kosten, kein fremder Code im Anmeldeweg, den wir nicht geprüft haben.
+- **Ablauf:** `/account/oidc/anmelden` → ZITADEL (Authorization Code mit **PKCE S256**, `state`, `nonce`, Scope
+  `openid profile email urn:zitadel:iam:org:id:<Kunden-Organisation>`) → `/account/oidc/rueckkehr`. Die Anwendung „Shop“
+  hat kein Client-Geheimnis (öffentlicher Client mit PKCE).
+- **ID-Token-Prüfung:** Signatur RS256 mit dem Schlüssel aus dem JWKS, Aussteller, Empfänger, Ablauf, `nonce`.
+- **Konto finden:** zuerst über die ZITADEL-Kennung (`sub`, Zusatzfeld `ketteler_zitadel_sub` am Kunden), sonst über die
+  E-Mail, aber nur wenn ZITADEL sie als bestätigt meldet und nur bei Kunden mit Konto (keine Gäste), die noch mit keinem
+  anderen ZITADEL-Konto verknüpft sind. Gibt es keinen Kunden, fragt der Shop einmal die Rechnungsanschrift ab
+  („Kundenkonto vervollständigen“) und legt das Konto an. Name und E-Mail kommen aus ZITADEL.
+- **Keine Shopware-Passwörter:** Passwort-Anmeldung, „Passwort vergessen“ und Registrierung von Shopware leiten zu
+  ZITADEL; E-Mail und Passwort ändert der Kunde im ZITADEL-Konto (Link im Profil).
+- **Abmelden** im Shop beendet auch die ZITADEL-Sitzung (`end_session` mit `id_token_hint`).
+- **Gastbestellung nur für Print:** Mit Online-Zugang oder Bundle im Warenkorb zeigt die Kasse kein Gastformular, sondern
+  „Anmelden“ und „Konto anlegen“. Zusätzlich blockiert eine Prüfung im Warenkorb jede Gastbestellung mit Online-Artikel,
+  auch wenn jemand das Formular von Hand abschickt.
+- **Einstellungen:** Adressen in der `.env` (`KETTELER_ZITADEL_URL` für den Browser, `KETTELER_ZITADEL_INTERN` für
+  Anfragen vom Server), Client-ID und Organisation in der Plugin-Konfiguration.
+- **Lokal:** eigener ZITADEL v4.19.4 (dieselbe Version wie das Redaktionssystem) mit Postgres, aufgebaut von `make setup`.
+  `bin/console ketteler:zitadel:einrichten` legt Organisation „KETTELER Kunden“ (Selbstregistrierung an), Projekt,
+  Anwendung „Shop“, Mailversand an Mailpit und drei Testkunden an. Lokal läuft die eingebaute Anmeldeseite von ZITADEL;
+  auf Staging und Live ist es die Ketteler-Anmeldeseite (Login v2). Das Protokoll ist dasselbe, das Plugin merkt keinen
+  Unterschied.
 
-### Shop-Konto und ZITADEL-Konto
+### Für Staging und Live
 
-1. In ZITADEL im Projekt „Redaktionssystem“ eine Anwendung „Shop“ (Web, Authorization Code mit PKCE), Redirect
-   `https://ketteler-verlag.de/account/oidc/callback`, Post-Logout `https://ketteler-verlag.de/`. Gleiche Organisation
-   „KETTELER Kunden“ wie die Bibliothek, also dieselben Konten.
-2. „Anmelden“ und „Registrieren“ im Shop leiten zu ZITADEL. Die Shopware-Passwortanmeldung für Kunden wird abgeschaltet
-   (Routen für Passwort-Login und Passwort vergessen leiten auf ZITADEL).
-3. Nach der Rückkehr: Kunde über `sub` finden (Zusatzfeld `ketteler_zitadel_sub` am Kunden). Sonst über die E-Mail, aber
-   nur bei `email_verified = true`, dann `sub` speichern. Sonst Kunde neu anlegen (Name aus ZITADEL, Anschrift fragt der
-   Checkout). Das Shopware-Passwort ist ein unbrauchbarer Zufallswert.
-4. Registrieren: Selbstregistrierung der Kunden-Organisation in ZITADEL mit E-Mail-Bestätigung (Seite im Ketteler-Design
-   gibt es schon, auf Staging aus).
-5. Abmelden im Shop beendet auch die ZITADEL-Sitzung (`end_session`).
-6. Gastbestellung: Für Print möglich lassen (wie heute). **Online-Artikel nur mit Konto**, damit die Lizenz am richtigen
-   Konto hängt (Frage unten). Bestellt ein Gast doch, legt die Lizenz-Schnittstelle das Konto an und schickt die Einladung.
+1. Im ZITADEL des Servers in der Organisation der Kunden eine Anwendung „Shop“ anlegen: Web, Authorization Code, PKCE,
+   **ohne** Client-Geheimnis, „Benutzerinfo im ID-Token“ an, Redirect `https://<shop>/account/oidc/rueckkehr`,
+   Post-Logout `https://<shop>/`. Client-ID und Organisations-ID in die Plugin-Konfiguration.
+2. Die Anmelde-Richtlinie der Kunden-Organisation braucht Gültigkeitsdauern (Passwortprüfung usw.); fehlen sie, fragt
+   ZITADEL nach jeder Passworteingabe erneut (lokal so aufgefallen und behoben).
+3. Bestehende Kunden: Die Verknüpfung über die bestätigte E-Mail übernimmt Bestandskunden beim ersten Anmelden.
 
 ### „Jetzt lesen“ ohne neue Anmeldung
 
-- Shop und Bibliothek liegen unter derselben Adresse: `ketteler-verlag.de` (Shopware) und `ketteler-verlag.de/bibliothek`
-  (Redaktionssystem, Caddy leitet den Pfad weiter). Beide melden über `login.ketteler-verlag.de` an.
-- Wer im Shop angemeldet ist, hat eine ZITADEL-Sitzung (Cookie auf `login.ketteler-verlag.de`). Der Knopf „Jetzt lesen“
-  (Bestellbestätigung, Kundenkonto „Meine Online-Werke“, Artikelseite bei vorhandener Lizenz) führt auf
-  `/bibliothek/<werk>`. Die Bibliothek hat noch keine eigene Sitzung, leitet zu ZITADEL, ZITADEL erkennt die Sitzung und
-  leitet ohne Passwortabfrage zurück. Für den Leser sieht das wie ein kurzer Seitenwechsel aus.
-- Die Lizenz entsteht in der Warteschlange einige Sekunden nach der Bestellung. Kommt jemand schneller in der Bibliothek an,
-  zeigt sie „Ihr Zugang wird eingerichtet“ und lädt nach (kleine Ergänzung in der Bibliothek).
-- Kopf und Fuß: Die Bibliothek hat bewusst austauschbare Bausteine (`rahmen.jsx`). Ziel ist derselbe Kopf und Fuß im Shop
-  und in der Bibliothek; das Theme in diesem Repository übernimmt dafür schon Farben, Schrift und Maße.
+- Gebaut: Knopf „Jetzt lesen“ in der Bestellbestätigung (je Online-Werk der Bestellung) und im Kundenkonto
+  („Meine Online-Werke“, aus den Bestellungen mit angelegter oder gerade entstehender Lizenz; nach Storno nicht mehr).
+  Ziel: `KETTELER_BIBLIOTHEK_URL/<werk>`, z. B. `https://ketteler-verlag.de/bibliothek/eichstaetter`. Lokal ist die
+  Adresse ein Platzhalter. Der Link „Bibliothek“ im Kopf nutzt dieselbe Adresse.
+- Shop und Bibliothek melden über `login.ketteler-verlag.de` an. Wer im Shop angemeldet ist, hat eine ZITADEL-Sitzung;
+  die Bibliothek leitet zu ZITADEL, ZITADEL erkennt die Sitzung und leitet ohne Passwortabfrage zurück.
+- Die Lizenz entsteht einige Sekunden nach der Bestellung. Für den Fall, dass jemand schneller in der Bibliothek ist,
+  braucht die Bibliothek einen Hinweis „Ihr Zugang wird eingerichtet“ mit neuem Versuch (Ergänzung im Redaktionssystem).
 
 ## 3. weclapp-Integration
 
@@ -175,7 +243,8 @@ Lager Hauptlager. Zuerst nur Artikel übertragen, Auftragsabruf erst nach dem Te
 
 ### Staging (Tests mit Ketteler, Anbindung an Staging-Redaktionssystem und weclapp)
 
-- **Wann:** nachdem Lizenz- und Anmelde-Plugin lokal laufen und der Ketteler-Test des Redaktionssystems abgeschlossen ist.
+- **Wann:** nachdem `stornieren` im Redaktionssystem umgesetzt ist und der Ketteler-Test des Redaktionssystems
+  abgeschlossen ist. Den Server vergrößert Atilla vorher bei Hetzner.
 - **Server:** der Staging-Server ist mit CPX22 (2 vCPU, 4 GB) heute schon voll. Vorher auf **CPX32** (4 vCPU, 8 GB)
   umskalieren, „nur CPU und RAM“, damit ein Zurückstufen möglich bleibt; und laut `live-server-plan.md` alte
   Analyse-Datenbanken und Docker-Bilder aufräumen.
@@ -204,7 +273,7 @@ Lager Hauptlager. Zuerst nur Artikel übertragen, Auftragsabruf erst nach dem Te
 
 ### Reihenfolge
 
-1. Lokal: Grundaufbau (fertig), dann Lizenz-Plugin mit Attrappe, dann Anmelde-Plugin gegen einen lokalen ZITADEL-Container.
+1. Lokal: Grundaufbau, Anmelde-Plugin mit lokalem ZITADEL, Lizenz-Plugin mit Attrappe, „Jetzt lesen“ (fertig).
 2. Redaktionssystem: Schnittstelle um `stornieren` erweitern (und später Mehrplatz), Bibliothek „Zugang wird eingerichtet“.
 3. Staging-Server vergrößern, Shop-Staging aufbauen, Plugins gegen Staging-Redaktionssystem und Staging-ZITADEL.
 4. weclapp an Shop-Staging: zuerst Artikel, dann Aufträge. Parallel räumt Ketteler weclapp auf.
@@ -215,28 +284,11 @@ Lager Hauptlager. Zuerst nur Artikel übertragen, Auftragsabruf erst nach dem Te
 
 ### An Atilla
 
-1. Shopware 6.6 bis zur weclapp-Freigabe von 6.7 einverstanden? (Alternative: gleich 6.7 und Risiko bei weclapp.)
-2. Eigenes Anmelde-Plugin statt fertigem Plugin einverstanden?
-3. Neue Schnittstellen-Art `stornieren` im Redaktionssystem: einverstanden?
-4. Mehrplatz zum Start über die Verwaltung (Stufe 1) einverstanden?
-5. Gastbestellung: für Print erlauben, für Online-Artikel nur mit Konto?
-6. Staging-Server auf CPX32 vergrößern, wenn Shop-Staging ansteht?
-7. Adresse für Shop-Staging: `staging-shop.mocodev.de` passend?
+1. Mail an den Kunden bei Storno: keine (Vorschlag) oder eine neue Mail „Zugang beendet“?
+2. Bestellungen, die die Verwaltung in der Shopware-Verwaltung anlegt: sollen sie auch automatisch eine Lizenz bekommen
+   (Flow-Builder-Aktion)?
+3. Rechnungsanschrift beim ersten Anmelden: Reicht Deutschland, oder sollen Österreich und die Schweiz gleich mit?
 
 ### An Ketteler
 
-1. Bitte bei weclapp schriftlich anfragen: Ab wann unterstützt die Shopware-6-Anbindung Version 6.7?
-2. Mehrplatz: Wie viele Einrichtungen kaufen mehrere Zugänge, sollen sie im Shop bestellen können oder weiter per Anfrage?
-3. Storno und Widerruf bei Online-Zugängen: sofort sperren oder erst nach Prüfung durch die Verwaltung?
-4. Abos im Shop (ZMV Print und Digital, AVR Digital): bestellbar wie heute, Vertrag legt die Verwaltung in weclapp an?
-5. Wer räumt die Artikel in weclapp auf (Liste in Abschnitt 3), bis wann?
-6. Zahlarten: Nur Rechnung zum Start? Heute nennt die Versandseite auch Bankeinzug und Nachnahme; in weclapp kommen
-   PayPal-Aufträge vor.
-7. Versand: Länder (heute Deutschland, Österreich, Schweiz, Italien, Großbritannien, EU) und Versandkosten nach Gewicht
-   oder pauschal?
-8. Darf weclapp an einen Testshop angebunden werden (Testmandant oder nur Artikel lesen)?
-9. Inhalte: Was wird aus den Inhaltsseiten „MAV Einstieg“, „ZMV aktuell“, „ZMV Fachtagung“, „Interviews Autoren“? Im
-   neuen Shop als Erlebniswelten (Inhaltsseiten) oder entfallen sie?
-10. Rechtstexte für den neuen Shop (AGB, Widerruf für digitale Inhalte, Datenschutz mit ZITADEL und weclapp) und
-    Geschäftsführung fürs Impressum.
-11. Buchhandel: eigene Kundengruppe mit Rabatt im Shop nötig?
+Gesammelt in [fragen-ketteler.md](fragen-ketteler.md) (zum Weitergeben).

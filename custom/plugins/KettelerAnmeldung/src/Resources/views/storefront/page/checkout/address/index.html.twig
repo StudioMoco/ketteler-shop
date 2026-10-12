@@ -1,0 +1,21 @@
+{% sw_extends '@Storefront/storefront/page/checkout/address/index.html.twig' %}
+
+{% block page_checkout_address_login_toggle %}{% endblock %}
+
+{% block page_checkout_address_login %}
+    <div class="mb-4">
+        {% sw_include '@KettelerAnmeldung/storefront/component/ketteler/anmelden-karte.html.twig' with { ziel: path('frontend.checkout.confirm.page') } %}
+    </div>
+{% endblock %}
+
+{# Gastbestellung nur bei reinem Print. Mit Online-Zugang oder Bundle braucht es ein Konto (Lizenz). #}
+{% block page_checkout_address_register %}
+    {% if ketteler_hat_online(page.cart) %}
+        <div class="alert alert-info" role="status" data-kt="online-hinweis">
+            {{ 'ketteler.anmeldung.onlineBrauchtKonto'|trans|sw_sanitize }}
+        </div>
+    {% else %}
+        <h2 class="h5 mt-2">{{ 'ketteler.anmeldung.gastTitel'|trans|sw_sanitize }}</h2>
+        {{ parent() }}
+    {% endif %}
+{% endblock %}

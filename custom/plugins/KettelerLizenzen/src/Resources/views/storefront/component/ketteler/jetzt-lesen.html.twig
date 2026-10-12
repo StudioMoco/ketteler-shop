@@ -1,0 +1,19 @@
+{# Liste von Online-Werken mit „Jetzt lesen“. Parameter: werke = [{werk, bereit}] #}
+<div class="card kt-jetzt-lesen" data-kt="jetzt-lesen">
+    <div class="card-body">
+        <h2 class="card-title h5">{{ 'ketteler.lizenz.titel'|trans|sw_sanitize }}</h2>
+        <ul class="list-unstyled mb-0">
+            {% for eintrag in werke %}
+                <li class="d-flex flex-wrap align-items-center justify-content-between gap-2 py-2">
+                    <span>{{ ('ketteler.werk.' ~ eintrag.werk)|trans|sw_sanitize }}</span>
+                    <a class="btn btn-primary btn-sm" href="{{ ketteler_bibliothek_url(eintrag.werk) }}" data-kt-werk="{{ eintrag.werk }}">
+                        {{ 'ketteler.lizenz.jetztLesen'|trans|sw_sanitize }}
+                    </a>
+                </li>
+                {% if not eintrag.bereit %}
+                    <li class="small text-muted">{{ 'ketteler.lizenz.wirdEingerichtet'|trans|sw_sanitize }}</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,10 @@
+{% sw_extends '@Storefront/storefront/component/line-item/element/delivery-date.html.twig' %}
+
+{# Online-Zugänge werden nicht geliefert: statt Lieferzeitraum ein Hinweis #}
+{% block component_line_item_delivery_date %}
+    {% if (lineItem.payload.customFields.ketteler_artikelart ?? null) == 'online' %}
+        <div class="line-item-delivery-date">{{ 'ketteler.artikelart.onlineLieferung'|trans|sw_sanitize }}</div>
+    {% else %}
+        {{ parent() }}
+    {% endif %}
+{% endblock %}

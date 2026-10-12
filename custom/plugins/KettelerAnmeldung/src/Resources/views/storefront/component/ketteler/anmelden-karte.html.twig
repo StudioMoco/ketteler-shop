@@ -1,0 +1,15 @@
+{# Anmelden und Konto anlegen über das Ketteler-Konto (ZITADEL). Parameter: ziel (Pfad nach der Anmeldung) #}
+<div class="card kt-anmelden-karte">
+    <div class="card-body">
+        <h2 class="card-title h4">{{ 'ketteler.anmeldung.titel'|trans|sw_sanitize }}</h2>
+        <p>{{ 'ketteler.anmeldung.einKonto'|trans|sw_sanitize }}</p>
+        <div class="d-flex flex-wrap gap-2">
+            <a class="btn btn-primary" href="{{ path('frontend.ketteler.anmelden', ziel ? {ziel: ziel} : {}) }}" data-kt="anmelden">
+                {{ 'ketteler.anmeldung.anmelden'|trans|sw_sanitize }}
+            </a>
+            <a class="btn btn-outline-primary" href="{{ path('frontend.ketteler.anmelden', ziel ? {ziel: ziel, registrieren: 1} : {registrieren: 1}) }}" data-kt="registrieren">
+                {{ 'ketteler.anmeldung.registrieren'|trans|sw_sanitize }}
+            </a>
+        </div>
+    </div>
+</div>

@@ -76,5 +76,16 @@
             ]
         }
     },
-    "description": "Ketteler-Shop (Shopware 6)"
+    "description": "Ketteler-Shop (Shopware 6)",
+    "require-dev": {
+        "phpunit/phpunit": "^10.5"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Ketteler\\Anmeldung\\": "custom/plugins/KettelerAnmeldung/src/",
+            "Ketteler\\Anmeldung\\Tests\\": "custom/plugins/KettelerAnmeldung/tests/",
+            "Ketteler\\Lizenzen\\": "custom/plugins/KettelerLizenzen/src/",
+            "Ketteler\\Lizenzen\\Tests\\": "custom/plugins/KettelerLizenzen/tests/"
+        }
+    }
 }

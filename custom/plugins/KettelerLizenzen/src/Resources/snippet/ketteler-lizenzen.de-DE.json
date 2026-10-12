@@ -1,0 +1,14 @@
+{
+    "ketteler": {
+        "lizenz": {
+            "titel": "Meine Online-Werke",
+            "jetztLesen": "Jetzt lesen",
+            "bestaetigung": "Ihr Online-Zugang wird jetzt freigeschaltet. Sie können sofort mit Ihrem Ketteler-Konto in der Bibliothek lesen und erhalten zusätzlich eine E-Mail.",
+            "wirdEingerichtet": "Der Zugang wird gerade eingerichtet und steht in wenigen Minuten bereit."
+        },
+        "werk": {
+            "avr": "Kompendium AVR Caritas",
+            "eichstaetter": "Eichstätter Kommentar"
+        }
+    }
+}

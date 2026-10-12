@@ -1,0 +1,11 @@
+{% sw_extends '@Storefront/storefront/page/account/index.html.twig' %}
+
+{% block page_account_overview_welcome %}
+    {{ parent() }}
+    {% set ktWerke = ketteler_meine_werke(context.customer) %}
+    {% if ktWerke is not empty %}
+        <div class="mb-4">
+            {% sw_include '@KettelerLizenzen/storefront/component/ketteler/jetzt-lesen.html.twig' with { werke: ktWerke } %}
+        </div>
+    {% endif %}
+{% endblock %}

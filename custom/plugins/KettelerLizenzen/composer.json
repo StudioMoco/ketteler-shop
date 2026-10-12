@@ -1,0 +1,27 @@
+{
+    "name": "ketteler/lizenzen",
+    "description": "Vergibt beim Online-Kauf die Lizenz im Redaktionssystem (Lizenz-Schnittstelle), Storno beendet sie",
+    "type": "shopware-platform-plugin",
+    "version": "0.1.0",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "Ketteler\\Lizenzen\\": "src/"
+        }
+    },
+    "require": {
+        "shopware/core": "~6.6.10",
+        "shopware/storefront": "~6.6.10"
+    },
+    "extra": {
+        "shopware-plugin-class": "Ketteler\\Lizenzen\\KettelerLizenzen",
+        "label": {
+            "de-DE": "Ketteler Lizenzen",
+            "en-GB": "Ketteler licences"
+        },
+        "description": {
+            "de-DE": "Lizenz beim Online-Kauf (sofort, auch bei Rechnung), Storno beendet die Lizenz, „Jetzt lesen“",
+            "en-GB": "Licences for online purchases"
+        }
+    }
+}

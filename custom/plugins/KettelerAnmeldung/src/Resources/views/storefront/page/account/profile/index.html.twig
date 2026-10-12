@@ -1,0 +1,12 @@
+{% sw_extends '@Storefront/storefront/page/account/profile/index.html.twig' %}
+
+{# E-Mail und Passwort gehören zum Ketteler-Konto (ZITADEL) und werden dort geändert #}
+{% block page_account_profile_credentials_change_mail %}{% endblock %}
+{% block page_account_profile_credentials_change_password %}
+    <div class="mt-2">
+        <a class="btn btn-light" href="{{ ketteler_zitadel_konto_url() }}" data-kt="konto-verwalten">
+            {{ 'ketteler.anmeldung.kontoVerwalten'|trans|sw_sanitize }}
+        </a>
+    </div>
+{% endblock %}
+{% block page_account_profile_mail_and_password %}{% endblock %}

@@ -1,0 +1,18 @@
+{% sw_extends '@Storefront/storefront/page/checkout/finish/index.html.twig' %}
+
+{% block page_checkout_finish_details %}
+    {{ parent() }}
+    {% set ktWerke = [] %}
+    {% for position in page.order.lineItems %}
+        {% set ktWerk = ketteler_online_werk(position) %}
+        {% if ktWerk and ktWerk not in ktWerke|map(w => w.werk) %}
+            {% set ktWerke = ktWerke|merge([{werk: ktWerk, bereit: false}]) %}
+        {% endif %}
+    {% endfor %}
+    {% if ktWerke is not empty %}
+        <div class="mb-4">
+            <p>{{ 'ketteler.lizenz.bestaetigung'|trans|sw_sanitize }}</p>
+            {% sw_include '@KettelerLizenzen/storefront/component/ketteler/jetzt-lesen.html.twig' with { werke: ktWerke } %}
+        </div>
+    {% endif %}
+{% endblock %}

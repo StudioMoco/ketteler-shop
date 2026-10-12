@@ -1,0 +1,56 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <defaults public="false"/>
+
+        <service id="Ketteler\Lizenzen\Schnittstelle\LizenzSchnittstelle">
+            <argument type="service" id="http_client"/>
+        </service>
+        <service id="Ketteler\Lizenzen\Nachricht\DalPositionenSpeicher">
+            <argument type="service" id="order.repository"/>
+            <argument type="service" id="order_line_item.repository"/>
+        </service>
+        <service id="Ketteler\Lizenzen\Nachricht\VerwaltungMeldung">
+            <argument type="service" id="mailer"/>
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+            <argument type="service" id="logger"/>
+        </service>
+
+        <service id="Ketteler\Lizenzen\Nachricht\LizenzEreignisHandler">
+            <argument type="service" id="Ketteler\Lizenzen\Nachricht\DalPositionenSpeicher"/>
+            <argument type="service" id="Ketteler\Lizenzen\Schnittstelle\LizenzSchnittstelle"/>
+            <argument type="service" id="Ketteler\Lizenzen\Nachricht\VerwaltungMeldung"/>
+            <argument type="service" id="logger"/>
+            <tag name="messenger.message_handler"/>
+        </service>
+
+        <service id="Ketteler\Lizenzen\Subscriber\BestellungSubscriber">
+            <argument type="service" id="messenger.default_bus"/>
+            <argument type="service" id="Ketteler\Lizenzen\Nachricht\DalPositionenSpeicher"/>
+            <argument type="service" id="order.repository"/>
+            <tag name="kernel.event_subscriber"/>
+        </service>
+        <service id="Ketteler\Lizenzen\Subscriber\EndgueltigGescheitertSubscriber">
+            <argument type="service" id="Ketteler\Lizenzen\Nachricht\DalPositionenSpeicher"/>
+            <argument type="service" id="Ketteler\Lizenzen\Nachricht\VerwaltungMeldung"/>
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="Ketteler\Lizenzen\Storefront\MeineWerke">
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+        </service>
+        <service id="Ketteler\Lizenzen\Storefront\TwigErweiterung">
+            <argument type="service" id="Ketteler\Lizenzen\Storefront\MeineWerke"/>
+            <tag name="twig.extension"/>
+        </service>
+
+        <service id="Ketteler\Lizenzen\Command\ErneutSendenCommand">
+            <argument type="service" id="order.repository"/>
+            <argument type="service" id="Ketteler\Lizenzen\Nachricht\DalPositionenSpeicher"/>
+            <argument type="service" id="messenger.default_bus"/>
+            <tag name="console.command"/>
+        </service>
+    </services>
+</container>

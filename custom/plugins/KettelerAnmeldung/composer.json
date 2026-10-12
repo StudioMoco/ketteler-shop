@@ -1,0 +1,27 @@
+{
+    "name": "ketteler/anmeldung",
+    "description": "Anmeldung im Shop über ZITADEL (OpenID Connect mit PKCE), ein Konto für Shop und Bibliothek",
+    "type": "shopware-platform-plugin",
+    "version": "0.1.0",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "Ketteler\\Anmeldung\\": "src/"
+        }
+    },
+    "require": {
+        "shopware/core": "~6.6.10",
+        "shopware/storefront": "~6.6.10"
+    },
+    "extra": {
+        "shopware-plugin-class": "Ketteler\\Anmeldung\\KettelerAnmeldung",
+        "label": {
+            "de-DE": "Ketteler Anmeldung (ZITADEL)",
+            "en-GB": "Ketteler login (ZITADEL)"
+        },
+        "description": {
+            "de-DE": "Anmeldung und Registrierung über ZITADEL, Gastbestellung nur für Print",
+            "en-GB": "Login via ZITADEL"
+        }
+    }
+}

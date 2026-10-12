@@ -138,6 +138,7 @@ class EinrichtenCommand extends Command
                     'id' => $this->id('zusatzfeld.artikelart'),
                     'name' => 'ketteler_artikelart',
                     'type' => CustomFieldTypes::SELECT,
+                    'allowCartExpose' => true,
                     'config' => [
                         'label' => ['de-DE' => 'Artikelart', 'en-GB' => 'Article type'],
                         'helpText' => ['de-DE' => 'Print wird verschickt, Online nicht, Bundle enthält beides.'],
@@ -151,6 +152,7 @@ class EinrichtenCommand extends Command
                     'id' => $this->id('zusatzfeld.produkt'),
                     'name' => 'ketteler_produkt',
                     'type' => CustomFieldTypes::SELECT,
+                    'allowCartExpose' => true,
                     'config' => [
                         'label' => ['de-DE' => 'Online-Werk (Lizenz)', 'en-GB' => 'Online work (licence)'],
                         'helpText' => ['de-DE' => 'Für Online und Bundle: welche Lizenz das Lizenz-Plugin nach dem Kauf vergibt. Leer bei Print.'],
@@ -162,6 +164,7 @@ class EinrichtenCommand extends Command
                 ],
             ],
         ]], $this->context);
+        // allowCartExpose: Shopware gibt die Felder nur dann an Warenkorb und Bestellpositionen weiter
         $this->io->writeln('Zusatzfelder ketteler_artikelart und ketteler_produkt angelegt.');
     }
 
@@ -442,6 +445,8 @@ class EinrichtenCommand extends Command
                 ]],
                 'stock' => 1000,
                 'isCloseout' => false,
+                // Online-Zugang einzeln; Mehrplatz vergibt die Verwaltung
+                'maxPurchase' => $online ? 1 : null,
                 'shippingFree' => $online,
                 'weight' => (float) $a['gewicht'],
                 'deliveryTimeId' => $online ? $lieferzeitSofort : $lieferzeitPost,
