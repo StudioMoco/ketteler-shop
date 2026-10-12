@@ -2,7 +2,7 @@
 # Gebaut von ops/staging/ausliefern.sh auf dem Server, nie von Hand. Kein Bauschritt für JavaScript nötig: Kern-Oberflächen
 # sind fertig in den Shopware-Paketen, die eigenen Verwaltungs-Skripte sind ohne Bauschritt geschrieben, das Theme
 # übersetzt der Shop beim Start (theme:compile).
-FROM composer:2.8 AS composer
+FROM composer:2 AS composer
 
 FROM ghcr.io/shopware/docker-base:8.3-caddy AS bau
 COPY --from=composer /usr/bin/composer /usr/local/bin/composer

@@ -27,7 +27,7 @@ if [ ! -f "$BASIS/.env" ]; then
   say ".env mit Zufallswerten anlegen (nur auf dem Server)"
   z() { openssl rand -hex "$1"; }
   PW=$(openssl rand -base64 24 | tr -d '/+=' | cut -c1-24)
-  HASH=$(printf '%s\n%s\n' "$PW" "$PW" | docker run -i --rm caddy:2.10-alpine caddy hash-password 2>/dev/null | tail -1)
+  HASH=$(printf '%s\n%s\n' "$PW" "$PW" | docker run -i --rm caddy:2-alpine caddy hash-password 2>/dev/null | tail -1)
   [[ $HASH == \$2* ]] || fehler "Passwort-Hash für den Passwortschutz konnte nicht erzeugt werden."
   DBPW=$(z 16)
   umask 077

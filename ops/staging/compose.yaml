@@ -28,7 +28,7 @@ services:
   front:
     # Caddy des Shops: Passwortschutz (außer /api/), noindex, robots.txt, Weiterleitung an Shop, Anmeldung, Mailpit.
     # Ohne eigene Ports: erreichbar nur über den gemeinsamen Caddy (Netz ketteler_web, Name ketteler-shop-front).
-    image: caddy:2.10-alpine
+    image: caddy:2-alpine
     environment:
       STG_BASICAUTH_BENUTZER: ${STG_BASICAUTH_BENUTZER:?fehlt}
       STG_BASICAUTH_HASH: ${STG_BASICAUTH_HASH:?fehlt}
@@ -98,7 +98,7 @@ services:
 
   mailer:
     # Test-Postfach: nimmt alle Mails an, leitet nichts weiter. Nur im internen Netz ohne Weg nach außen.
-    image: axllent/mailpit:v1.27
+    image: axllent/mailpit:v1.29
     environment:
       MP_MAX_MESSAGES: "2000"
     volumes:
@@ -178,7 +178,7 @@ services:
 
   lizenz-attrappe:
     # Nachbildung der Lizenz-Schnittstelle der Redaktion (wie lokal). Port nur an 127.0.0.1 für den SSH-Tunnel der Tests.
-    image: python:3.13-alpine
+    image: python:3.12-alpine
     environment:
       KETTELER_LIZENZ_GEHEIMNIS: ${KETTELER_LIZENZ_GEHEIMNIS:?fehlt}
       ATTRAPPE_DATEN: /daten
