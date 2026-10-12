@@ -1,0 +1,27 @@
+{
+    "name": "ketteler/theme",
+    "description": "Theme im Ketteler-Design (passend zur Bibliothek)",
+    "type": "shopware-platform-plugin",
+    "version": "0.1.0",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "Ketteler\\Theme\\": "src/"
+        }
+    },
+    "require": {
+        "shopware/core": "~6.6.10",
+        "shopware/storefront": "~6.6.10"
+    },
+    "extra": {
+        "shopware-plugin-class": "Ketteler\\Theme\\KettelerTheme",
+        "label": {
+            "de-DE": "Ketteler Theme",
+            "en-GB": "Ketteler Theme"
+        },
+        "description": {
+            "de-DE": "Theme im Ketteler-Design (Farben, Schrift, Kopf und Fuß wie die Bibliothek)",
+            "en-GB": "Ketteler storefront theme"
+        }
+    }
+}

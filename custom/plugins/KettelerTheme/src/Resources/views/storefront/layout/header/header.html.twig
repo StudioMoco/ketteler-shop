@@ -1,0 +1,9 @@
+{% sw_extends '@Storefront/storefront/layout/header/header.html.twig' %}
+
+{# Link zur Bibliothek, wie „Shop“ im Kopf der Bibliothek #}
+{% block layout_header_actions_account %}
+    <div class="col-auto d-none d-md-block">
+        <a class="kt-kopf-bibliothek" href="{{ theme_config('ketteler-bibliothek-url') }}">{{ 'ketteler.kopf.bibliothek'|trans|sw_sanitize }}</a>
+    </div>
+    {{ parent() }}
+{% endblock %}

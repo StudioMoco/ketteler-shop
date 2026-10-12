@@ -1,0 +1,29 @@
+# Geheimnisse und lokale Einstellungen
+/.env
+/.env.local
+/.env.*.local
+/auth.json
+
+# Abhängigkeiten und erzeugte Dateien (entstehen bei make setup)
+/vendor/
+/var/*
+!/var/.htaccess
+/files/*
+!/files/.htaccess
+/public/bundles/
+/public/theme/
+/public/media/
+/public/thumbnail/
+/public/sitemap/
+/public/asset-manifest.json
+/.env.local.php
+/.idea/
+/install.lock
+/node_modules/
+/custom/plugins/*/src/Resources/app/*/node_modules/
+/custom/apps/
+/config/jwt/*.pem
+/.phpunit.result.cache
+
+# Mac
+.DS_Store

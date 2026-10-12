@@ -1,0 +1,26 @@
+{
+    "name": "ketteler/einrichtung",
+    "description": "Grundeinstellungen, Zusatzfelder, Kategorien und Testartikel des Ketteler-Shops",
+    "type": "shopware-platform-plugin",
+    "version": "0.1.0",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "Ketteler\\Einrichtung\\": "src/"
+        }
+    },
+    "require": {
+        "shopware/core": "~6.6.10"
+    },
+    "extra": {
+        "shopware-plugin-class": "Ketteler\\Einrichtung\\KettelerEinrichtung",
+        "label": {
+            "de-DE": "Ketteler Einrichtung",
+            "en-GB": "Ketteler setup"
+        },
+        "description": {
+            "de-DE": "Befehl ketteler:einrichten: Steuern, Zahlart, Versand, Zusatzfelder, Kategorien, Testartikel",
+            "en-GB": "Command ketteler:einrichten for the base setup"
+        }
+    }
+}

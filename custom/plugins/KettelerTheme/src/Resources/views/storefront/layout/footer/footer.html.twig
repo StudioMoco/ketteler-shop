@@ -1,0 +1,17 @@
+{% sw_extends '@Storefront/storefront/layout/footer/footer.html.twig' %}
+
+{# Kundenservice wie in der Bibliothek (Verlagsangaben des Redaktionssystems) #}
+{% block layout_footer_navigation_hotline_content %}
+    <div class="footer-column-content collapse" id="collapseFooterHotline" aria-labelledby="collapseFooterHotlineTitle">
+        <div class="footer-column-content-inner">
+            <p class="footer-contact-hotline">{{ 'ketteler.fuss.kundenservice'|trans|sw_sanitize }}</p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block layout_footer_bottom %}
+    {{ parent() }}
+    <div class="container">
+        <div class="kt-fuss-impressum">{{ 'ketteler.fuss.impressum'|trans|sw_sanitize }}</div>
+    </div>
+{% endblock %}

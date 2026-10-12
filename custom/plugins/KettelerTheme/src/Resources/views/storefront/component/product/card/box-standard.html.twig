@@ -1,0 +1,9 @@
+{% sw_extends '@Storefront/storefront/component/product/card/box-standard.html.twig' %}
+
+{% block component_product_box_name %}
+    {% set ktArt = product.translated.customFields.ketteler_artikelart ?? null %}
+    {% if ktArt %}
+        <span class="kt-artikelart">{{ ('ketteler.artikelart.' ~ ktArt)|trans|sw_sanitize }}</span>
+    {% endif %}
+    {{ parent() }}
+{% endblock %}

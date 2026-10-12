@@ -1,0 +1,16 @@
+// Wird vor dem Storefront-SCSS geladen: nur Variablen, kein CSS ausgeben.
+// Farben und Maße wie in der Bibliothek (Redaktionssystem, docs/gestaltung.md).
+$kt-ink: #1b1b1d;
+$kt-mute: #6b6b70;
+$kt-hair: #e6e6e9;
+$kt-frame: #f6f6f7;
+$kt-box: #f4f5f7;
+$kt-accent: #b7005c;
+$kt-accent-soft: #f7eaf0;
+
+$border-radius: 8px;
+$border-radius-sm: 6px;
+$border-radius-lg: 10px;
+$btn-border-radius: 8px;
+$input-border-radius: 8px;
+$headings-font-weight: 600;

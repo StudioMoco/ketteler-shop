@@ -1,0 +1,9 @@
+{% sw_extends '@Storefront/storefront/page/product-detail/headline.html.twig' %}
+
+{% block page_product_detail_name %}
+    {% set ktArt = page.product.translated.customFields.ketteler_artikelart ?? null %}
+    {% if ktArt %}
+        <span class="kt-artikelart">{{ ('ketteler.artikelart.' ~ ktArt)|trans|sw_sanitize }}</span>
+    {% endif %}
+    {{ parent() }}
+{% endblock %}

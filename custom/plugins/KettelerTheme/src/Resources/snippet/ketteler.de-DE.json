@@ -1,0 +1,20 @@
+{
+    "ketteler": {
+        "kopf": {
+            "bibliothek": "Bibliothek"
+        },
+        "fuss": {
+            "kundenservice": "Schloßhof 1, 93449 Waldmünchen<br>Tel. 09972 94 14-51<br><a href=\"mailto:kontakt@ketteler-verlag.de\">kontakt@ketteler-verlag.de</a>",
+            "impressum": "KETTELER-Verlag GmbH, Bernhard-Letterhaus-Str. 26, 50670 Köln, Amtsgericht Köln HRB 34678"
+        },
+        "artikelart": {
+            "print": "Print",
+            "online": "Online-Zugang",
+            "bundle": "Print und Online"
+        }
+    },
+    "footer": {
+        "serviceHotlineHeadline": "Kundenservice",
+        "serviceHotline": "Schloßhof 1, 93449 Waldmünchen<br>Tel. 09972 94 14-51"
+    }
+}

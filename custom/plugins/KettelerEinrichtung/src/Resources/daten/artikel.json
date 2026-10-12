@@ -1,0 +1,71 @@
+{
+  "_hinweis": "Testartikel mit Platzhaltertexten. Keine echten Daten. Artikelnummern beginnen mit TEST, damit sie nie mit weclapp kollidieren. Preise sind Bruttopreise in Euro. Später kommen Artikel, Preise und Bestände aus weclapp.",
+  "artikel": [
+    {
+      "nummer": "TEST-P-001",
+      "name": "Musterbuch Arbeitsrecht (Print)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": 7,
+      "preis": 24.90,
+      "gewicht": 0.45,
+      "kategorien": ["praxishandbuecher"],
+      "beschreibung": "Platzhaltertext für ein gedrucktes Praxishandbuch. Hier steht später die Beschreibung aus weclapp."
+    },
+    {
+      "nummer": "TEST-P-002",
+      "name": "Musterkerze (Print-Sortiment, voller Steuersatz)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": 19,
+      "preis": 12.50,
+      "gewicht": 0.30,
+      "kategorien": ["kab-kerzen"],
+      "beschreibung": "Platzhaltertext für einen Sachartikel mit vollem Steuersatz."
+    },
+    {
+      "nummer": "TEST-O-AVR",
+      "name": "Kompendium AVR Online (Test)",
+      "artikelart": "online",
+      "produkt": "avr",
+      "steuer": 7,
+      "preis": 198.90,
+      "gewicht": 0,
+      "kategorien": ["avr"],
+      "beschreibung": "Platzhaltertext für den Online-Zugang zur AVR in der Bibliothek. Kein Versand, der Zugang wird nach dem Kauf freigeschaltet."
+    },
+    {
+      "nummer": "TEST-O-EK",
+      "name": "Eichstätter Kommentar Online-Zugang (Test)",
+      "artikelart": "online",
+      "produkt": "eichstaetter",
+      "steuer": 7,
+      "preis": 89.90,
+      "gewicht": 0,
+      "kategorien": ["eichstaetter"],
+      "beschreibung": "Platzhaltertext für den Online-Zugang zum Eichstätter Kommentar. Kein Versand."
+    },
+    {
+      "nummer": "TEST-B-EK",
+      "name": "Eichstätter Kommentar Print und Online (Test)",
+      "artikelart": "bundle",
+      "produkt": "eichstaetter",
+      "steuer": 7,
+      "preis": 109.80,
+      "gewicht": 1.20,
+      "kategorien": ["eichstaetter"],
+      "beschreibung": "Platzhaltertext für ein Bundle aus Buch und Online-Zugang. Das Buch wird verschickt, der Zugang wird freigeschaltet."
+    },
+    {
+      "nummer": "TEST-P-ZMV",
+      "name": "ZMV Einzelheft (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": 7,
+      "preis": 9.80,
+      "gewicht": 0.15,
+      "kategorien": ["zmv-print"],
+      "beschreibung": "Platzhaltertext für ein Einzelheft der Zeitschrift."
+    }
+  ]
+}

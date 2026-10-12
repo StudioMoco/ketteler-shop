@@ -1,0 +1,55 @@
+{
+  "_hinweis": "Vorläufige Kategorien nach der Struktur des heutigen Shops auf ketteler-verlag.de (nur Struktur, keine Texte). Schlüssel sind fest, daraus entstehen die IDs. Reihenfolge = Reihenfolge im Menü.",
+  "wurzel": { "schluessel": "katalog", "name": "KETTELER-Verlag" },
+  "navigation": [
+    { "schluessel": "zmv", "name": "Zeitschrift ZMV", "kinder": [
+      { "schluessel": "zmv-print", "name": "ZMV Print" },
+      { "schluessel": "zmv-digital", "name": "ZMV Digital" },
+      { "schluessel": "zmv-archiv", "name": "Archiv" },
+      { "schluessel": "eichstaetter-schriften", "name": "Eichstätter Schriften" }
+    ]},
+    { "schluessel": "eichstaetter", "name": "Eichstätter Kommentar" },
+    { "schluessel": "avr", "name": "Kompendium AVR Caritas" },
+    { "schluessel": "praxishandbuecher", "name": "Praxishandbücher" },
+    { "schluessel": "kab", "name": "KAB Service", "kinder": [
+      { "schluessel": "kab-buecher", "name": "Bücher und Magazine", "kinder": [
+        { "schluessel": "kab-themenhefte", "name": "KAB Themenhefte und Bücher" },
+        { "schluessel": "kab-impuls", "name": "KAB Magazin Impuls" },
+        { "schluessel": "kab-sozialethik", "name": "Bücher Sozialethik" },
+        { "schluessel": "kab-literaturtipps", "name": "Impuls Literaturtipps, Bücher, Geschenke" },
+        { "schluessel": "kab-liederbuecher", "name": "Liederbücher" },
+        { "schluessel": "kab-antiquariat", "name": "Antiquariat" }
+      ]},
+      { "schluessel": "kab-kerzen", "name": "Kerzen" },
+      { "schluessel": "kab-produkte", "name": "Individuelle KAB-Produkte", "kinder": [
+        { "schluessel": "kab-accessoires", "name": "Accessoires" },
+        { "schluessel": "kab-signalwesten", "name": "Signalwesten" },
+        { "schluessel": "kab-abzeichen", "name": "Abzeichen, Bronzekreuze, Plaketten" },
+        { "schluessel": "kab-urkunden", "name": "Urkunden und Ehrungen" },
+        { "schluessel": "kab-briefpapier", "name": "Blöcke, Briefpapier, Mappen, Vordrucke" },
+        { "schluessel": "kab-aufkleber", "name": "Aufkleber, Sichthüllen, Visitenkarten" },
+        { "schluessel": "kab-plakate", "name": "Plakate" },
+        { "schluessel": "kab-werbeartikel", "name": "Werbeartikel" },
+        { "schluessel": "kab-fahnen", "name": "Fahnen, Flaggen, Banner, Wimpel" }
+      ]},
+      { "schluessel": "kab-karten", "name": "Karten", "kinder": [
+        { "schluessel": "kab-karten-gruss", "name": "Glückwunsch und Gruß" },
+        { "schluessel": "kab-karten-trauer", "name": "Trauer" }
+      ]},
+      { "schluessel": "kab-gutschein", "name": "Gutschein" }
+    ]}
+  ],
+  "fuss": { "schluessel": "fuss", "name": "Fußzeile", "kinder": [
+    { "schluessel": "fuss-service", "name": "Service", "kinder": [
+      { "schluessel": "fuss-kontakt", "name": "Kontakt" },
+      { "schluessel": "fuss-versand", "name": "Versand und Lieferung" },
+      { "schluessel": "fuss-kuendigen", "name": "Verträge hier kündigen" }
+    ]},
+    { "schluessel": "fuss-rechtliches", "name": "Rechtliches", "kinder": [
+      { "schluessel": "fuss-impressum", "name": "Impressum" },
+      { "schluessel": "fuss-agb", "name": "AGB" },
+      { "schluessel": "fuss-widerruf", "name": "Widerrufsbelehrung" },
+      { "schluessel": "fuss-datenschutz", "name": "Datenschutzerklärung" }
+    ]}
+  ]}
+}

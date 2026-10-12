@@ -1,0 +1,45 @@
+# Lokale Entwicklungsumgebung (läuft auf Apple Silicon und Intel: alle Bilder sind multi-arch).
+# Starten und Einrichten über das Makefile (make setup), nicht direkt.
+
+services:
+  web:
+    # Offizielles Shopware-Entwicklungsbild (PHP, Composer, Node, Caddy)
+    image: ghcr.io/shopware/docker-dev:php8.3-node22-caddy
+    env_file: .env
+    ports:
+      - "127.0.0.1:${SHOP_PORT:-8000}:8000"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      database:
+        condition: service_healthy
+
+  database:
+    image: mariadb:11.4
+    environment:
+      MARIADB_DATABASE: shopware
+      MARIADB_USER: shopware
+      MARIADB_PASSWORD: ${DB_PASSWORT:?DB_PASSWORT fehlt in .env, bitte make setup}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORT:?DB_ROOT_PASSWORT fehlt in .env, bitte make setup}
+    command:
+      - --sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+      - --log_bin_trust_function_creators=1
+      - --group_concat_max_len=320000
+      - --innodb_buffer_pool_size=512M
+      - --default-time-zone=+00:00
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  mailer:
+    # Fängt alle Mails ab (nichts geht nach außen): http://localhost:8025
+    image: axllent/mailpit:v1.27
+    ports:
+      - "127.0.0.1:${MAILPIT_PORT:-8025}:8025"
+
+volumes:
+  db-data:
