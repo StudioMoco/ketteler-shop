@@ -15,6 +15,10 @@ from html.parser import HTMLParser
 
 WURZEL = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
+# Docker Desktop legt „docker“ je nach Einstellung an verschiedene Stellen; die Tests sollen auch ohne make laufen
+os.environ["PATH"] = os.pathsep.join([os.environ.get("PATH", ""), "/usr/local/bin", os.path.expanduser("~/.docker/bin"),
+                                      "/Applications/Docker.app/Contents/Resources/bin"])
+
 
 def env():
     werte = {}
