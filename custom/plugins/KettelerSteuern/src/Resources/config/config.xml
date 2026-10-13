@@ -20,7 +20,8 @@
             <label>Own VAT ID as requester</label>
             <label lang="de-DE">Eigene USt-IdNr. als Anfragender</label>
             <placeholder>DE…</placeholder>
-            <helpText lang="de-DE">Mit der eigenen USt-IdNr. liefert VIES zu jeder Prüfung eine Abfragenummer als Nachweis. Leer: VIES meldet nur gültig oder ungültig, ohne Abfragenummer.</helpText>
+            <defaultValue>DE122792915</defaultValue>
+            <helpText lang="de-DE">Mit der eigenen USt-IdNr. liefert VIES zu jeder Prüfung eine Abfragenummer als Nachweis. Vorgabe: USt-IdNr. des KETTELER-Verlags laut Impressum (DE 122 792 915). Leer: VIES meldet nur gültig oder ungültig, ohne Abfragenummer.</helpText>
         </input-field>
     </card>
 </config>

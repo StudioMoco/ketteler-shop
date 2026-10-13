@@ -47,11 +47,9 @@ Erklärung geht per E-Mail an Sie und steht an der Bestellung. Dazu brauchen wir
     Betrifft Sie das?
 12. **Einrichtungen in anderen EU-Ländern:** Mit gültiger, über die EU-Datenbank geprüfter USt-IdNr. berechnen wir keine
     Umsatzsteuer (Steuerschuldnerschaft des Empfängers). Ist das so richtig für Sie?
-13. **Ihre eigene USt-IdNr. für die Prüfung:** Fragt der Shop mit Ihrer USt-IdNr. als Anfragender bei der EU-Datenbank,
-    bekommt jede Prüfung eine Abfragenummer. Sie gilt als Nachweis, dass Sie die Nummer des Kunden geprüft haben. Welche
-    USt-IdNr. sollen wir dafür eintragen? Der Shop prüft eine bestätigte Nummer nach einem Jahr beim nächsten Kauf erneut.
-
-## Zur ZMV
-
+13. **Ihre USt-IdNr. für die Prüfung (bitte nur bestätigen):** Der Shop fragt bei der EU-Datenbank (VIES) mit Ihrer
+    USt-IdNr. **DE 122 792 915** (aus Ihrem Impressum) als Anfragender. Dann bekommt jede Prüfung eine Abfragenummer, die als
+    Nachweis gilt, dass Sie die Nummer des Kunden geprüft haben. Eine bestätigte Nummer prüft der Shop nach einem Jahr beim
+    nächsten Kauf erneut. Ist DE 122 792 915 richtig?
 14. **ZMV digital:** Was bekommt ein Käufer beim digitalen Teil der ZMV (Digital, Kombi, Zusatz-Abo), und wo liest er?
     Soll die ZMV später auch in die neue Bibliothek?

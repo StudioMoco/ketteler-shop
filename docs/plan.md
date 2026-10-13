@@ -254,7 +254,8 @@ Staging und Live die offizielle Schnittstelle der EU.
 **Nachweis der VIES-Prüfung:** Am Kunden stehen Zeit, Ergebnis, Name laut VIES und die Abfragenummer
 (`requestIdentifier`), dazu ein Verlauf der letzten 20 Prüfungen (frühere Bestätigungen gehen nicht verloren). Eine
 Abfragenummer liefert VIES nur, wenn Ketteler mit der eigenen USt-IdNr. als Anfragender fragt: Einstellung „Eigene
-USt-IdNr. als Anfragender“ (Erweiterungen > Ketteler Steuern), Wert von Ketteler (`docs/fragen-ketteler.md`). Ist die
+USt-IdNr. als Anfragender“ (Erweiterungen > Ketteler Steuern), Vorgabe DE 122 792 915 aus dem Impressum (Bestätigung durch
+Ketteler: `docs/fragen-ketteler.md`, Frage 13). Ist die
 letzte erfolgreiche Prüfung älter als ein Jahr, prüft der Shop beim nächsten Kauf neu, mit denselben Regeln (scheitert die
 Prüfung, keine Befreiung). Jede Bestellung ohne Umsatzsteuer wegen USt-IdNr. hält den Nachweis fest, der beim Kauf galt
 (`ketteler_ustid_nachweis`). Beides ist in der Verwaltung sichtbar (Kunde: Karte „USt-IdNr.: Prüfung über VIES“;

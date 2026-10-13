@@ -173,15 +173,24 @@ def main():
                  "Verlauf: frühere Prüfung bleibt erhalten")
 
     print("Nachweis: Abfragenummer, erneute Prüfung nach einem Jahr, Nachweis an der Bestellung")
+    anfragende = konsole("system:config:get", "KettelerSteuern.config.anfragendeUstId").strip()
     if STAGING:
-        e.ueberspringe("Abfragenummer von VIES", "eigene USt-IdNr. von Ketteler als Anfragender noch offen (Frage an Ketteler)")
+        # Offizielle VIES-Schnittstelle mit Kettelers USt-IdNr. als Anfragender (Vorgabe aus dem Impressum)
+        if anfragende and gueltige_at:
+            api("PATCH", "/customer/" + firma_at, {"vatIds": [gueltige_at.replace(" ", "")]})
+            stand = ustid_stand(firma_at) or {}
+            e.pruefe(stand.get("status") == "gueltig" and bool(stand.get("anfrageNummer")) and stand.get("anfragende") == anfragende.replace(" ", ""),
+                     "VIES (offiziell) mit eigener USt-IdNr. als Anfragender: Abfragenummer gespeichert", str(stand.get("anfrageNummer")))
+        else:
+            e.ueberspringe("Abfragenummer von VIES", "keine eigene USt-IdNr. als Anfragender oder keine gültige Testnummer eingetragen")
     else:
         konsole("system:config:set", "KettelerSteuern.config.anfragendeUstId", "DE123456788")
         api("PATCH", "/customer/" + firma_at, {"vatIds": ["ATU12345675"]})
         stand = ustid_stand(firma_at) or {}
         e.pruefe(str(stand.get("anfrageNummer", "")).startswith("WAPI") and stand.get("anfragende") == "DE123456788",
                  "mit eigener USt-IdNr. als Anfragender: Abfragenummer gespeichert", str(stand.get("anfrageNummer")))
-        konsole("system:config:set", "KettelerSteuern.config.anfragendeUstId", "")
+        # Vorherigen Wert wiederherstellen (Vorgabe: Kettelers USt-IdNr.)
+        konsole("system:config:set", "KettelerSteuern.config.anfragendeUstId", anfragende)
     if gueltige_at:
         def altern():
             alt = dict(ustid_stand(firma_at))
