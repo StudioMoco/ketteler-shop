@@ -1,19 +1,32 @@
-{# Hinweis mit Zeichen („Ihr gutes Recht“): großes Zeichen, Dachzeile, Haupttext mit *Kursiv*, Unterzeile, Text, Links #}
+{#
+    Hinweis mit Zeichen („Ihr gutes Recht“): großes Zeichen, Dachzeile, Haupttext mit *Kursiv*, Unterzeile, Text, Links
+    (auch auf Dateien), optional mit Vorspann („Muster-Formular für den Dienstgeber:“). Größe „groß“ (Startseite) oder
+    „normal“ (Werkseiten).
+#}
 {% set c = element.config %}
+{# Leer gelassen (z. B. auf einer Werkseite ohne diesen Bereich): nichts anzeigen #}
+{% if c.haupttext.value %}
+{% set d = element.data %}
 <div class="kt-rahmen">
-    <section class="kt-hinweis" aria-label="{{ c.dachzeile.value|default(c.unterzeile.value)|striptags }}">
+    <section class="kt-hinweis kt-hinweis--{{ (c.groesse.value ?? null)|default('gross') }}" aria-label="{{ c.dachzeile.value|default(c.unterzeile.value)|striptags }}" data-kt="hinweis">
         <div class="kt-hinweis-zeichen" aria-hidden="true">{{ c.zeichen.value|default('§') }}</div>
         <div class="kt-hinweis-inhalt">
             {% if c.dachzeile.value %}<p class="kt-hinweis-dachzeile">{{ c.dachzeile.value }}</p>{% endif %}
             <p class="kt-hinweis-haupt">{{ c.haupttext.value|kt_kursiv }}</p>
             {% if c.unterzeile.value %}<p class="kt-hinweis-unter">{{ c.unterzeile.value }}</p>{% endif %}
             {% if c.text.value %}<p class="kt-hinweis-text">{{ c.text.value }}</p>{% endif %}
-            {% set links = c.links.value|default([])|filter(l => l.text and kt_link(l.link)) %}
+            {% set links = [] %}
+            {% for l in c.links.value|default([]) %}
+                {% set ziel = l.datei is defined and l.datei and d.medien[l.datei] is defined ? d.medien[l.datei].url : kt_link(l.link) %}
+                {% if l.text and ziel %}{% set links = links|merge([{ text: l.text, ziel: ziel }]) %}{% endif %}
+            {% endfor %}
             {% if links is not empty %}
                 <p class="kt-hinweis-links">
-                    {% for l in links %}<a class="kt-textlink kt-textlink--magenta" href="{{ kt_link(l.link) }}" data-kt="hinweis-link">{{ l.text }}</a>{% endfor %}
+                    {% if c.linksVorspann.value is defined and c.linksVorspann.value %}<span class="kt-hinweis-vorspann">{{ c.linksVorspann.value }}</span>{% endif %}
+                    {% for l in links %}<a class="kt-textlink kt-textlink--magenta" href="{{ l.ziel }}" data-kt="hinweis-link">{{ l.text }}</a>{% endfor %}
                 </p>
             {% endif %}
         </div>
     </section>
 </div>
+{% endif %}

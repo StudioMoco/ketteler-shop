@@ -1,0 +1,45 @@
+{#
+    Video mit Person (Werkseiten): Vorschaubild mit Abspielknopf, öffnet das selbst gehostete Video im Dialog. Daneben
+    Dachzeile, Titel, Text und eine Person mit Foto, erster Zeile, Name und Links.
+#}
+{% set c = element.config %}
+{# Leer gelassen (z. B. auf einer Werkseite ohne diesen Bereich): nichts anzeigen #}
+{% if c.titel.value or c.video.value %}
+{% set d = element.data %}
+{% set video = c.video.value ? d.medien[c.video.value] ?? null : null %}
+{% set poster = c.videoPoster.value ? d.medien[c.videoPoster.value] ?? null : null %}
+{% set untertitel = c.videoUntertitel.value ? d.medien[c.videoUntertitel.value] ?? null : null %}
+{% set foto = c.foto.value ? d.medien[c.foto.value] ?? null : null %}
+{% set dialogId = 'kt-video-' ~ element.id %}
+<section class="kt-rahmen kt-videoperson" aria-label="{{ c.titel.value|striptags }}" data-kt="video-person">
+    {% if video %}
+        <a class="kt-videoperson-bild" href="{{ video.url }}" data-kt-video-oeffnen="{{ dialogId }}" aria-haspopup="dialog" data-kt="video-knopf">
+            {% if poster %}<img src="{{ poster.url }}" alt="" loading="lazy">{% endif %}
+            <span class="kt-videoperson-start"><svg width="26" height="26" viewBox="0 0 24 24" fill="#ffffff" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg></span>
+            <span class="visually-hidden">Video ansehen: {{ c.titel.value }}</span>
+        </a>
+    {% endif %}
+    <div class="kt-videoperson-text">
+        {% if c.dachzeile.value %}<p class="kt-dachzeile">{{ c.dachzeile.value }}</p>{% endif %}
+        {% if c.titel.value %}<h2>{{ c.titel.value }}</h2>{% endif %}
+        {% if c.text.value %}<p class="kt-videoperson-beschreibung">{{ c.text.value|kt_text }}</p>{% endif %}
+        {% if c.personName.value or c.personTitel.value %}
+            <div class="kt-person">
+                <span class="kt-person-foto">{% if foto %}<img src="{{ foto.url }}" alt="{{ foto.translated.alt ?: c.personName.value }}" loading="lazy">{% endif %}</span>
+                <div>
+                    {% if c.personTitel.value %}<p class="kt-person-titel">{{ c.personTitel.value }}</p>{% endif %}
+                    <p class="kt-person-name">{{ c.personName.value }}
+                        {% for l in c.links.value|default([]) %}
+                            {% set ziel = l.datei and d.medien[l.datei] is defined ? d.medien[l.datei].url : kt_link(l.link) %}
+                            {% if l.text and ziel %} · <a class="kt-person-link" href="{{ ziel }}">{{ l.text }}</a>{% endif %}
+                        {% endfor %}
+                    </p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% if video %}
+    {% sw_include '@KettelerTheme/storefront/component/ketteler/video-dialog.html.twig' with { dialogId: dialogId, video: video, poster: poster, untertitel: untertitel, titel: c.titel.value, leiste: c.dachzeile.value } only %}
+{% endif %}
+{% endif %}

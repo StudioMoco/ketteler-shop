@@ -1,6 +1,7 @@
 /*
  * Erlebniswelten: eigene Blöcke des KETTELER-Verlags (Schaufenster, Kategorien mit Cover-Stapel, Werke, Hinweis mit
- * Zeichen, Drei Beiträge, Nummerierte Liste, Produktreihe). Bewusst ohne Bauschritt geschrieben (kein Webpack),
+ * Zeichen, Drei Beiträge, Nummerierte Liste, Produktreihe; für die Werkseiten Werk-Kopf, Angebote, Vorteile / Liste,
+ * Leseproben, Video mit Person, Einzelhefte mit Jahrgangsauswahl, Aktuelle Ausgabe, Fakten, Rückmeldung). Bewusst ohne Bauschritt geschrieben (kein Webpack),
  * Shopware lädt diese Datei direkt. Jeder Block hat genau ein Element gleichen Namens; dessen Einstellungen beschreibt
  * ein Feldschema (FELDER), aus dem das Einstellungsfenster gebaut wird. Darstellung im Shop:
  * Resources/views/storefront/element/cms-element-ketteler-*.html.twig, Daten lädt Cms/KettelerElementResolver.php.
@@ -13,8 +14,11 @@
     var Criteria = Shopware.Data.Criteria;
 
     var FLAECHEN = [{ value: 'sand', label: 'Sand' }, { value: 'rose', label: 'Rosé' }];
+    var FLAECHEN_WERK = [{ value: 'rose', label: 'Rosé' }, { value: 'sand', label: 'Sand' }, { value: 'blaugrau', label: 'Blaugrau' }];
+    var ANKER = { name: 'anker', label: 'Sprungmarke (z. B. „angebote“; Knöpfe springen mit #angebote hierher)', typ: 'text' };
+    var HINWEIS_TEXT = 'Im Text: **fett**, *kursiv*, [Linktext](/pfad oder https://…)';
 
-    // Feldschema je Element. typ: text | textarea | link | produkt | produkte | kategorie | medium | auswahl | schalter | liste
+    // Feldschema je Element. typ: text | textarea | link | produkt | produkte | kategorie | medium | medien | auswahl | schalter | liste
     var ELEMENTE = {
         schaufenster: {
             label: 'Schaufenster',
@@ -92,15 +96,18 @@
             beschreibung: 'Großes Zeichen, Dachzeile, Haupttext, Unterzeile, Text und Links',
             felder: [
                 { name: 'zeichen', label: 'Zeichen', typ: 'text' },
+                { name: 'groesse', label: 'Größe', typ: 'auswahl', optionen: [{ value: 'gross', label: 'Groß (Startseite)' }, { value: 'normal', label: 'Normal (Werkseiten)' }] },
                 { name: 'dachzeile', label: 'Dachzeile', typ: 'text' },
                 { name: 'haupttext', label: 'Haupttext (*Wörter zwischen Sternchen* werden kursiv)', typ: 'textarea' },
                 { name: 'unterzeile', label: 'Unterzeile', typ: 'text' },
                 { name: 'text', label: 'Text', typ: 'textarea' },
+                { name: 'linksVorspann', label: 'Text vor den Links, z. B. „Muster-Formular für den Dienstgeber:“', typ: 'text' },
                 {
                     name: 'links', label: 'Links', typ: 'liste', max: 4, eintrag: 'Link',
                     felder: [
                         { name: 'text', label: 'Text', typ: 'text' },
-                        { name: 'link', label: 'Ziel', typ: 'link' }
+                        { name: 'link', label: 'Ziel', typ: 'link' },
+                        { name: 'datei', label: 'oder Datei aus den Medien (geht vor)', typ: 'medium', akzeptiert: '*/*' }
                     ]
                 }
             ]
@@ -137,6 +144,222 @@
                 }
             ]
         },
+        werkkopf: {
+            label: 'Werk-Kopf',
+            beschreibung: 'Brotkrumen, großes Cover vor einem Kreis, Dachzeile, Titel, Untertitel, Text, Knöpfe und Zeile für Bestandskunden',
+            felder: [
+                { name: 'produkt', label: 'Produkt für das Cover', typ: 'produkt' },
+                { name: 'bild', label: 'Coverbild (statt Produktcover)', typ: 'medium', akzeptiert: 'image/*' },
+                { name: 'flaeche', label: 'Kreis hinter dem Cover', typ: 'auswahl', optionen: FLAECHEN_WERK },
+                { name: 'dachzeile', label: 'Dachzeile (z. B. Herausgeber)', typ: 'text' },
+                { name: 'titel', label: 'Titel (einzige Hauptüberschrift der Seite)', typ: 'text' },
+                { name: 'untertitel', label: 'Untertitel (kursiv)', typ: 'text' },
+                { name: 'text', label: 'Text (Absätze durch Leerzeile trennen)', typ: 'textarea' },
+                { name: 'zusatz', label: 'Zusatzzeile (' + HINWEIS_TEXT + ')', typ: 'textarea' },
+                { name: 'angaben', label: 'Angaben, z. B. Schriftleitung oder Auflage, ISBN', typ: 'text' },
+                { name: 'knopfText', label: 'Hauptknopf: Text', typ: 'text' },
+                { name: 'knopfLink', label: 'Hauptknopf: Ziel (z. B. #angebote)', typ: 'link' },
+                { name: 'nebenLinkText', label: 'Nebenlink: Text', typ: 'text' },
+                { name: 'nebenLink', label: 'Nebenlink: Ziel (z. B. #leseproben)', typ: 'link' },
+                { name: 'bestandText', label: 'Bestandskunden: Text, z. B. „Sie haben schon einen Zugang?“', typ: 'text' },
+                { name: 'bestandLinkText', label: 'Bestandskunden: Linktext', typ: 'text' },
+                { name: 'bestandLink', label: 'Bestandskunden: Ziel (leer: KETTELER-Bibliothek)', typ: 'link' }
+            ]
+        },
+        angebote: {
+            label: 'Angebote',
+            beschreibung: 'Ein bis drei Kaufkarten mit Produkten aus dem Katalog, darunter Hinweiszeilen (Mehrplatz, Zusatzangebote)',
+            felder: [
+                ANKER,
+                { name: 'ueberschrift', label: 'Überschrift', typ: 'text' },
+                { name: 'bestellnummer', label: 'Bestell-Nr. auf den Karten zeigen', typ: 'schalter' },
+                { name: 'werk', label: 'Werk (für die Mehrplatz-Anfrage)', typ: 'auswahl', optionen: [{ value: '', label: 'keins' }, { value: 'avr', label: 'Die AVR von A bis Z' }, { value: 'zmv', label: 'ZMV' }, { value: 'eichstaetter', label: 'Eichstätter Kommentar' }] },
+                {
+                    name: 'karten', label: 'Kaufkarten', typ: 'liste', max: 3, eintrag: 'Karte',
+                    felder: [
+                        { name: 'produkt', label: 'Produkt (Bestell-Nr., Preis, Warenkorb)', typ: 'produkt' },
+                        { name: 'titel', label: 'Titel (leer: Name des Produkts)', typ: 'text' },
+                        { name: 'zeile', label: 'Kurze Zeile unter dem Titel', typ: 'text' },
+                        { name: 'hervorgehoben', label: 'Hervorheben (Rahmen und Knopf in Magenta, mobil zuerst)', typ: 'schalter' }
+                    ]
+                },
+                { name: 'seitentitel', label: 'Text neben einer einzelnen Karte: erste Zeile (groß)', typ: 'text' },
+                { name: 'seitentext', label: 'Text neben einer einzelnen Karte: weiterer Text', typ: 'textarea' },
+                {
+                    name: 'zeilen', label: 'Hinweiszeilen', typ: 'liste', max: 6, eintrag: 'Zeile',
+                    felder: [
+                        { name: 'text', label: 'Text links (' + HINWEIS_TEXT + '; {preis} = Preis des Produkts)', typ: 'text' },
+                        { name: 'zusatz', label: 'Kleiner Zusatz, z. B. „(gilt nicht für …)“', typ: 'text' },
+                        { name: 'art', label: 'Rechts', typ: 'auswahl', optionen: [{ value: 'link', label: 'Link' }, { value: 'mehrplatz', label: 'Mehrplatz-Anfrage (mit Werk)' }, { value: 'kaufen', label: 'In den Warenkorb (Produkt)' }] },
+                        { name: 'linkText', label: 'Linktext', typ: 'text' },
+                        { name: 'link', label: 'Ziel (bei „Link“)', typ: 'link' },
+                        { name: 'produkt', label: 'Produkt (bei „In den Warenkorb“)', typ: 'produkt' }
+                    ]
+                },
+                { name: 'fussText', label: 'Kleiner Text darunter (' + HINWEIS_TEXT + ')', typ: 'textarea' }
+            ]
+        },
+        vorteile: {
+            label: 'Vorteile / Liste',
+            beschreibung: 'Überschrift und Einleitung links, rechts zweispaltige Einträge (Titel und Text, eine Zeile oder kursiver Anfangsbuchstabe), dazu Aufzählungen',
+            felder: [
+                ANKER,
+                { name: 'abstand', label: 'Abstand oben', typ: 'auswahl', optionen: [{ value: 'gross', label: 'Groß' }, { value: 'klein', label: 'Klein (direkt nach einem Hinweis)' }] },
+                { name: 'ueberschrift', label: 'Überschrift', typ: 'text' },
+                { name: 'einleitung', label: 'Einleitung (Absätze durch Leerzeile trennen)', typ: 'textarea' },
+                { name: 'hinweis', label: 'Weiterer Text, kleiner und heller', typ: 'textarea' },
+                { name: 'darstellung', label: 'Einträge', typ: 'auswahl', optionen: [{ value: 'titel', label: 'Titel und Text, zwei Spalten' }, { value: 'zeile', label: 'Eine Zeile, zwei Spalten' }, { value: 'buchstabe', label: 'Anfangsbuchstabe kursiv, eine Spalte' }] },
+                {
+                    name: 'eintraege', label: 'Einträge', typ: 'liste', max: 12, eintrag: 'Eintrag',
+                    felder: [
+                        { name: 'titel', label: 'Titel (bei „Anfangsbuchstabe“: der Buchstabe)', typ: 'text' },
+                        { name: 'text', label: 'Text', typ: 'textarea' }
+                    ]
+                },
+                {
+                    name: 'aufzaehlungen', label: 'Aufzählungen darunter', typ: 'liste', max: 3, eintrag: 'Aufzählung',
+                    felder: [
+                        { name: 'titel', label: 'Titel, z. B. „Plus:“', typ: 'text' },
+                        { name: 'punkte', label: 'Punkte (einer je Zeile)', typ: 'textarea' }
+                    ]
+                }
+            ]
+        },
+        leseproben: {
+            label: 'Leseproben',
+            beschreibung: 'Überschrift, Text, optional Kasten und Knopf, rechts PDF-Dateien aus den Medien mit Kürzel',
+            felder: [
+                ANKER,
+                { name: 'flaeche', label: 'Fläche', typ: 'auswahl', optionen: FLAECHEN_WERK },
+                { name: 'ueberschrift', label: 'Überschrift', typ: 'text' },
+                { name: 'text', label: 'Text', typ: 'textarea' },
+                { name: 'knopfText', label: 'Knopf: Text (z. B. „Lesemuster (PDF)“)', typ: 'text' },
+                { name: 'knopfDatei', label: 'Knopf: Datei', typ: 'medium', akzeptiert: 'application/pdf' },
+                { name: 'kastenDachzeile', label: 'Kasten: Dachzeile', typ: 'text' },
+                { name: 'kastenTitel', label: 'Kasten: Titel', typ: 'text' },
+                { name: 'kastenPunkte', label: 'Kasten: Punkte (einer je Zeile)', typ: 'textarea' },
+                {
+                    name: 'dateien', label: 'Dateien', typ: 'liste', max: 30, eintrag: 'Datei',
+                    felder: [
+                        { name: 'kuerzel', label: 'Kürzel, z. B. „A 11“ (optional)', typ: 'text' },
+                        { name: 'titel', label: 'Titel', typ: 'text' },
+                        { name: 'datei', label: 'PDF aus den Medien', typ: 'medium', akzeptiert: 'application/pdf' }
+                    ]
+                }
+            ]
+        },
+        video: {
+            label: 'Video mit Person',
+            beschreibung: 'Selbst gehostetes Video (öffnet im Dialog), daneben Dachzeile, Titel, Text und Person mit Foto und Links',
+            felder: [
+                { name: 'video', label: 'Video (MP4 aus den Medien)', typ: 'medium', akzeptiert: 'video/mp4' },
+                { name: 'videoPoster', label: 'Vorschaubild', typ: 'medium', akzeptiert: 'image/*' },
+                { name: 'videoUntertitel', label: 'Untertitel (WebVTT, .vtt)', typ: 'medium', akzeptiert: 'text/vtt,.vtt' },
+                { name: 'dachzeile', label: 'Dachzeile', typ: 'text' },
+                { name: 'titel', label: 'Titel', typ: 'text' },
+                { name: 'text', label: 'Text', typ: 'textarea' },
+                { name: 'foto', label: 'Person: Foto', typ: 'medium', akzeptiert: 'image/*' },
+                { name: 'personTitel', label: 'Person: erste Zeile', typ: 'text' },
+                { name: 'personName', label: 'Person: Name', typ: 'text' },
+                {
+                    name: 'links', label: 'Person: Links', typ: 'liste', max: 3, eintrag: 'Link',
+                    felder: [
+                        { name: 'text', label: 'Text', typ: 'text' },
+                        { name: 'link', label: 'Ziel', typ: 'link' },
+                        { name: 'datei', label: 'oder Datei aus den Medien (geht vor)', typ: 'medium', akzeptiert: '*/*' }
+                    ]
+                }
+            ]
+        },
+        einzelhefte: {
+            label: 'Einzelhefte mit Jahrgangsauswahl',
+            beschreibung: 'Hefte einer Kategorie nach Jahrgang (Reiter ohne Neuladen), darunter der Kasten Archiv mit Preiszeilen',
+            felder: [
+                ANKER,
+                { name: 'ueberschrift', label: 'Überschrift', typ: 'text' },
+                { name: 'text', label: 'Text', typ: 'textarea' },
+                { name: 'heftKategorie', label: 'Kategorie mit den Einzelheften (Jahrgang und Heft aus der Artikelnummer, z. B. Z5-2026, oder aus den Zusatzfeldern)', typ: 'kategorie' },
+                { name: 'jahrgaenge', label: 'Anzahl Jahrgänge als Reiter (Standard 5)', typ: 'text' },
+                { name: 'onlineText', label: 'Zeile darunter: Text', typ: 'text' },
+                { name: 'onlineLinkText', label: 'Zeile darunter: Linktext', typ: 'text' },
+                { name: 'onlineLink', label: 'Zeile darunter: Ziel', typ: 'link' },
+                { name: 'archivTitel', label: 'Archiv: Titel (leer: kein Kasten)', typ: 'text' },
+                { name: 'archivText', label: 'Archiv: Text', typ: 'text' },
+                { name: 'archivLinkText', label: 'Archiv: Linktext', typ: 'text' },
+                { name: 'archivLink', label: 'Archiv: Ziel', typ: 'link' },
+                {
+                    name: 'preiszeilen', label: 'Archiv: Preiszeilen', typ: 'liste', max: 10, eintrag: 'Preiszeile',
+                    felder: [
+                        { name: 'text', label: 'Text', typ: 'text' },
+                        { name: 'preis', label: 'Preis (Text, z. B. „je 17,50 €“)', typ: 'text' }
+                    ]
+                }
+            ]
+        },
+        ausgabe: {
+            label: 'Aktuelle Ausgabe',
+            beschreibung: 'Dachzeile, Titel, Untertitel, Inhalt als Tabelle, Links, daneben Kasten (z. B. Probeheft) mit zwei Knöpfen',
+            felder: [
+                ANKER,
+                { name: 'flaeche', label: 'Fläche', typ: 'auswahl', optionen: FLAECHEN_WERK },
+                { name: 'dachzeile', label: 'Dachzeile', typ: 'text' },
+                { name: 'titel', label: 'Titel', typ: 'text' },
+                { name: 'untertitel', label: 'Untertitel', typ: 'text' },
+                {
+                    name: 'zeilen', label: 'Inhalt', typ: 'liste', max: 8, eintrag: 'Rubrik',
+                    felder: [
+                        { name: 'rubrik', label: 'Rubrik', typ: 'text' },
+                        { name: 'inhalt', label: 'Inhalt (ein Beitrag je Zeile)', typ: 'textarea' }
+                    ]
+                },
+                {
+                    name: 'links', label: 'Links', typ: 'liste', max: 4, eintrag: 'Link',
+                    felder: [
+                        { name: 'text', label: 'Text', typ: 'text' },
+                        { name: 'link', label: 'Ziel', typ: 'link' },
+                        { name: 'datei', label: 'oder Datei aus den Medien (geht vor)', typ: 'medium', akzeptiert: '*/*' }
+                    ]
+                },
+                { name: 'kastenTitel', label: 'Kasten: Titel (leer: kein Kasten)', typ: 'text' },
+                { name: 'kastenText', label: 'Kasten: Text', typ: 'text' },
+                {
+                    name: 'knoepfe', label: 'Kasten: Knöpfe (der erste in Magenta)', typ: 'liste', max: 2, eintrag: 'Knopf',
+                    felder: [
+                        { name: 'text', label: 'Text', typ: 'text' },
+                        { name: 'link', label: 'Ziel', typ: 'link' },
+                        { name: 'datei', label: 'oder Datei aus den Medien (geht vor)', typ: 'medium', akzeptiert: '*/*' }
+                    ]
+                },
+                { name: 'kastenFussText', label: 'Kasten: Zeile darunter, Text (z. B. „Leseprobe:“)', typ: 'text' },
+                { name: 'kastenFussLinkText', label: 'Kasten: Zeile darunter, Linktext', typ: 'text' },
+                { name: 'kastenFussDatei', label: 'Kasten: Zeile darunter, Datei', typ: 'medium', akzeptiert: '*/*' }
+            ]
+        },
+        fakten: {
+            label: 'Fakten',
+            beschreibung: 'Überschrift links, rechts eine Liste Begriff und Wert',
+            felder: [
+                ANKER,
+                { name: 'ueberschrift', label: 'Überschrift', typ: 'text' },
+                {
+                    name: 'eintraege', label: 'Einträge', typ: 'liste', max: 12, eintrag: 'Eintrag',
+                    felder: [
+                        { name: 'begriff', label: 'Begriff', typ: 'text' },
+                        { name: 'wert', label: 'Wert', typ: 'textarea' }
+                    ]
+                }
+            ]
+        },
+        rueckmeldung: {
+            label: 'Rückmeldung',
+            beschreibung: 'Überschrift links, rechts Text und Knopf (z. B. E-Mail)',
+            felder: [
+                { name: 'ueberschrift', label: 'Überschrift', typ: 'text' },
+                { name: 'text', label: 'Text', typ: 'text' },
+                { name: 'knopfText', label: 'Knopf: Text', typ: 'text' },
+                { name: 'knopfLink', label: 'Knopf: Ziel (z. B. mailto:kontakt@ketteler-verlag.de)', typ: 'link' }
+            ]
+        },
         produktreihe: {
             label: 'Produktreihe',
             beschreibung: 'Produktkarten mit Cover, Autor, Preis und „In den Warenkorb“ bzw. „Zum Angebot“',
@@ -168,7 +391,7 @@
         return e;
     }
 
-    // Feld für einen Link: Kategorie, Produkt oder Adresse; gespeichert als Zeichenkette
+    // Feld für einen Link: Kategorie, Produkt oder Adresse (auch „bibliothek“ für die KETTELER-Bibliothek); als Zeichenkette
     Shopware.Component.register('ketteler-link-feld', {
         template: '' +
             '<div class="ketteler-link-feld">' +
@@ -287,7 +510,7 @@
                 },
                 anzahl: function () {
                     var c = this.element.config || {};
-                    var l = (c.eintraege && c.eintraege.value) || (c.kacheln && c.kacheln.value) || (c.produkte && c.produkte.value);
+                    var l = ['eintraege', 'kacheln', 'produkte', 'karten', 'dateien', 'zeilen'].map(function (f) { return c[f] && c[f].value; }).filter(function (v) { return Array.isArray(v) && v.length; })[0];
                     return Array.isArray(l) ? l.length + ' Einträge' : null;
                 }
             },

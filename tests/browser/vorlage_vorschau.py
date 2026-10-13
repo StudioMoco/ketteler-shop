@@ -1,4 +1,4 @@
-"""Statische Vorschau der Gestaltungsvorlage docs/design/startseite-entwurf.dc.html für Vergleichsbilder.
+"""Statische Vorschau einer Gestaltungsvorlage (Standard: docs/design/startseite-entwurf.dc.html) für Vergleichsbilder.
 
 Die Vorlage braucht zum Anzeigen ein Hilfsskript (support.js) und lädt Google Fonts. Hier: Akzentfarbe einsetzen,
 Listen (sc-for) mit den Daten aus der Vorlage ausrollen, Schriften aus dem Theme (lokal), Logo aus dem Theme, keine
@@ -20,15 +20,16 @@ if not os.path.exists(LOGO):
 
 
 def js_liste(quelle, name):
-    """Die Liste name: [ {...}, ... ] aus dem Skript der Vorlage als Python-Liste."""
-    m = re.search(name + r":\s*(\[.*?\n\s*\])", quelle, re.S)
-    text = re.sub(r"(\{|,)\s*(\w+):", r'\1 "\2":', m.group(1)).replace("'", '"')
+    """Die Liste name: [ {...}, ... ] (oder Liste von Texten) aus dem Skript der Vorlage als Python-Liste."""
+    m = re.search(r"\b" + name + r":\s*(\[.*?\n\s*\])", quelle, re.S) or re.search(r"\b" + name + r":\s*(\[[^\n]*\])", quelle)
+    text = re.sub(r"(\{|,)\s*(\w+):", r'\1 "\2":', m.group(1))
+    text = re.sub(r"'((?:[^'\\]|\\.)*)'", lambda t: json.dumps(t.group(1)), text)
     return json.loads(text)
 
 
-def main(ziel):
-    html = open(VORLAGE, encoding="utf-8").read()
-    daten = {"cats": js_liste(html, "cats"), "books": js_liste(html, "books")}
+def main(ziel, vorlage=VORLAGE):
+    html = open(vorlage, encoding="utf-8").read()
+    daten = {name: js_liste(html, name) for name in set(re.findall(r'<sc-for list="\{\{(\w+)\}\}"', html))}
     html = html.replace("{{accent}}", "#b7005c")
 
     def ausrollen(m):
@@ -36,8 +37,11 @@ def main(ziel):
         aus = []
         for eintrag in daten[liste]:
             teil = inhalt
-            for k, v in eintrag.items():
-                teil = teil.replace("{{%s.%s}}" % (name, k), str(v))
+            if isinstance(eintrag, dict):
+                for k, v in eintrag.items():
+                    teil = teil.replace("{{%s.%s}}" % (name, k), str(v))
+            else:
+                teil = teil.replace("{{%s}}" % name, str(eintrag))
             aus.append(teil)
         return "".join(aus)
 
@@ -54,9 +58,9 @@ def main(ziel):
                                  % (familie, g, stil, SCHRIFTEN, datei, g, stil))
     html = html.replace("<style>", "<style>" + "".join(schriften), 1)
     # Platzhalter-Cover der Vorlage (farbige Bücher) kennzeichnen: ihre Aufschriften sind kein Seitentext
-    html = re.sub(r'<div style="([^"]*border-radius: 2px [345]px [345]px 2px[^"]*)"', r'<div data-cover="1" style="\1"', html)
+    html = re.sub(r'<div style="([^"]*border-radius: [23]px [3-6]px [3-6]px [23]px[^"]*)"', r'<div data-cover="1" style="\1"', html)
     open(ziel, "w", encoding="utf-8").write(html)
 
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main(sys.argv[1], *(sys.argv[2:3]))

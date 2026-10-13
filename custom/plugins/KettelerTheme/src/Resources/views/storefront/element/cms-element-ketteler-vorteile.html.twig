@@ -1,0 +1,40 @@
+{#
+    Vorteile / Liste (Werkseiten): links Überschrift, Einleitung und heller Zusatztext, rechts Einträge zweispaltig
+    (Titel und Text oder eine Zeile) oder einspaltig mit kursivem Anfangsbuchstaben, darunter Aufzählungen.
+#}
+{% set c = element.config %}
+{# Leer gelassen (z. B. auf einer Werkseite ohne diesen Bereich): nichts anzeigen #}
+{% if c.ueberschrift.value or c.eintraege.value is not empty %}
+{% set art = c.darstellung.value|default('titel') %}
+<section class="kt-rahmen kt-vorteile kt-vorteile--{{ art }} kt-vorteile--abstand-{{ c.abstand.value|default('gross') }}"{% if c.anker.value %} id="{{ c.anker.value }}"{% endif %} aria-label="{{ c.ueberschrift.value|striptags }}" data-kt="vorteile">
+    <div class="kt-vorteile-kopf">
+        {% if c.ueberschrift.value %}<h2>{{ c.ueberschrift.value }}</h2>{% endif %}
+        {% for absatz in (c.einleitung.value|default(''))|split("\n\n") %}
+            {% if absatz|trim %}<p class="kt-vorteile-einleitung">{{ absatz|trim|kt_text }}</p>{% endif %}
+        {% endfor %}
+        {% if c.hinweis.value %}<p class="kt-vorteile-hinweis">{{ c.hinweis.value|kt_text }}</p>{% endif %}
+    </div>
+    <div class="kt-vorteile-liste">
+        {% for e in c.eintraege.value|default([]) %}
+            {% if art == 'buchstabe' %}
+                <div class="kt-vorteil-buchstabe"><span class="kt-vorteil-anfang" aria-hidden="true">{{ e.titel }}</span><span>{{ e.text }}</span></div>
+            {% elseif art == 'zeile' %}
+                <p class="kt-vorteil-zeile">{{ e.titel ?: e.text }}</p>
+            {% else %}
+                <div class="kt-vorteil"><p class="kt-vorteil-titel">{{ e.titel }}</p>{% if e.text %}<p class="kt-vorteil-text">{{ e.text }}</p>{% endif %}</div>
+            {% endif %}
+        {% endfor %}
+        {% set listen = c.aufzaehlungen.value|default([])|filter(a => a.titel or a.punkte) %}
+        {% if listen is not empty %}
+            <div class="kt-vorteile-aufzaehlungen">
+                {% for a in listen %}
+                    <div class="kt-vorteile-aufzaehlung">
+                        {% if a.titel %}<p class="kt-vorteile-aufzaehlung-titel">{{ a.titel }}</p>{% endif %}
+                        <ul>{% for punkt in (a.punkte|default(''))|split("\n") %}{% if punkt|trim %}<li>{{ punkt|trim|kt_text }}</li>{% endif %}{% endfor %}</ul>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endif %}

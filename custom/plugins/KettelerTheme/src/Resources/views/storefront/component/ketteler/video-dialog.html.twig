@@ -1,0 +1,36 @@
+{#
+    Video im nativen Dialog (Schaufenster, Video mit Person): selbst gehostetes MP4, Untertitel (WebVTT), keine Anfrage an
+    fremde Server. Der Auslöser trägt data-kt-video-oeffnen="{{ dialogId }}" und zeigt ohne JavaScript auf die Videodatei.
+    Fokus wandert in den Dialog, Escape und „Schließen“ beenden ihn, der Fokus kehrt zum Auslöser zurück, das Video hält an.
+    Parameter: dialogId, video, poster (optional), untertitel (optional), titel, leiste (Text in der Leiste)
+#}
+<dialog class="kt-video-dialog" id="{{ dialogId }}" aria-label="{{ titel }}" data-kt="video-dialog">
+    <video controls preload="none" playsinline{% if poster %} poster="{{ poster.url }}"{% endif %}>
+        <source src="{{ video.url }}" type="{{ video.mimeType|default('video/mp4') }}">
+        {% if untertitel %}<track kind="subtitles" srclang="de" label="Deutsch" src="{{ untertitel.url }}" default>{% endif %}
+    </video>
+    <div class="kt-video-dialog-leiste">
+        <span>{{ leiste }}</span>
+        <button type="button" class="kt-knopf kt-knopf--magenta" data-kt-video-schliessen>Schließen</button>
+    </div>
+</dialog>
+<script>
+    (function () {
+        var dialog = document.getElementById('{{ dialogId }}');
+        var knoepfe = document.querySelectorAll('[data-kt-video-oeffnen="{{ dialogId }}"]');
+        if (!dialog || !knoepfe.length || typeof dialog.showModal !== 'function') { return; }
+        var video = dialog.querySelector('video');
+        var zuletzt = null;
+        knoepfe.forEach(function (knopf) {
+            knopf.addEventListener('click', function (e) {
+                e.preventDefault();
+                zuletzt = knopf;
+                dialog.showModal();
+                dialog.querySelector('[data-kt-video-schliessen]').focus();
+            });
+        });
+        dialog.querySelector('[data-kt-video-schliessen]').addEventListener('click', function () { dialog.close(); });
+        dialog.addEventListener('click', function (e) { if (e.target === dialog) { dialog.close(); } });
+        dialog.addEventListener('close', function () { video.pause(); if (zuletzt) { zuletzt.focus(); } });
+    })();
+</script>

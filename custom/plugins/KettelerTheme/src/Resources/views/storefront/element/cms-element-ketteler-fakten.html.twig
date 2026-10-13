@@ -1,0 +1,15 @@
+{# Fakten (Werkseiten): Überschrift links, rechts eine Liste Begriff und Wert (dl) #}
+{% set c = element.config %}
+{# Leer gelassen (z. B. auf einer Werkseite ohne diesen Bereich): nichts anzeigen #}
+{% if c.eintraege.value is not empty %}
+<section class="kt-band--weiss kt-band--nur-oben"{% if c.anker.value %} id="{{ c.anker.value }}"{% endif %} aria-label="{{ c.ueberschrift.value|striptags }}" data-kt="fakten">
+    <div class="kt-rahmen kt-fakten">
+        {% if c.ueberschrift.value %}<h2>{{ c.ueberschrift.value }}</h2>{% endif %}
+        <dl>
+            {% for e in c.eintraege.value|default([])|filter(e => e.begriff) %}
+                <div><dt>{{ e.begriff }}</dt><dd>{{ e.wert|kt_text }}</dd></div>
+            {% endfor %}
+        </dl>
+    </div>
+</section>
+{% endif %}

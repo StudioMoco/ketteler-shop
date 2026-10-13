@@ -73,3 +73,19 @@ Erklärung geht per E-Mail an Sie und steht an der Bestellung. Dazu brauchen wir
     liefern (oder freigeben, dass wir sie aus dem heutigen Shop übernehmen). Bis dahin führen beide Links auf die Seite
     „Aktuell & interessant“.
 
+
+## Zu den Werkseiten (ZMV, Eichstätter, AVR)
+
+21. **Dateien:** Bitte die PDFs der Leseproben, das Inhaltsverzeichnis ZMV 5/2026, das Lesemuster des Eichstätter
+    Kommentars, das Grußwort und ein Foto von Rechtsanwalt Marvin Milleschewski liefern. Liste mit den heutigen Adressen:
+    [dateien-ketteler.md](dateien-ketteler.md). Bis dahin zeigt der Shop Platzhalter mit dem richtigen Titel.
+22. **ZMV-Probeheft Digital:** Heute bestellt man es in der Digibib. Soll es künftig ein PDF zum Herunterladen sein oder
+    ein Zugang in der Bibliothek? Bis zur Antwort führt der Knopf auf ein Platzhalter-PDF.
+23. **„Einzelhefte und Einzelartikel Digital“:** Wo sollen einzelne Hefte und Artikel digital künftig verkauft werden?
+    Bis zur Antwort führt der Link auf die Kategorie „ZMV Digital“.
+24. **Pressemeldung zur neuen Schriftleitung (AVR):** Als PDF oder als eigene Seite im Shop?
+25. **Nummern der Einzelhefte:** Der Shop ordnet Einzelhefte nach Jahrgang und Heft aus der Artikelnummer (Muster
+    `Z5-2026` = Heft 5/2026). Sind alle Einzelhefte in weclapp so nummeriert? Ausnahmen lassen sich am Artikel über die
+    Zusatzfelder „Jahrgang“ und „Heft“ festlegen.
+26. **Eichstätter Kommentar Print und Online:** Zurzeit wird nur der Online-Zugang (608082) verkauft. Bitte bestätigen,
+    dass es kein Paket mit der Printausgabe mehr gibt.

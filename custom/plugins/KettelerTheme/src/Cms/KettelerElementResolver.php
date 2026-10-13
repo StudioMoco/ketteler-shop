@@ -27,7 +27,9 @@ class KettelerElementResolver extends AbstractCmsElementResolver
     /** Feldnamen, deren Wert eine Produkt-, Kategorie- oder Medien-ID (bzw. eine Liste davon) ist */
     public const PRODUKT_FELDER = ['produkt', 'produkte'];
     public const KATEGORIE_FELDER = ['kategorie'];
-    public const MEDIEN_FELDER = ['bild', 'bilder', 'video', 'videoPoster', 'videoUntertitel'];
+    public const MEDIEN_FELDER = ['bild', 'bilder', 'video', 'videoPoster', 'videoUntertitel', 'datei', 'knopfDatei', 'foto', 'kastenFussDatei'];
+    /** Kategorie, deren Produkte vollständig geladen und nach Jahrgang gruppiert werden (Einzelhefte) */
+    public const HEFT_FELD = 'heftKategorie';
 
     public function __construct(private readonly string $typ)
     {
@@ -58,6 +60,11 @@ class KettelerElementResolver extends AbstractCmsElementResolver
         if ($ids['medien'] !== []) {
             $sammlung->add($this->schluessel($slot, 'medien'), MediaDefinition::class, new Criteria($ids['medien']));
         }
+        $hefte = $this->werte($slot)[self::HEFT_FELD] ?? null;
+        if (\is_string($hefte) && Uuid::isValid($hefte)) {
+            $c = (new Criteria())->addFilter(new EqualsFilter('categoriesRo.id', $hefte))->addAssociation('cover.media')->setLimit(500);
+            $sammlung->add($this->schluessel($slot, 'hefte'), SalesChannelProductDefinition::class, $c);
+        }
 
         return $sammlung->all() === [] ? null : $sammlung;
     }
@@ -78,7 +85,69 @@ class KettelerElementResolver extends AbstractCmsElementResolver
         foreach ($result->get($this->schluessel($slot, 'medien'))?->getEntities() ?? [] as $m) {
             $daten['medien'][$m->getId()] = $m;
         }
+        $daten['jahrgaenge'] = self::nachJahrgang(array_values($result->get($this->schluessel($slot, 'hefte'))?->getEntities()?->getElements() ?? []));
         $slot->setData(new ArrayStruct($daten));
+    }
+
+    /**
+     * Einzelhefte nach Jahrgang (neuester zuerst), im Jahrgang nach Heftnummer absteigend. Jahrgang und Heft kommen aus
+     * den Zusatzfeldern ketteler_jahrgang und ketteler_heft, sonst aus der Artikelnummer (Z5-2026, auch TEST-P-ZMV-2026-5),
+     * sonst aus dem Namen („5/2026“). Hefte ohne erkennbaren Jahrgang (Abo, Probeheft) fehlen hier.
+     *
+     * @param list<object> $produkte
+     *
+     * @return array<int, list<object>>
+     */
+    public static function nachJahrgang(array $produkte): array
+    {
+        $gruppen = [];
+        $nummern = [];
+        foreach ($produkte as $p) {
+            $felder = method_exists($p, 'getCustomFields') ? ($p->getCustomFields() ?? []) : [];
+            [$jahr, $heft] = self::heft((string) $p->getProductNumber(), (string) ($p->getTranslation('name') ?? $p->getName() ?? ''));
+            $jahr = (int) ($felder['ketteler_jahrgang'] ?? 0) ?: $jahr;
+            $heft = (int) ($felder['ketteler_heft'] ?? 0) ?: $heft;
+            if ($jahr === null) {
+                continue;
+            }
+            $gruppen[$jahr][] = $p;
+            $nummern[$p->getId()] = $heft ?? 0;
+        }
+        krsort($gruppen);
+        foreach ($gruppen as &$liste) {
+            usort($liste, static fn (object $a, object $b): int => $nummern[$b->getId()] <=> $nummern[$a->getId()]);
+        }
+
+        return $gruppen;
+    }
+
+    /**
+     * Jahrgang und Heft aus Artikelnummer bzw. Name. Der Jahrgang ist die vierstellige Zahl 19xx/20xx, das Heft die
+     * ein- bis zweistellige Zahl daneben (Z5-2026, ZMV-2026-5, „ZMV-Einzelheft 5/2026“).
+     *
+     * @return array{0: ?int, 1: ?int}
+     */
+    public static function heft(string $nummer, string $name = ''): array
+    {
+        foreach ([$nummer, $name] as $text) {
+            preg_match_all('/\d+/', $text, $t);
+            $zahlen = $t[0];
+            foreach ($zahlen as $i => $z) {
+                if (preg_match('/^(19|20)\d\d$/', $z)) {
+                    $heft = null;
+                    foreach ([$i - 1, $i + 1] as $n) {
+                        if (isset($zahlen[$n]) && \strlen($zahlen[$n]) <= 2) {
+                            $heft = (int) $zahlen[$n];
+                            break;
+                        }
+                    }
+
+                    return [(int) $z, $heft];
+                }
+            }
+        }
+
+        return [null, null];
     }
 
     /**

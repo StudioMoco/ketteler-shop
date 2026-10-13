@@ -176,7 +176,7 @@ def main():
     e.pruefe(len(kunde) == 1, "Eingangsbestätigung an die Kundin")
     if kunde:
         pruefe_bestaetigung(e, "Bestätigung", kunde[0], [nr, "Tessa Testkundin", "testkunde@ketteler.test",
-                            "Widerruf für: Musterbuch Arbeitsrecht (Print) (TEST-P-001)", "Das Buch brauche ich doch nicht.", "09972 94 14-51"])
+                            "Widerruf für: Musterbuch Arbeitsrecht (Test) (TEST-P-001)", "Das Buch brauche ich doch nicht.", "09972 94 14-51"])
     verwaltung = warte(lambda: mails('to:%s subject:"Widerruf eingegangen: %s"' % (empfaenger, nr)), 20)
     e.pruefe(len(verwaltung) == 1 and "Zugeordnet zu Bestellung " + nr in text_von(verwaltung[0]), "Mail an den Empfänger aus der Einstellung, mit Zuordnung")
     e.pruefe((lizenz_zu(nr) or [{}])[0].get("status") == "aktiv", "Lizenz bleibt bestehen (keine automatische Beendigung)")

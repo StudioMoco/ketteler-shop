@@ -415,8 +415,51 @@ Beim Anbinden die Liste erzeugen und an Ketteler geben.
 **Startseite: gebaut (13.10.2026)** nach der freigegebenen Vorlage `docs/design/startseite-entwurf.dc.html`. Theme
 (Farben, IBM Plex Sans und Serif selbst ausgeliefert), Kopf und Fuß (`docs/design/kopf-fuss.md`), sieben eigene
 Erlebniswelt-Blöcke (`docs/design/erlebniswelten.md`), Startseite und Seite „Sortiment“ legt `ketteler:einrichten` einmal
-an; danach pflegt Ketteler in der Verwaltung. Werkseiten folgen mit denselben Blöcken (vor allem „Werke“, „Schaufenster“,
-„Produktreihe“). Bildschirmfotos neben der Vorlage: `docs/design/bildschirmfotos/`.
+an; danach pflegt Ketteler in der Verwaltung. Bildschirmfotos neben der Vorlage: `docs/design/bildschirmfotos/`.
+
+**Werkseiten: gebaut (13.10.2026)** nach den Vorlagen `docs/design/werkseite-{avr,zmv,eichstaetter}-entwurf.dc.html`.
+Ein Layout „Werkseite“ mit zehn festen Plätzen (Werk-Kopf, Angebote, Einzelhefte, Hinweis, Vorteile / Liste, Aktuelle
+Ausgabe, Leseproben, Video mit Person, Fakten, Rückmeldung) an den Kategorien „Kompendium AVR Caritas“, „Zeitschrift ZMV“
+und „Eichstätter Kommentar“; die Inhalte stehen je Kategorie in deren Layout-Inhalten (Verwaltung: Kategorie > Layout),
+leere Plätze zeigen nichts. Blöcke: `docs/design/erlebniswelten.md`. Fehlende Dateien: `docs/dateien-ketteler.md`.
+
+### Entscheidungen von Atilla zu den Werkseiten (13.10.2026)
+
+1. **Mehrere Lizenzen nur über die Mehrplatz-Anfrage.** Jede Leselizenz braucht in der Bibliothek einen eigenen Zugang,
+   mehrere Plätze laufen über IP-Bereiche und bearbeitet Ketteler als Anfrage. Daraus folgt:
+   - Online-Artikel nur einzeln kaufbar (höchstens 1 Stück; geprüft in `tests/e2e/werkseiten_test.py`).
+   - **Keine Mengenpreise** bei Online-Artikeln. Die Staffel des alten Shops beim Eichstätter (3 Stück 71,90 € bis
+     10 Stück 44,90 €) wird nicht übernommen. Überträgt weclapp später Staffelpreise, werden sie für Online-Artikel
+     ignoriert (in Phase 3 umsetzen und im Bericht nennen).
+   - „Die AVR von A bis Z - Zusätzliche digitale Lizenzen“ (05029-M, 99,80 €) wird im Shop nicht verkauft.
+   - „Abonnement Digital ab 2. Lizenz 59,90 €“ (ZMV) wird im Shop nicht angeboten.
+   - Mehrplatz ist nie eine eigene Karte, nur die Hinweiszeile mit Link auf die Anfrage (Werk vorausgefüllt).
+2. **AVR:** online nur als Abonnement (05029-D, 198,90 €). Die Printausgabe (05029, 125,50 €) bleibt, solange Bestand
+   da ist (Abverkauf); bei Bestand 0 nicht bestellbar.
+3. **ZMV:** Abonnements Print, Digital, Kombi, dazu Digital zusätzlich zum Print-Abo. Einzelhefte bleiben kaufbar, mit
+   Archiv.
+4. **Eichstätter:** nur Online-Zugang (608082, 89,90 €), zurzeit keine Printausgabe.
+5. **Gutscheine** nur noch als Aktionscode im Checkout, keine eigene Seite. `/gutschein` leitet per 301 auf die
+   Eichstätter-Werkseite.
+
+### Weiterleitungen (301)
+
+Liste in `custom/plugins/KettelerTheme/src/Resources/config/weiterleitungen.json`, umgesetzt im Theme
+(`Weiterleitung/AlteAdressen.php`, vor dem Routing, Ziel ist die SEO-Adresse der Kategorie). Geprüft in
+`tests/e2e/werkseiten_test.py`.
+
+| Alte Adresse | Neue Seite |
+|---|---|
+| `/digibib` | Zeitschrift ZMV |
+| `/zmvaktuell` | Zeitschrift ZMV, Aktuelle Ausgabe (`#probeheft`) |
+| `/?listview&link=0205000` | ZMV Print (Einzelhefte) |
+| `/?listview&link=0207000` | ZMV Archiv |
+| `/listview?link=0200000` | Zeitschrift ZMV |
+| `/?listview&link=0500000`, `/listview?link=0500000` | Eichstätter Kommentar |
+| `/bookreader`, `/eichstaetterkommentar`, `/gutschein` | Eichstätter Kommentar |
+| `/importraet`, `/kompendiumaktuell`, `/kompendiumavrcaritas` | Kompendium AVR Caritas |
+| `/neuepreise` | Preise ZMV (bleibt eigene Seite unter „Rechtliches & Informationen“) |
+| `/stob` | AGB |
 
 ### Ursprüngliche Empfehlung
 

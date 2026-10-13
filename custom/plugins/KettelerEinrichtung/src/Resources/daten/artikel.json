@@ -1,9 +1,9 @@
 {
-  "_hinweis": "Testartikel mit Platzhaltertexten. Keine echten Daten. Artikelnummern beginnen mit TEST, damit sie nie mit weclapp kollidieren. Preise sind Bruttopreise in Euro. Später kommen Artikel, Preise und Bestände aus weclapp. steuer: print7, print19 oder online (siehe steuern.json). abo: null oder Hinweistext für die Abo-Kennzeichnung. bestand: optional (Vorgabe 1000).",
+  "_hinweis": "Testartikel mit Platzhaltertexten. Keine echten Daten. Artikelnummern beginnen mit TEST, damit sie nie mit weclapp kollidieren. Preise sind Bruttopreise in Euro. Später kommen Artikel, Preise und Bestände aus weclapp. steuer: print7, print19 oder online (siehe steuern.json). abo: null oder Hinweistext für die Abo-Kennzeichnung. bestand: optional (Vorgabe 1000). abverkauf: true = nur solange Bestand (bei 0 nicht bestellbar). autor: Zeile über dem Titel auf der Produktkarte.",
   "artikel": [
     {
       "nummer": "TEST-P-001",
-      "name": "Musterbuch Arbeitsrecht (Print)",
+      "name": "Musterbuch Arbeitsrecht (Test)",
       "artikelart": "print",
       "produkt": null,
       "steuer": "print7",
@@ -13,11 +13,12 @@
         "praxishandbuecher"
       ],
       "beschreibung": "Platzhaltertext für ein gedrucktes Praxishandbuch. Hier steht später die Beschreibung aus weclapp.",
-      "abo": null
+      "abo": null,
+      "autor": "Ulrich Richartz (Autor)"
     },
     {
       "nummer": "TEST-P-002",
-      "name": "Musterkerze (Print-Sortiment, voller Steuersatz)",
+      "name": "Musterkerze KAB (Test)",
       "artikelart": "print",
       "produkt": null,
       "steuer": "print19",
@@ -40,12 +41,13 @@
       "kategorien": [
         "avr"
       ],
-      "beschreibung": "Platzhaltertext für den Online-Zugang zur AVR in der Bibliothek. Kein Versand, der Zugang wird nach dem Kauf freigeschaltet.",
-      "abo": null
+      "beschreibung": "Platzhaltertext für „Die AVR von A bis Z - Digital“ (05029-D) als Abonnement. Der Zugang zur Bibliothek wird sofort freigeschaltet. Mehrere Lizenzen nur über die Mehrplatz-Anfrage.",
+      "abo": "Jahresabonnement mit sofortigem Online-Zugang, verlängert sich jeweils um ein Jahr. Platzhalter: Laufzeit und Kündigungsfrist nach den AGB.",
+      "autor": "Marvin Milleschewski (Schriftleiter)"
     },
     {
       "nummer": "TEST-O-EK",
-      "name": "Eichstätter Kommentar Online-Zugang (Test)",
+      "name": "Eichstätter Kommentar MAVO & KAGO Online-Zugang (Test)",
       "artikelart": "online",
       "produkt": "eichstaetter",
       "steuer": "online",
@@ -56,7 +58,8 @@
       ],
       "beschreibung": "Platzhaltertext für den Online-Zugang zum Eichstätter Kommentar. Kein Versand. Wird ohne Bestandsprüfung verkauft (wie 608082 in weclapp, dort als Lagerartikel geführt).",
       "abo": null,
-      "bestand": 0
+      "bestand": 0,
+      "autor": "Oxenknecht-Witzsch/Eder/Stöcke-Muhlack/Schmitz/Richartz (Hg)"
     },
     {
       "nummer": "TEST-B-EK",
@@ -66,24 +69,8 @@
       "steuer": "print7",
       "preis": 109.8,
       "gewicht": 1.2,
-      "kategorien": [
-        "eichstaetter"
-      ],
-      "beschreibung": "Platzhaltertext für ein Bundle aus Buch und Online-Zugang. Das Buch wird verschickt, der Zugang wird freigeschaltet.",
-      "abo": null
-    },
-    {
-      "nummer": "TEST-P-ZMV",
-      "name": "ZMV-Einzelheft (Test)",
-      "artikelart": "print",
-      "produkt": null,
-      "steuer": "print7",
-      "preis": 24.5,
-      "gewicht": 0.15,
-      "kategorien": [
-        "zmv-print"
-      ],
-      "beschreibung": "Platzhaltertext für ein Einzelheft der Zeitschrift.",
+      "kategorien": [],
+      "beschreibung": "Platzhaltertext für ein Bundle aus Buch und Online-Zugang (nur für die Tests der Lizenzlogik; nicht im Sortiment, der Eichstätter Kommentar wird zurzeit nur online verkauft).",
       "abo": null
     },
     {
@@ -98,7 +85,8 @@
         "zmv-print"
       ],
       "abo": "Jahresabonnement, verlängert sich jeweils um ein Jahr. Platzhalter: Laufzeit und Kündigungsfrist nach den AGB.",
-      "beschreibung": "Platzhaltertext für das gedruckte ZMV-Abonnement. Die Bestellung geht nach weclapp, den Vertrag legt die Verwaltung dort an."
+      "beschreibung": "Platzhaltertext für das gedruckte ZMV-Abonnement. Die Bestellung geht nach weclapp, den Vertrag legt die Verwaltung dort an.",
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)"
     },
     {
       "nummer": "TEST-ABO-ZMV-D",
@@ -112,21 +100,8 @@
         "zmv-digital"
       ],
       "abo": "Jahresabonnement, verlängert sich jeweils um ein Jahr. Platzhalter: Laufzeit und Kündigungsfrist nach den AGB.",
-      "beschreibung": "Platzhaltertext für das digitale ZMV-Abonnement. Offen: was der Käufer beim Online-Teil der ZMV bekommt und wo (siehe docs/plan.md)."
-    },
-    {
-      "nummer": "TEST-ABO-AVR-D",
-      "name": "AVR Digital Abonnement (Test)",
-      "artikelart": "online",
-      "produkt": "avr",
-      "steuer": "online",
-      "preis": 198.9,
-      "gewicht": 0,
-      "kategorien": [
-        "avr"
-      ],
-      "abo": "Jahresabonnement mit sofortigem Online-Zugang, verlängert sich jeweils um ein Jahr. Platzhalter: Laufzeit und Kündigungsfrist nach den AGB.",
-      "beschreibung": "Platzhaltertext für AVR Digital als Abonnement. Der Zugang zur Bibliothek wird sofort freigeschaltet, den Vertrag legt die Verwaltung in weclapp an."
+      "beschreibung": "Platzhaltertext für das digitale ZMV-Abonnement. Offen: was der Käufer beim Online-Teil der ZMV bekommt und wo (siehe docs/plan.md).",
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)"
     },
     {
       "nummer": "TEST-P-ZMV-2026-5",
@@ -140,7 +115,8 @@
         "zmv-print"
       ],
       "beschreibung": "Testartikel für die Startseite. Echte Daten kommen aus weclapp.",
-      "abo": null
+      "abo": null,
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)"
     },
     {
       "nummer": "TEST-PH-CHECKLISTEN",
@@ -216,9 +192,644 @@
       "autor": "Matthias Ullrich (Autor)",
       "beschreibung": "Testartikel für die Startseite (Titel aus der Gestaltungsvorlage). Echte Daten kommen aus weclapp.",
       "abo": null
+    },
+    {
+      "nummer": "TEST-P-AVR",
+      "name": "Die AVR von A bis Z Print (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 125.5,
+      "gewicht": 2.4,
+      "kategorien": [
+        "avr"
+      ],
+      "autor": "Marvin Milleschewski (Schriftleiter)",
+      "beschreibung": "Platzhaltertext für die Printausgabe (05029). Nur solange der Vorrat reicht: Abverkauf, bei Bestand 0 nicht bestellbar.",
+      "abo": null,
+      "bestand": 3,
+      "abverkauf": true
+    },
+    {
+      "nummer": "TEST-P-AVR-0",
+      "name": "Die AVR von A bis Z Print, ausverkauft (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 125.5,
+      "gewicht": 2.4,
+      "kategorien": [
+        "avr"
+      ],
+      "autor": "Marvin Milleschewski (Schriftleiter)",
+      "beschreibung": "Testartikel für den Fall „Bestand 0 im Abverkauf“: wird angezeigt, ist aber nicht bestellbar.",
+      "abo": null,
+      "bestand": 0,
+      "abverkauf": true
+    },
+    {
+      "nummer": "TEST-ABO-ZMV-K",
+      "name": "ZMV Abonnement Kombi (Test)",
+      "artikelart": "bundle",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 164.8,
+      "gewicht": 0.25,
+      "kategorien": [
+        "zmv-print",
+        "zmv-digital"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "abo": "Jahresabonnement, verlängert sich jeweils um ein Jahr. Platzhalter: Laufzeit und Kündigungsfrist nach den AGB.",
+      "beschreibung": "Platzhaltertext für das ZMV-Abonnement Kombi (Digital und Print)."
+    },
+    {
+      "nummer": "TEST-ABO-ZMV-DZ",
+      "name": "ZMV Abonnement Digital zusätzlich zum Print-Abo (Test)",
+      "artikelart": "online",
+      "produkt": null,
+      "steuer": "online",
+      "preis": 35.0,
+      "gewicht": 0,
+      "kategorien": [
+        "zmv-digital"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "abo": "Jahresabonnement, verlängert sich jeweils um ein Jahr. Platzhalter: Laufzeit und Kündigungsfrist nach den AGB.",
+      "beschreibung": "Platzhaltertext für das digitale Abonnement zusätzlich zum bestehenden Abonnement Print (gilt nicht für Universitäten, Bibliotheken, Gerichte)."
+    },
+    {
+      "nummer": "TEST-P-ZMV-PROBE",
+      "name": "ZMV-Probeheft Print, kostenlos (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 0.0,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Platzhaltertext für das kostenlose Probeheft (Print, ohne Abonnement).",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2026-4",
+      "name": "ZMV-Einzelheft 4/2026 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 24.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Einzelheft. Jahrgang und Heft aus der Artikelnummer. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2026-3",
+      "name": "ZMV-Einzelheft 3/2026 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 24.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Einzelheft. Jahrgang und Heft aus der Artikelnummer. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2026-2",
+      "name": "ZMV-Einzelheft 2/2026 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 24.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Einzelheft. Jahrgang und Heft aus der Artikelnummer. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2026-1",
+      "name": "ZMV-Einzelheft 1/2026 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 24.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Einzelheft. Jahrgang und Heft aus der Artikelnummer. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2025-6",
+      "name": "ZMV-Einzelheft 6/2025 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 24.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Einzelheft. Jahrgang und Heft aus der Artikelnummer. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2025-5",
+      "name": "ZMV-Einzelheft 5/2025 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 24.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Einzelheft. Jahrgang und Heft aus der Artikelnummer. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2025-4",
+      "name": "ZMV-Einzelheft 4/2025 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 24.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Einzelheft. Jahrgang und Heft aus der Artikelnummer. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2025-3",
+      "name": "ZMV-Einzelheft 3/2025 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 24.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Einzelheft. Jahrgang und Heft aus der Artikelnummer. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2025-2",
+      "name": "ZMV-Einzelheft 2/2025 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 24.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Einzelheft. Jahrgang und Heft aus der Artikelnummer. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2025-1",
+      "name": "ZMV-Einzelheft 1/2025 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 24.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Einzelheft. Jahrgang und Heft aus der Artikelnummer. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2024-6",
+      "name": "ZMV-Einzelheft 6/2024 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 24.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Einzelheft. Jahrgang und Heft aus der Artikelnummer. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2024-5",
+      "name": "ZMV-Einzelheft 5/2024 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 24.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Einzelheft. Jahrgang und Heft aus der Artikelnummer. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2024-4",
+      "name": "ZMV-Einzelheft 4/2024 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 24.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Einzelheft. Jahrgang und Heft aus der Artikelnummer. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2024-3",
+      "name": "ZMV-Einzelheft 3/2024 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 24.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Einzelheft. Jahrgang und Heft aus der Artikelnummer. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2024-2",
+      "name": "ZMV-Einzelheft 2/2024 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 24.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Einzelheft. Jahrgang und Heft aus der Artikelnummer. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2024-1",
+      "name": "ZMV-Einzelheft 1/2024 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 24.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Einzelheft. Jahrgang und Heft aus der Artikelnummer. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2023-6",
+      "name": "ZMV-Einzelheft 6/2023 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 24.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Einzelheft. Jahrgang und Heft aus der Artikelnummer. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2023-5",
+      "name": "ZMV-Einzelheft 5/2023 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 24.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Einzelheft. Jahrgang und Heft aus der Artikelnummer. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2023-4",
+      "name": "ZMV-Einzelheft 4/2023 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 24.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Einzelheft. Jahrgang und Heft aus der Artikelnummer. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2023-3",
+      "name": "ZMV-Einzelheft 3/2023 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 24.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Einzelheft. Jahrgang und Heft aus der Artikelnummer. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2023-2",
+      "name": "ZMV-Einzelheft 2/2023 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 24.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Einzelheft. Jahrgang und Heft aus der Artikelnummer. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2023-1",
+      "name": "ZMV-Einzelheft 1/2023 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 24.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Einzelheft. Jahrgang und Heft aus der Artikelnummer. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2022-6",
+      "name": "ZMV-Einzelheft 6/2022 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 17.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Einzelheft. Jahrgang und Heft aus der Artikelnummer. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2022-5",
+      "name": "ZMV-Einzelheft 5/2022 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 17.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Einzelheft. Jahrgang und Heft aus der Artikelnummer. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2022-4",
+      "name": "ZMV-Einzelheft 4/2022 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 17.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Einzelheft. Jahrgang und Heft aus der Artikelnummer. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2022-3",
+      "name": "ZMV-Einzelheft 3/2022 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 17.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Einzelheft. Jahrgang und Heft aus der Artikelnummer. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2022-2",
+      "name": "ZMV-Einzelheft 2/2022 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 17.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Einzelheft. Jahrgang und Heft aus der Artikelnummer. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2022-1",
+      "name": "ZMV-Einzelheft 1/2022 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 17.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Einzelheft. Jahrgang und Heft aus der Artikelnummer. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2021-3",
+      "name": "ZMV-Einzelheft 3/2021 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 17.5,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-archiv"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Archiv. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2018-2",
+      "name": "ZMV-Einzelheft 2/2018 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 15.8,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-archiv"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Archiv. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2015-4",
+      "name": "ZMV-Einzelheft 4/2015 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 14.8,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-archiv"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Archiv. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-2012-1",
+      "name": "ZMV-Einzelheft 1/2012 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 12.8,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-archiv"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Archiv. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-P-ZMV-FT-2010",
+      "name": "ZMV-Fachtagungsband 2010 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 10.5,
+      "gewicht": 0.4,
+      "kategorien": [
+        "zmv-archiv"
+      ],
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "beschreibung": "Testartikel Archiv. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-KAB-IMPULS",
+      "name": "KAB Magazin Impuls 3/2026 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 4.5,
+      "gewicht": 0.1,
+      "kategorien": [
+        "kab-impuls"
+      ],
+      "autor": "KAB Deutschlands (Hrsg.)",
+      "beschreibung": "Testartikel KAB Magazin. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-KAB-SOZIALETHIK",
+      "name": "Grundlagen der Sozialethik (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 19.9,
+      "gewicht": 0.5,
+      "kategorien": [
+        "kab-sozialethik"
+      ],
+      "autor": "Testautorin Sozialethik (Autorin)",
+      "beschreibung": "Testartikel KAB Buch. Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-KAB-ABZEICHEN",
+      "name": "KAB Anstecknadel (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print19",
+      "preis": 3.9,
+      "gewicht": 0.02,
+      "kategorien": [
+        "kab-abzeichen"
+      ],
+      "beschreibung": "Testartikel KAB Service (voller Steuersatz). Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-KAB-KARTE",
+      "name": "Glückwunschkarte KAB (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print19",
+      "preis": 2.5,
+      "gewicht": 0.03,
+      "kategorien": [
+        "kab-karten-gruss"
+      ],
+      "beschreibung": "Testartikel KAB Service Karten. Echte Daten kommen aus weclapp.",
+      "abo": null
     }
   ],
   "entfernt": [
+    "TEST-ABO-AVR-D",
+    "TEST-P-ZMV",
     "TEST-PH-PRAXISWISSEN"
   ]
 }

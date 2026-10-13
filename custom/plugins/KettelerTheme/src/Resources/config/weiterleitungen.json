@@ -1,0 +1,20 @@
+{
+  "_hinweis": "Alte Adressen des bisherigen Shops, 301 auf die neuen Seiten. ziel: Kategorie-Schlüssel aus ketteler:einrichten (kategorien.json), optional mit #Sprungmarke. Liste auch in docs/plan.md.",
+  "weiterleitungen": [
+    { "alt": "/digibib", "ziel": "zmv" },
+    { "alt": "/zmvaktuell", "ziel": "zmv#probeheft" },
+    { "alt": "/?listview&link=0205000", "ziel": "zmv-print" },
+    { "alt": "/?listview&link=0207000", "ziel": "zmv-archiv" },
+    { "alt": "/listview?link=0200000", "ziel": "zmv" },
+    { "alt": "/?listview&link=0500000", "ziel": "eichstaetter" },
+    { "alt": "/listview?link=0500000", "ziel": "eichstaetter" },
+    { "alt": "/bookreader", "ziel": "eichstaetter" },
+    { "alt": "/eichstaetterkommentar", "ziel": "eichstaetter" },
+    { "alt": "/gutschein", "ziel": "eichstaetter" },
+    { "alt": "/importraet", "ziel": "avr" },
+    { "alt": "/kompendiumaktuell", "ziel": "avr" },
+    { "alt": "/kompendiumavrcaritas", "ziel": "avr" },
+    { "alt": "/neuepreise", "ziel": "fuss-preise-zmv" },
+    { "alt": "/stob", "ziel": "fuss-agb" }
+  ]
+}

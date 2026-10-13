@@ -57,16 +57,22 @@ class ServiceDaten extends AbstractExtension
 
     public function getFilters(): array
     {
-        return [new TwigFilter('kt_kursiv', self::kursiv(...), ['is_safe' => ['html']])];
+        return [
+            new TwigFilter('kt_kursiv', self::kursiv(...), ['is_safe' => ['html']]),
+            new TwigFilter('kt_text', $this->text(...), ['is_safe' => ['html']]),
+        ];
     }
 
-    /** Ziel eines Block-Links: Kategorie oder Produkt über die SEO-Adresse, sonst die eingetragene Adresse; leer = null */
+    /** Ziel eines Block-Links: Kategorie oder Produkt über die SEO-Adresse, „bibliothek“, sonst die eingetragene Adresse; leer = null */
     public function link(mixed $ziel): ?string
     {
         if (!\is_string($ziel) || trim($ziel) === '') {
             return null;
         }
         $ziel = trim($ziel);
+        if ($ziel === 'bibliothek') {
+            return $this->daten()['bibliothekUrl'];
+        }
         if (preg_match('/^(kategorie|produkt):([0-9a-f]{32})$/', $ziel, $t) && Uuid::isValid($t[2])) {
             return $t[1] === 'kategorie'
                 ? $this->seoUrls->generate('frontend.navigation.page', ['navigationId' => $t[2]])
@@ -100,6 +106,25 @@ class ServiceDaten extends AbstractExtension
         $sicher = htmlspecialchars((string) $text, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8');
 
         return (string) preg_replace('/\*([^*]+)\*/u', '<em>$1</em>', $sicher);
+    }
+
+    /**
+     * Kurzer gepflegter Text mit wenigen Auszeichnungen: **fett**, *kursiv*, [Linktext](Ziel). Ziel wie bei Block-Links
+     * (kategorie:<id>, produkt:<id>, /pfad, https://…, mailto:); unbekannte Ziele bleiben reiner Text. Alles andere wird
+     * maskiert, Zeilenumbrüche werden zu <br>.
+     */
+    public function text(mixed $text): string
+    {
+        $sicher = htmlspecialchars((string) $text, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8');
+        $sicher = (string) preg_replace_callback('/\[([^\]]+)\]\(([^)\s]+)\)/u', function (array $t): string {
+            $ziel = $this->link(html_entity_decode($t[2], \ENT_QUOTES, 'UTF-8'));
+
+            return $ziel === null ? $t[1] : '<a class="kt-fliesslink" href="' . htmlspecialchars($ziel, \ENT_QUOTES, 'UTF-8') . '">' . $t[1] . '</a>';
+        }, $sicher);
+        $sicher = (string) preg_replace('/\*\*([^*]+)\*\*/u', '<strong>$1</strong>', $sicher);
+        $sicher = (string) preg_replace('/\*([^*]+)\*/u', '<em>$1</em>', $sicher);
+
+        return nl2br($sicher, false);
     }
 
     /** @return array<string, string> */

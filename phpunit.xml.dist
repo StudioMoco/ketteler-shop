@@ -11,6 +11,7 @@
             <directory>custom/plugins/KettelerLizenzen/tests</directory>
             <directory>custom/plugins/KettelerMehrplatz/tests</directory>
             <directory>custom/plugins/KettelerSteuern/tests</directory>
+            <directory>custom/plugins/KettelerTheme/tests</directory>
         </testsuite>
     </testsuites>
 </phpunit>

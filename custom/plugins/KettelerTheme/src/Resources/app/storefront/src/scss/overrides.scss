@@ -55,3 +55,10 @@ $btn-border-radius-sm: 25px;
 $btn-border-radius-lg: 25px;
 $input-border-radius: 8px;
 $border-color: $kt-linie;
+
+// Flächen der Werkseiten (Vorlagen werkseite-*-entwurf.dc.html): Kreis hinter dem Cover und Bänder
+$kt-blaugrau: #e9eef1;           // Band Blaugrau (Leseproben Eichstätter)
+$kt-blaugrau-kreis: #e4e9ec;     // Kreis Blaugrau hinter dem Cover
+$kt-linie-rose: #e3c7d3;         // Linien auf Rosé
+$kt-linie-blaugrau: #cfd8dd;     // Linien auf Blaugrau
+$kt-videoflaeche: #d8cbbb;       // Fläche hinter dem Abspielknopf, solange kein Vorschaubild da ist

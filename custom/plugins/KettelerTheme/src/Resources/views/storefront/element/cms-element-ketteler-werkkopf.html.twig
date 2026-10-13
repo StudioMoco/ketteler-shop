@@ -1,0 +1,57 @@
+{#
+    Werk-Kopf (Werkseiten): Brotkrumen, großes Cover leicht gedreht vor einem Kreis (Rosé, Sand oder Blaugrau), Dachzeile,
+    Titel (einzige h1), Untertitel kursiv, Text, Zusatzzeile, Angaben, Hauptknopf und Nebenlink (Sprungmarken), Zeile
+    für Bestandskunden mit Link in die Bibliothek. Vorlage: docs/design/werkseite-*-entwurf.dc.html
+#}
+{% set c = element.config %}
+{# Leer gelassen (z. B. auf einer Werkseite ohne diesen Bereich): nichts anzeigen #}
+{% if c.titel.value %}
+{% set d = element.data %}
+{% set produkt = c.produkt.value ? d.produkte[c.produkt.value] ?? null : null %}
+{% set bild = c.bild.value ? d.medien[c.bild.value] ?? null : null %}
+{% set aktiv = page.header.navigation.active ?? null %}
+{% set bestandZiel = kt_link(c.bestandLink.value) ?? kt_service().bibliothekUrl %}
+<div class="kt-rahmen">
+    <section class="kt-werkkopf" aria-label="{{ c.titel.value|striptags }}" data-kt="werkkopf">
+        <nav class="kt-brotkrumen" aria-label="Brotkrumen">
+            <a href="{{ path('frontend.home.page') }}">Home</a>
+            {% if aktiv %}
+                {% for k in sw_breadcrumb_full(aktiv, context.context) %}
+                    {% if k.id != context.salesChannel.navigationCategoryId %}
+                        <span aria-hidden="true">/</span>
+                        {% if k.id == aktiv.id %}<span aria-current="page">{{ k.translated.name }}</span>{% else %}<a href="{{ seoUrl('frontend.navigation.page', { navigationId: k.id }) }}">{{ k.translated.name }}</a>{% endif %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </nav>
+        <div class="kt-werkkopf-reihe">
+            <div class="kt-werkkopf-bild kt-werkkopf-bild--{{ c.flaeche.value|default('rose') }}">
+                {% if bild or produkt %}
+                    {% sw_include '@KettelerTheme/storefront/component/ketteler/cover.html.twig' with { produkt: produkt, medium: bild, titel: c.titel.value, groesse: 'werkkopf', drehung: -3, dekorativ: true } only %}
+                {% endif %}
+            </div>
+            <div class="kt-werkkopf-text">
+                {% if c.dachzeile.value %}<p class="kt-werkkopf-dachzeile">{{ c.dachzeile.value }}</p>{% endif %}
+                <h1 class="kt-werkkopf-titel">{{ c.titel.value }}</h1>
+                {% if c.untertitel.value %}<p class="kt-werkkopf-untertitel">{{ c.untertitel.value }}</p>{% endif %}
+                {% for absatz in (c.text.value|default(''))|split("\n\n") %}
+                    {% if absatz|trim %}<p class="kt-werkkopf-beschreibung">{{ absatz|trim }}</p>{% endif %}
+                {% endfor %}
+                {% if c.zusatz.value %}<p class="kt-werkkopf-zusatz">{{ c.zusatz.value|kt_text }}</p>{% endif %}
+                {% if c.angaben.value %}<p class="kt-werkkopf-angaben">{{ c.angaben.value }}</p>{% endif %}
+                {% set knopf = kt_link(c.knopfLink.value) %}
+                {% set neben = kt_link(c.nebenLink.value) %}
+                {% if (c.knopfText.value and knopf) or (c.nebenLinkText.value and neben) %}
+                    <div class="kt-werkkopf-aktionen">
+                        {% if c.knopfText.value and knopf %}<a class="kt-knopf kt-knopf--magenta" href="{{ knopf }}" data-kt="werkkopf-knopf">{{ c.knopfText.value }}</a>{% endif %}
+                        {% if c.nebenLinkText.value and neben %}<a class="kt-textlink" href="{{ neben }}">{{ c.nebenLinkText.value }}</a>{% endif %}
+                    </div>
+                {% endif %}
+                {% if c.bestandText.value or c.bestandLinkText.value %}
+                    <p class="kt-werkkopf-bestand">{{ c.bestandText.value }}{% if c.bestandLinkText.value %} <a class="kt-unterstrichen-magenta" href="{{ bestandZiel }}" data-kt="werkkopf-bibliothek">{{ c.bestandLinkText.value }}</a>{% endif %}</p>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+</div>
+{% endif %}

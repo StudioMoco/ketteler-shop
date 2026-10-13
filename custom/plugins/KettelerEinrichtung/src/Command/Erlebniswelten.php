@@ -16,6 +16,11 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * Nur EINMAL: Gibt es die Seite schon, bleibt sie unverändert, weil Ketteler sie danach in der Verwaltung pflegt und
  * ketteler:einrichten bei jeder Auslieferung läuft. Neu anlegen (überschreibt die Pflege!) nur mit --erlebniswelten-neu.
  * Medien (Platzhalter-Video, Vorschaubild, Untertitel) kommen aus daten/medien, ebenfalls nur einmal.
+ *
+ * Gemeinsame Layouts (z. B. „Werkseite“ für ZMV, Eichstätter und AVR): EIN Layout mit festen Plätzen, die Inhalte je
+ * Kategorie stehen in deren Layout-Inhalten (category.slotConfig, in der Verwaltung: Kategorie > Layout). Leere Plätze
+ * zeigen nichts. Auch hier gilt: nur einmal anlegen, gepflegte Inhalte bleiben (außer mit --erlebniswelten-neu).
+ * PDF-Platzhalter (@pdf:Titel) entstehen als kleine PDF-Datei mit dem Titel, bis Ketteler die echte Datei hochlädt.
  */
 class Erlebniswelten
 {
@@ -65,6 +70,82 @@ class Erlebniswelten
             $this->zuweisen($kategorie, $id, $context, true);
             $io->writeln(\sprintf('Erlebniswelt „%s“ angelegt (%d Blöcke).', $seite['name'], \count($seite['bloecke'])));
         }
+        foreach ($daten['layouts'] ?? [] as $layout) {
+            $this->layout($layout, $context, $io, $neu);
+        }
+    }
+
+    /**
+     * Gemeinsames Layout mit festen Plätzen (ein Block je Typ, in der Reihenfolge der Daten) und Inhalten je Kategorie.
+     *
+     * @param array<string, mixed> $layout
+     */
+    private function layout(array $layout, Context $context, SymfonyStyle $io, bool $neu): void
+    {
+        $id = self::id('cms.' . $layout['schluessel']);
+        $vorhanden = $this->repo('cms_page')->searchIds(new Criteria([$id]), $context)->firstId() !== null;
+        if (!$vorhanden || $neu) {
+            $bloecke = [];
+            foreach ($layout['bloecke'] as $i => $typ) {
+                $bloecke[] = [
+                    'id' => self::id('cms.' . $layout['schluessel'] . '.block.' . $typ),
+                    'type' => 'ketteler-' . $typ,
+                    'position' => $i,
+                    'sectionPosition' => 'main',
+                    'marginTop' => '0',
+                    'marginBottom' => '0',
+                    'marginLeft' => '0',
+                    'marginRight' => '0',
+                    'slots' => [[
+                        'id' => $this->platz($layout['schluessel'], $typ),
+                        'type' => 'ketteler-' . $typ,
+                        'slot' => 'inhalt',
+                        'config' => [],
+                    ]],
+                ];
+            }
+            // Bestehendes Layout ersetzen: Kategorien behalten ihre Zuordnung (gleiche ID), Plätze haben feste IDs
+            $this->repo('cms_page')->upsert([[
+                'id' => $id,
+                'type' => 'page',
+                'name' => $layout['name'],
+                'sections' => [[
+                    'id' => self::id('cms.' . $layout['schluessel'] . '.bereich'),
+                    'type' => 'default',
+                    'position' => 0,
+                    'sizingMode' => 'full_width',
+                    'blocks' => $bloecke,
+                ]],
+            ]], $context);
+            $io->writeln(\sprintf('Layout „%s“ angelegt (%d Plätze).', $layout['name'], \count($bloecke)));
+        }
+        foreach ($layout['inhalte'] as $schluessel => $inhalte) {
+            $kategorie = self::id('kategorie.' . $schluessel);
+            $k = $this->repo('category')->search(new Criteria([$kategorie]), $context)->first();
+            if ($k === null) {
+                continue;
+            }
+            if (!$neu && $k->getCmsPageId() !== null && !empty($k->getSlotConfig())) {
+                $io->writeln(\sprintf('Inhalte der Kategorie „%s“ bestehen schon und bleiben.', $k->getName()));
+                continue;
+            }
+            $slotConfig = [];
+            foreach ($layout['bloecke'] as $typ) {
+                $konfig = [];
+                foreach ($inhalte[$typ] ?? [] as $feld => $wert) {
+                    $konfig[$feld] = ['source' => 'static', 'value' => $this->aufloesen($wert, $context)];
+                }
+                // Auch leere Plätze ausdrücklich leer setzen, damit nichts aus dem Layout durchscheint
+                $slotConfig[$this->platz($layout['schluessel'], $typ)] = $konfig;
+            }
+            $this->repo('category')->update([['id' => $kategorie, 'cmsPageId' => $id, 'slotConfig' => $slotConfig]], $context);
+            $io->writeln(\sprintf('Kategorie „%s“: Layout „%s“ mit eigenen Inhalten.', $k->getName(), $layout['name']));
+        }
+    }
+
+    private function platz(string $layout, string $typ): string
+    {
+        return self::id('cms.' . $layout . '.block.' . $typ . '.inhalt');
     }
 
     /** Seite an die Kategorie hängen; ohne $immer nur, wenn die Kategorie noch keine eigene Erlebniswelt hat */
@@ -148,6 +229,10 @@ class Erlebniswelten
         if (\is_array($wert)) {
             return array_map(fn (mixed $w): mixed => $this->aufloesen($w, $context), $wert);
         }
+        if (\is_string($wert) && str_contains($wert, '](@')) {
+            // Links im Text: [AGB](@link-kategorie:fuss-agb)
+            return (string) preg_replace_callback('/\]\((@[a-z-]+:[^)]+)\)/', fn (array $t): string => '](' . $this->aufloesen($t[1], $context) . ')', $wert);
+        }
         if (!\is_string($wert) || !str_starts_with($wert, '@')) {
             return $wert;
         }
@@ -159,6 +244,7 @@ class Erlebniswelten
             'link-kategorie' => 'kategorie:' . self::id('kategorie.' . $schluessel),
             'link-artikel' => 'produkt:' . self::id('artikel.' . $schluessel),
             'medium' => $this->medium($schluessel, $context),
+            'pdf' => $this->pdf($schluessel, $context),
             default => throw new \RuntimeException('Unbekannter Verweis: ' . $wert),
         };
     }
@@ -182,6 +268,51 @@ class Erlebniswelten
         $this->medien->saveFile((string) file_get_contents($pfad), $endung, $typ, pathinfo($datei, \PATHINFO_FILENAME), $context, null, $id);
 
         return $id;
+    }
+
+    /**
+     * Platzhalter-PDF mit dem Titel der Datei (die echte Datei liefert Ketteler, siehe docs/plan.md). Einmal anlegen;
+     * ersetzt Ketteler die Datei in der Medienverwaltung, bleibt der Verweis gültig.
+     */
+    private function pdf(string $titel, Context $context): string
+    {
+        $id = self::id('pdf.' . $titel);
+        if ($this->repo('media')->searchIds(new Criteria([$id]), $context)->firstId() !== null) {
+            return $id;
+        }
+        $ordner = $this->repo('media_folder')->searchIds((new Criteria())->addFilter(new EqualsFilter('defaultFolder.entity', 'cms_page'))->setLimit(1), $context)->firstId();
+        $this->repo('media')->create([['id' => $id, 'mediaFolderId' => $ordner, 'title' => $titel, 'alt' => $titel]], $context);
+        $name = 'platzhalter-' . trim((string) preg_replace('/[^a-z0-9]+/', '-', strtolower(strtr($titel, ['ä' => 'ae', 'ö' => 'oe', 'ü' => 'ue', 'ß' => 'ss', 'Ä' => 'ae', 'Ö' => 'oe', 'Ü' => 'ue', '§' => 'paragraf']))), '-');
+        $this->medien->saveFile(self::platzhalterPdf($titel), 'pdf', 'application/pdf', substr($name, 0, 80) . '-' . substr($id, 0, 6), $context, null, $id);
+
+        return $id;
+    }
+
+    /** Einseitiges PDF mit zwei Zeilen Text (Helvetica, WinAnsi), ohne Bibliothek */
+    public static function platzhalterPdf(string $titel): string
+    {
+        $text = static fn (string $t): string => str_replace(['\\', '(', ')'], ['\\\\', '\\(', '\\)'], (string) mb_convert_encoding($t, 'Windows-1252', 'UTF-8'));
+        $inhalt = "BT /F1 16 Tf 72 760 Td (" . $text($titel) . ") Tj 0 -28 Td /F1 11 Tf (" . $text('Platzhalter: Die Datei liefert der KETTELER-Verlag.') . ") Tj ET";
+        $objekte = [
+            '<< /Type /Catalog /Pages 2 0 R >>',
+            '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+            '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>',
+            '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>',
+            '<< /Length ' . \strlen($inhalt) . " >>\nstream\n" . $inhalt . "\nendstream",
+        ];
+        $pdf = "%PDF-1.4\n";
+        $stellen = [];
+        foreach ($objekte as $i => $o) {
+            $stellen[] = \strlen($pdf);
+            $pdf .= ($i + 1) . " 0 obj\n" . $o . "\nendobj\n";
+        }
+        $xref = \strlen($pdf);
+        $pdf .= "xref\n0 " . (\count($objekte) + 1) . "\n0000000000 65535 f \n";
+        foreach ($stellen as $s) {
+            $pdf .= \sprintf("%010d 00000 n \n", $s);
+        }
+
+        return $pdf . "trailer\n<< /Size " . (\count($objekte) + 1) . " /Root 1 0 R >>\nstartxref\n" . $xref . "\n%%EOF\n";
     }
 
     private function repo(string $entity): EntityRepository

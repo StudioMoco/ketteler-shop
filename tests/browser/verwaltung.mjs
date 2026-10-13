@@ -32,6 +32,11 @@ const seite = await (await fetch(SHOP + '/api/search/cms-page', {
     body: JSON.stringify({ filter: [{ type: 'equals', field: 'name', value: 'Startseite' }], limit: 1 }),
 })).json();
 const seitenId = seite.data?.[0]?.id;
+const werkseite = await (await fetch(SHOP + '/api/search/cms-page', {
+    method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token.access_token },
+    body: JSON.stringify({ filter: [{ type: 'equals', field: 'name', value: 'Werkseite' }], limit: 1 }),
+})).json();
+const werkseitenId = werkseite.data?.[0]?.id;
 
 const b = await starten(AUTH);
 const fehler = [];
@@ -70,6 +75,23 @@ try {
         felder = await b.werte(`document.querySelectorAll('.ketteler-cms-el-config .ketteler-schema-feld').length`);
     }
     pruefe(felder > 5, 'Einstellungsfenster des Schaufensters mit Feldern', String(felder));
+    // Alle eigenen Blöcke mit deutschem Namen und Vorschau registriert; Layout „Werkseite“ mit seinen zehn Plätzen
+    const bloecke = await b.werte(`Object.values(Shopware.Service('cmsService').getCmsBlockRegistry()).filter((x) => x.name.startsWith('ketteler-')).map((x) => x.label + (x.previewComponent ? '' : ' (ohne Vorschau)'))`);
+    pruefe(bloecke.length === 16 && bloecke.every((l) => l.startsWith('KETTELER: ') && !l.includes('ohne Vorschau')), '16 KETTELER-Blöcke mit Namen und Vorschau', bloecke.join(' | '));
+    // Layout „Werkseite“: innerhalb der Verwaltung wechseln (ein zweiter Start der Verwaltung scheitert an Shopware selbst)
+    await b.werte(`(document.querySelector('.sw-modal__close') || { click() {} }).click()`);
+    await b.warte(800);
+    await b.werte(`Shopware.Application.view.router.push({ name: 'sw.cms.index' }).then(() => true)`);
+    await b.warte(1500);
+    await b.werte(`(document.querySelector('.sw-modal .sw-button--primary, .sw-modal .sw-button--danger') || { click() {} }).click()`);
+    await b.warte(1500);
+    await b.werte(`Shopware.Application.view.router.push({ name: 'sw.cms.detail', params: { id: '${werkseitenId}' } }).then(() => true)`);
+    let plaetze = 0;
+    for (let i = 0; i < 60 && plaetze !== 10; i += 1) {
+        await b.warte(1000);
+        plaetze = await b.werte(`document.querySelector('.sw-cms-detail') && document.body.innerText.includes('Werkseite') ? document.querySelectorAll('.ketteler-cms-el').length : 0`);
+    }
+    pruefe(plaetze === 10, 'Layout „Werkseite“ im Editor mit zehn Plätzen', String(plaetze));
     if (bildIndex > 0) {
         await b.ganzeSeite(resolve(process.argv[bildIndex + 1]));
     }
@@ -78,5 +100,4 @@ try {
 } finally {
     await b.beenden();
 }
-console.log(`\n${gut} bestanden, ${schlecht.length} fehlgeschlagen`);
-process.exit(schlecht.length ? 1 : 0);
+

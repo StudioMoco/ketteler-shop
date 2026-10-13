@@ -106,7 +106,7 @@ def main():
     b = Browser()
     b.get(SHOP + "/Zeitschrift-ZMV/ZMV-Print/")
     e.pruefe('kt-abo">Abo<' in b.html, "Kennzeichen „Abo“ in der Kategorie")
-    b.get(SHOP + "/detail/" + artikel_id("TEST-ABO-AVR-D"))
+    b.get(SHOP + "/detail/" + artikel_id("TEST-O-AVR"))
     e.pruefe('data-kt="abo-hinweis"' in b.html and "Jahresabonnement" in b.html, "Abo-Hinweis auf der Artikelseite")
     e.pruefe('data-kt="mehrplatz-link"' in b.html, "„Mehrere Lizenzen anfragen“ auf der Artikelseite (Online)")
     b.get(SHOP + "/detail/" + artikel_id("TEST-P-001"))

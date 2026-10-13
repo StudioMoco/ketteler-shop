@@ -37,5 +37,45 @@
             <argument>ketteler-produktreihe</argument>
             <tag name="shopware.cms.data_resolver"/>
         </service>
+        <service id="Ketteler\Theme\Cms\KettelerElementResolver.werkkopf" class="Ketteler\Theme\Cms\KettelerElementResolver">
+            <argument>ketteler-werkkopf</argument>
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+        <service id="Ketteler\Theme\Cms\KettelerElementResolver.angebote" class="Ketteler\Theme\Cms\KettelerElementResolver">
+            <argument>ketteler-angebote</argument>
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+        <service id="Ketteler\Theme\Cms\KettelerElementResolver.vorteile" class="Ketteler\Theme\Cms\KettelerElementResolver">
+            <argument>ketteler-vorteile</argument>
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+        <service id="Ketteler\Theme\Cms\KettelerElementResolver.leseproben" class="Ketteler\Theme\Cms\KettelerElementResolver">
+            <argument>ketteler-leseproben</argument>
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+        <service id="Ketteler\Theme\Cms\KettelerElementResolver.video" class="Ketteler\Theme\Cms\KettelerElementResolver">
+            <argument>ketteler-video</argument>
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+        <service id="Ketteler\Theme\Cms\KettelerElementResolver.einzelhefte" class="Ketteler\Theme\Cms\KettelerElementResolver">
+            <argument>ketteler-einzelhefte</argument>
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+        <service id="Ketteler\Theme\Cms\KettelerElementResolver.ausgabe" class="Ketteler\Theme\Cms\KettelerElementResolver">
+            <argument>ketteler-ausgabe</argument>
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+        <service id="Ketteler\Theme\Cms\KettelerElementResolver.fakten" class="Ketteler\Theme\Cms\KettelerElementResolver">
+            <argument>ketteler-fakten</argument>
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+        <service id="Ketteler\Theme\Cms\KettelerElementResolver.rueckmeldung" class="Ketteler\Theme\Cms\KettelerElementResolver">
+            <argument>ketteler-rueckmeldung</argument>
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+        <service id="Ketteler\Theme\Weiterleitung\AlteAdressen">
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+            <tag name="kernel.event_subscriber"/>
+        </service>
     </services>
 </container>

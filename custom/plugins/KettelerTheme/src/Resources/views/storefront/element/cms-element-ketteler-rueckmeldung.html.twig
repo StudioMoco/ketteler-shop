@@ -1,0 +1,15 @@
+{# Rückmeldung (Werkseiten): Überschrift links, rechts Text und Knopf mit Rand (z. B. E-Mail-Adresse) #}
+{% set c = element.config %}
+{# Leer gelassen (z. B. auf einer Werkseite ohne diesen Bereich): nichts anzeigen #}
+{% if c.ueberschrift.value %}
+{% set ziel = kt_link(c.knopfLink.value) %}
+<section class="kt-band--weiss kt-band--nur-oben" aria-label="{{ c.ueberschrift.value|striptags }}" data-kt="rueckmeldung">
+    <div class="kt-rahmen kt-rueckmeldung">
+        {% if c.ueberschrift.value %}<h2>{{ c.ueberschrift.value }}</h2>{% endif %}
+        <div>
+            {% if c.text.value %}<p class="kt-rueckmeldung-text">{{ c.text.value }}</p>{% endif %}
+            {% if c.knopfText.value and ziel %}<a class="kt-knopf kt-knopf--rand" href="{{ ziel }}" data-kt="rueckmeldung-knopf">{{ c.knopfText.value }}</a>{% endif %}
+        </div>
+    </div>
+</section>
+{% endif %}

@@ -10,11 +10,28 @@ Produkt, nie aus dem Text. Ohne Bild zeigt jedes Cover einen ruhigen Platzhalter
 | Schaufenster | Texte, Knopf (mit Video aus den Medien: MP4, Vorschaubild, Untertitel als .vtt), Nebenlink, Produkt (Preisvorsatz leer lassen = nur der Preis) und zwei Nebenkacheln (Fläche Sand oder Rosé, Bild oder bis zu drei Produktcover) eintragen. |
 | Kategorien mit Cover-Stapel | Bis zu sechs Kategorien wählen, Titel und Untertitel nach Wunsch; ohne eigene Bilder erscheinen die ersten drei Produktbilder der Kategorie. |
 | Werke | Überschrift und Einleitung, je Werk Produkt (Cover und Preis genau dieses Produkts, Vorsatz „ab“ nach Wunsch), Zeile über dem Titel, Titel, Text, Formatzeile und Link; auch für die Werkseiten. |
-| Hinweis mit Zeichen | Zeichen (Vorgabe §), Dachzeile, Haupttext mit *Sternchen* für Kursives, Unterzeile, Text und bis zu vier Links. |
+| Hinweis mit Zeichen | Zeichen (Vorgabe §), Größe (groß auf der Startseite, normal auf Werkseiten), Dachzeile, Haupttext mit *Sternchen* für Kursives, Unterzeile, Text, Vorspann vor den Links und bis zu vier Links (auch auf Dateien). |
 | Drei Beiträge | Überschrift und je Beitrag Dachzeile, Titel, Text und Link pflegen. |
 | Nummerierte Liste mit Einleitung | Dachzeile, Überschrift, Einleitung und bis zu acht Einträge mit Link; die Nummern setzt der Shop. |
+| Werk-Kopf | Produkt für das Cover (oder Bild), Kreisfläche (Rosé, Sand, Blaugrau), Dachzeile, Titel (die Hauptüberschrift), Untertitel, Text, Zusatzzeile mit **fett**, Angaben, Hauptknopf und Nebenlink (z. B. `#angebote`, `#leseproben`) und die Zeile für Bestandskunden (leeres Ziel = Bibliothek); die Brotkrumen setzt der Shop. |
+| Angebote | Bis zu drei Karten mit Produkt, Titel, kurzer Zeile und „hervorheben“ (eine Karte); Bestell-Nr. ein- oder ausblenden; Werk für die Mehrplatz-Anfrage; Hinweiszeilen mit Link, „In den Warenkorb“ (Produkt, `{preis}` im Text) oder Mehrplatz-Anfrage; kleiner Text darunter mit Links als `[AGB](…)`. |
+| Vorteile / Liste | Überschrift, Einleitung und heller Zusatztext links; rechts Einträge (Titel und Text, eine Zeile oder kursiver Anfangsbuchstabe) und bis zu drei Aufzählungen (ein Punkt je Zeile); Abstand oben klein, wenn ein Hinweis davor steht. |
+| Leseproben | Fläche, Überschrift, Text, optional Knopf mit Datei und weißer Kasten mit Punkten; rechts die PDFs aus den Medien mit Kürzel und Titel. |
+| Video mit Person | Video (MP4, Vorschaubild, Untertitel) wie im Schaufenster, Dachzeile, Titel, Text und Person mit Foto, erster Zeile, Name und bis zu drei Links (auch auf Dateien). |
+| Einzelhefte mit Jahrgangsauswahl | Überschrift, Text, die Kategorie mit den Heften (Jahrgang und Heft aus der Artikelnummer `Z5-2026` oder aus den Zusatzfeldern), Anzahl der Reiter, Zeile mit Link, Kasten Archiv mit Link und Preiszeilen. |
+| Aktuelle Ausgabe | Fläche, Dachzeile, Titel, Untertitel, Inhalt als Rubrik und Beiträge (einer je Zeile), Links (auch Dateien), Kasten mit Titel, Text, zwei Knöpfen und einer Zeile darunter. |
+| Fakten | Überschrift und Einträge Begriff und Wert. |
+| Rückmeldung | Überschrift, Text und Knopf (z. B. `mailto:kontakt@ketteler-verlag.de`). |
 | Produktreihe | Überschrift, Link rechts und die Produkte in der gewünschten Reihenfolge wählen; sie erscheinen als Produktkarten (wie in allen Produktlisten), Autor/Herausgeber aus dem Zusatzfeld am Produkt. |
 
 Die Startseite legt `ketteler:einrichten` nur einmal an. Danach gilt, was in der Verwaltung gepflegt ist;
 `--erlebniswelten-neu` legt sie neu an und überschreibt die Pflege. Grundsätzlich gilt für alle Texte: wörtlich aus der
 Vorlage, die sie aus `content/` nimmt; nichts umformulieren oder ergänzen.
+
+## Werkseiten: ein Layout, Inhalte je Kategorie
+
+Das Layout „Werkseite“ (Inhalte > Erlebniswelten) hat zehn feste Plätze. Die Inhalte pflegen Sie an der Kategorie: Kataloge >
+Kategorien > z. B. „Zeitschrift ZMV“ > Reiter „Layout“; dort lassen sich die Plätze für genau diese Kategorie füllen. Was
+leer bleibt, erscheint nicht (z. B. Einzelhefte nur bei ZMV). Neue Werkseite: Kategorie anlegen, Layout „Werkseite“ wählen,
+Plätze füllen. `ketteler:einrichten` legt Layout und Inhalte nur einmal an; `--erlebniswelten-neu` schreibt sie neu.
+Fehlende Dateien und Bilder: `docs/dateien-ketteler.md`.

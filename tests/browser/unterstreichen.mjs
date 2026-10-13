@@ -1,5 +1,5 @@
 // Beim Überfahren nichts unterstreichen (nur Farbe): jeder sichtbare Link und Knopf auf Startseite, Kategorieseite,
-// Artikelseite und Warenkorb wird mit der Maus überfahren, dann text-decoration-line geprüft. Erlaubt ist ein
+// Werkseiten (ZMV, AVR), Artikelseite und Warenkorb wird mit der Maus überfahren, dann text-decoration-line geprüft. Erlaubt ist ein
 // Unterstrich nur, wenn das Element schon ohne Maus unterstrichen ist (dauerhafte Textlinks).
 //   node tests/browser/unterstreichen.mjs [--staging]
 import { execFileSync } from 'node:child_process';
@@ -53,6 +53,8 @@ try {
     await seite('Startseite', SHOP + '/');
     await seite('Kategorie Praxishandbücher', SHOP + '/Praxishandbuecher/');
     const artikel = await b.werte(`(document.querySelector('.kt-karte-titel') || document.querySelector('.product-name') || {}).href || ''`);
+    await seite('Werkseite ZMV', SHOP + '/Zeitschrift-ZMV/');
+    await seite('Werkseite AVR', SHOP + '/Kompendium-AVR-Caritas/');
     await seite('Artikelseite', artikel);
     await b.werte(`(() => { const f = document.querySelector('form[data-add-to-cart], .buy-widget form'); if (f) { f.requestSubmit ? f.requestSubmit() : f.submit(); } })()`);
     await b.warte(2500);

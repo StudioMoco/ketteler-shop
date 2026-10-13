@@ -14,13 +14,20 @@
                 "email": "E-Mail-Adresse",
                 "telefon": "Telefon",
                 "anzahl": "Anzahl der Lizenzen",
-                "nachricht": "Nachricht"
+                "nachricht": "Nachricht",
+                "werk": "Title"
             },
             "fehler": {
                 "allgemein": "Bitte prüfen Sie die markierten Felder.",
                 "pflicht": "Bitte füllen Sie dieses Feld aus.",
                 "email": "Bitte geben Sie eine gültige E-Mail-Adresse an.",
                 "anzahl": "Bitte geben Sie eine Zahl ab 2 an."
+            },
+            "werk": {
+                "keins": "Please choose",
+                "avr": "Die AVR von A bis Z",
+                "zmv": "ZMV Die Mitarbeitervertretung",
+                "eichstaetter": "Eichstätter Kommentar MAVO und KAGO"
             }
         }
     }

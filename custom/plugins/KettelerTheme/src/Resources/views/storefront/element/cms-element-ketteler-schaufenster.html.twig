@@ -72,32 +72,5 @@
 </div>
 
 {% if video %}
-    <dialog class="kt-video-dialog" id="{{ dialogId }}" aria-label="{{ c.knopfText.value }}" data-kt="video-dialog">
-        <video controls preload="none" playsinline{% if poster %} poster="{{ poster.url }}"{% endif %}>
-            <source src="{{ video.url }}" type="{{ video.mimeType|default('video/mp4') }}">
-            {% if untertitel %}<track kind="subtitles" srclang="de" label="Deutsch" src="{{ untertitel.url }}" default>{% endif %}
-        </video>
-        <div class="kt-video-dialog-leiste">
-            <span>{{ c.dachzeile.value }}</span>
-            <button type="button" class="kt-knopf kt-knopf--magenta" data-kt-video-schliessen>Schließen</button>
-        </div>
-    </dialog>
-    <script>
-        (function () {
-            // Video im nativen Dialog: Fokus wandert in den Dialog, Escape und „Schließen“ beenden ihn, der Fokus kehrt
-            // zum Knopf zurück, das Video hält an.
-            var knopf = document.querySelector('[data-kt-video-oeffnen="{{ dialogId }}"]');
-            var dialog = document.getElementById('{{ dialogId }}');
-            if (!knopf || !dialog || typeof dialog.showModal !== 'function') { return; }
-            var video = dialog.querySelector('video');
-            knopf.addEventListener('click', function (e) {
-                e.preventDefault();
-                dialog.showModal();
-                dialog.querySelector('[data-kt-video-schliessen]').focus();
-            });
-            dialog.querySelector('[data-kt-video-schliessen]').addEventListener('click', function () { dialog.close(); });
-            dialog.addEventListener('click', function (e) { if (e.target === dialog) { dialog.close(); } });
-            dialog.addEventListener('close', function () { video.pause(); knopf.focus(); });
-        })();
-    </script>
+    {% sw_include '@KettelerTheme/storefront/component/ketteler/video-dialog.html.twig' with { dialogId: dialogId, video: video, poster: poster, untertitel: untertitel, titel: c.knopfText.value, leiste: c.dachzeile.value } only %}
 {% endif %}

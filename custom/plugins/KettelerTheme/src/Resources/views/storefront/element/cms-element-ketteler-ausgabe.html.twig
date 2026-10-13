@@ -1,0 +1,49 @@
+{#
+    Aktuelle Ausgabe (ZMV): Fläche wählbar. Links Dachzeile, Titel, Untertitel, Inhalt als Tabelle (Rubrik, Beiträge),
+    Links (Inhaltsverzeichnis, Print-Ausgabe, Online-Ausgabe); rechts weißer Kasten (z. B. Probeheft) mit zwei Knöpfen
+    und einer Zeile darunter.
+#}
+{% set c = element.config %}
+{# Leer gelassen (z. B. auf einer Werkseite ohne diesen Bereich): nichts anzeigen #}
+{% if c.titel.value %}
+{% set d = element.data %}
+<section class="kt-flaeche kt-flaeche--{{ c.flaeche.value|default('rose') }}"{% if c.anker.value %} id="{{ c.anker.value }}"{% endif %} aria-label="{{ c.titel.value|striptags }}" data-kt="ausgabe">
+    <div class="kt-rahmen kt-ausgabe">
+        <div class="kt-ausgabe-inhalt">
+            {% if c.dachzeile.value %}<p class="kt-dachzeile">{{ c.dachzeile.value }}</p>{% endif %}
+            {% if c.titel.value %}<h2>{{ c.titel.value }}</h2>{% endif %}
+            {% if c.untertitel.value %}<p class="kt-ausgabe-untertitel">{{ c.untertitel.value }}</p>{% endif %}
+            {% set zeilen = c.zeilen.value|default([])|filter(z => z.rubrik) %}
+            {% if zeilen is not empty %}
+                <div class="kt-ausgabe-tabelle">
+                    {% for z in zeilen %}
+                        <div><span class="kt-ausgabe-rubrik">{{ z.rubrik }}</span><span>{% for zeile in (z.inhalt|default(''))|split("\n") %}{% if zeile|trim %}{{ zeile|trim }}{% if not loop.last %}<br>{% endif %}{% endif %}{% endfor %}</span></div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% set links = [] %}
+            {% for l in c.links.value|default([]) %}
+                {% set ziel = l.datei and d.medien[l.datei] is defined ? d.medien[l.datei].url : kt_link(l.link) %}
+                {% if l.text and ziel %}{% set links = links|merge([{ text: l.text, ziel: ziel }]) %}{% endif %}
+            {% endfor %}
+            {% if links is not empty %}
+                <p class="kt-ausgabe-links">{% for l in links %}<a class="kt-textlink" href="{{ l.ziel }}">{{ l.text }}</a>{% endfor %}</p>
+            {% endif %}
+        </div>
+        {% if c.kastenTitel.value %}
+            <div class="kt-ausgabe-kasten" data-kt="probeheft">
+                <h3>{{ c.kastenTitel.value }}</h3>
+                {% if c.kastenText.value %}<p class="kt-ausgabe-kasten-text">{{ c.kastenText.value }}</p>{% endif %}
+                <div class="kt-ausgabe-knoepfe">
+                    {% for k in c.knoepfe.value|default([]) %}
+                        {% set ziel = k.datei and d.medien[k.datei] is defined ? d.medien[k.datei].url : kt_link(k.link) %}
+                        {% if k.text and ziel %}<a class="kt-knopf {{ loop.first ? 'kt-knopf--magenta' : 'kt-knopf--rand' }}" href="{{ ziel }}">{{ k.text }}</a>{% endif %}
+                    {% endfor %}
+                </div>
+                {% set fuss = c.kastenFussDatei.value and d.medien[c.kastenFussDatei.value] is defined ? d.medien[c.kastenFussDatei.value].url : null %}
+                {% if c.kastenFussText.value %}<p class="kt-ausgabe-kasten-fuss">{{ c.kastenFussText.value }}{% if c.kastenFussLinkText.value and fuss %} <a class="kt-textlink--magenta" href="{{ fuss }}">{{ c.kastenFussLinkText.value }}</a>{% elseif c.kastenFussLinkText.value %} {{ c.kastenFussLinkText.value }}{% endif %}</p>{% endif %}
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endif %}

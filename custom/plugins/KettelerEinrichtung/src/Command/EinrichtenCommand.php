@@ -280,8 +280,24 @@ class EinrichtenCommand extends Command
                 ],
             ],
         ]]);
+        // Einzelhefte: Jahrgang und Heft nur für Ausnahmen (sonst aus der Artikelnummer Z5-2026); eigene Zeilen, damit sie
+        // auch in eine schon bestehende Gruppe kommen
+        $this->schreiben('custom_field', array_map(fn (array $f): array => [
+            'id' => $this->id('zusatzfeld.' . $f[0]),
+            'customFieldSetId' => $this->id('zusatzfelder.artikel'),
+            'name' => 'ketteler_' . $f[0],
+            'type' => CustomFieldTypes::INT,
+            'config' => [
+                'label' => ['de-DE' => $f[1], 'en-GB' => $f[2]],
+                'helpText' => ['de-DE' => 'Nur für Einzelhefte, deren Artikelnummer nicht dem Muster Z5-2026 folgt (z. B. Sonderhefte). Leer = aus der Artikelnummer.'],
+                'componentName' => 'sw-field',
+                'customFieldType' => 'number',
+                'numberType' => 'int',
+                'customFieldPosition' => $f[3],
+            ],
+        ], [['jahrgang', 'Einzelheft: Jahrgang', 'Issue: year', 5], ['heft', 'Einzelheft: Heft', 'Issue: number', 6]]));
         // allowCartExpose: Shopware gibt die Felder nur dann an Warenkorb und Bestellpositionen weiter
-        $this->io->writeln('Zusatzfelder ketteler_artikelart, ketteler_produkt, ketteler_abo und ketteler_autor angelegt.');
+        $this->io->writeln('Zusatzfelder ketteler_artikelart, ketteler_produkt, ketteler_abo, ketteler_autor, ketteler_jahrgang und ketteler_heft angelegt.');
     }
 
     /** @return array{0: string, 1: string} */
@@ -822,7 +838,8 @@ class EinrichtenCommand extends Command
                     'linked' => true,
                 ]],
                 'stock' => (int) ($a['bestand'] ?? 1000),
-                'isCloseout' => false,
+                // Abverkauf (z. B. AVR Print, solange der Vorrat reicht): bei Bestand 0 nicht bestellbar
+                'isCloseout' => (bool) ($a['abverkauf'] ?? false),
                 // Online-Zugang einzeln; Mehrplatz vergibt die Verwaltung
                 'maxPurchase' => $online ? 1 : null,
                 'shippingFree' => $online,
@@ -843,6 +860,20 @@ class EinrichtenCommand extends Command
             ];
         }
         $this->schreiben('product', $zeilen);
+        if ($this->ueberschreiben) {
+            // Kategorien genau wie in den Daten: Zuordnungen, die dort nicht mehr stehen, lösen (upsert ergänzt nur)
+            $weg = [];
+            foreach ($zeilen as $z) {
+                $soll = array_column($z['categories'], 'id');
+                $ist = $this->repo('product')->search((new Criteria([$z['id']]))->addAssociation('categories'), $this->context)->first()?->getCategories()?->getIds() ?? [];
+                foreach (array_diff(array_values($ist), $soll) as $kategorie) {
+                    $weg[] = ['productId' => $z['id'], 'categoryId' => $kategorie];
+                }
+            }
+            if ($weg !== []) {
+                $this->repo('product_category')->delete($weg, $this->context);
+            }
+        }
         // Testartikel, die es nicht mehr gibt (nur beim Überschreiben)
         $alt = array_map(fn (string $n): string => $this->id('artikel.' . $n), $this->json('artikel.json')['entfernt'] ?? []);
         $alt = $alt === [] || !$this->ueberschreiben ? [] : $this->repo('product')->searchIds(new Criteria($alt), $this->context)->getIds();

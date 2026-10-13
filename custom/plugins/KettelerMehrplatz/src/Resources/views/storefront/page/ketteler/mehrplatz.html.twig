@@ -16,7 +16,15 @@
                 <form method="post" action="{{ path('frontend.ketteler.mehrplatz.senden') }}" data-kt="mehrplatz">
                     {% sw_include '@Storefront/storefront/component/captcha/base.html.twig' with { additionalClass: 'col-md-12', formId: 'ketteler-mehrplatz' } %}
                     <input type="hidden" name="artikel" value="{{ daten.artikel|default('') }}">
-                    <input type="hidden" name="werk" value="{{ daten.werk|default('') }}">
+                    {# Werk sichtbar und änderbar; von den Werkseiten vorausgefüllt (?werk=avr|zmv|eichstaetter) #}
+                    <div class="mb-3">
+                        <label class="form-label" for="kt-mp-werk">{{ 'ketteler.mehrplatz.feld.werk'|trans|sw_sanitize }}</label>
+                        <select class="form-select" id="kt-mp-werk" name="werk" data-kt="mehrplatz-werk">
+                            {% for w in ['', 'avr', 'zmv', 'eichstaetter'] %}
+                                <option value="{{ w }}"{% if daten.werk|default('') == w %} selected{% endif %}>{{ ('ketteler.mehrplatz.werk.' ~ (w ?: 'keins'))|trans|sw_sanitize }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
                     {% for feld in [
                         {name: 'einrichtung', typ: 'text', auto: 'organization', pflicht: true},
                         {name: 'ansprechperson', typ: 'text', auto: 'name', pflicht: true},

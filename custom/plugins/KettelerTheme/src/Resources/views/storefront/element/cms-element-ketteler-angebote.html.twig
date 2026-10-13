@@ -1,0 +1,86 @@
+{#
+    Angebote (Werkseiten): ein bis drei Kaufkarten mit Produkt aus dem Katalog (Bestell-Nr., Titel, kurze Zeile, Preis,
+    „In den Warenkorb“ ohne Seitenwechsel), eine Karte hervorgehoben (Rahmen und Knopf in Magenta, mobil zuerst).
+    Neben einer einzelnen Karte optional Text. Darunter Hinweiszeilen: Text links, Link, Mehrplatz-Anfrage (mit Werk)
+    oder „In den Warenkorb“ rechts. Mehrplatz ist nie eine eigene Karte. Nicht lieferbare Produkte (z. B. Print bei
+    Bestand 0 im Abverkauf) zeigen „Zurzeit nicht lieferbar“ statt des Knopfs.
+#}
+{% set c = element.config %}
+{# Leer gelassen (z. B. auf einer Werkseite ohne diesen Bereich): nichts anzeigen #}
+{% if c.karten.value is not empty or c.ueberschrift.value %}
+{% set d = element.data %}
+{% set karten = [] %}
+{% for k in c.karten.value|default([]) %}
+    {% if k.produkt and d.produkte[k.produkt] is defined %}{% set karten = karten|merge([k|merge({ p: d.produkte[k.produkt] })]) %}{% endif %}
+{% endfor %}
+{% set ersteNummer = karten is not empty ? (karten|first).p.productNumber : '' %}
+<section class="kt-band--weiss"{% if c.anker.value %} id="{{ c.anker.value }}"{% endif %} aria-label="{{ c.ueberschrift.value|striptags }}" data-kt="angebote">
+    <div class="kt-rahmen kt-angebote">
+        {% if c.ueberschrift.value %}<h2 class="kt-angebote-titel">{{ c.ueberschrift.value }}</h2>{% endif %}
+        <div class="kt-angebote-reihe{% if karten|length == 1 %} kt-angebote-reihe--einzeln{% endif %}">
+            {% for k in karten %}
+                {% set p = k.p %}
+                {% set name = k.titel ?: p.translated.name %}
+                {% set lieferbar = p.available and p.calculatedMaxPurchase > 0 %}
+                <div class="kt-angebot{% if k.hervorgehoben %} kt-angebot--hervorgehoben{% endif %}" data-kt="angebot" data-nummer="{{ p.productNumber }}">
+                    {% if c.bestellnummer.value %}<p class="kt-angebot-nummer">Bestell-Nr. {{ p.productNumber }}</p>{% endif %}
+                    <h3 class="kt-angebot-name">{{ name }}</h3>
+                    {% if k.zeile %}<p class="kt-angebot-zeile">{{ k.zeile }}</p>{% endif %}
+                    <p class="kt-angebot-preis"><span class="kt-angebot-betrag">{{ p.calculatedPrice.unitPrice|currency }}</span> <span class="kt-angebot-steuer">inkl. MwSt.</span></p>
+                    {% if lieferbar %}
+                        <form action="{{ path('frontend.checkout.line-item.add') }}" method="post" data-add-to-cart="true" class="kt-angebot-form">
+                            <input type="hidden" name="redirectTo" value="frontend.cart.offcanvas">
+                            <input type="hidden" name="lineItems[{{ p.id }}][id]" value="{{ p.id }}">
+                            <input type="hidden" name="lineItems[{{ p.id }}][type]" value="product">
+                            <input type="hidden" name="lineItems[{{ p.id }}][referencedId]" value="{{ p.id }}">
+                            <input type="hidden" name="lineItems[{{ p.id }}][stackable]" value="1">
+                            <input type="hidden" name="lineItems[{{ p.id }}][removable]" value="1">
+                            <input type="hidden" name="lineItems[{{ p.id }}][quantity]" value="1">
+                            <button type="submit" class="kt-angebot-knopf" data-kt="angebot-kaufen" aria-label="In den Warenkorb: {{ name }}">In den Warenkorb</button>
+                        </form>
+                    {% else %}
+                        <p class="kt-angebot-nicht-lieferbar" data-kt="nicht-lieferbar">Zurzeit nicht lieferbar</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            {% if karten|length == 1 and (c.seitentitel.value or c.seitentext.value) %}
+                <div class="kt-angebote-seitentext">
+                    {% if c.seitentitel.value %}<p class="kt-angebote-seitentitel">{{ c.seitentitel.value }}</p>{% endif %}
+                    {% if c.seitentext.value %}<p class="kt-angebote-seitentext-text">{{ c.seitentext.value|kt_text }}</p>{% endif %}
+                </div>
+            {% endif %}
+        </div>
+        {% set zeilen = c.zeilen.value|default([])|filter(z => z.text) %}
+        {% if zeilen is not empty %}
+            <div class="kt-angebote-zeilen">
+                {% for z in zeilen %}
+                    {% set zp = z.art == 'kaufen' and z.produkt and d.produkte[z.produkt] is defined ? d.produkte[z.produkt] : null %}
+                    <div class="kt-angebote-zeile" data-kt="hinweiszeile">
+                        <p>{{ (zp ? z.text|replace({ '{preis}': zp.calculatedPrice.unitPrice|currency }) : z.text)|kt_text }}{% if z.zusatz %} <span class="kt-angebote-zusatz">{{ z.zusatz }}</span>{% endif %}</p>
+                        {% if z.art == 'mehrplatz' %}
+                            <a class="kt-textlink kt-textlink--magenta" href="{{ path('frontend.ketteler.mehrplatz', { werk: c.werk.value|default(''), artikel: ersteNummer }) }}" data-kt="mehrplatz-link">{{ z.linkText|default('Lizenzen anfragen') }}</a>
+                        {% elseif z.art == 'kaufen' and z.produkt and d.produkte[z.produkt] is defined %}
+                            {% set p = d.produkte[z.produkt] %}
+                            {% if p.available and p.calculatedMaxPurchase > 0 %}
+                                <form action="{{ path('frontend.checkout.line-item.add') }}" method="post" data-add-to-cart="true" class="kt-angebote-zeile-form">
+                                    <input type="hidden" name="redirectTo" value="frontend.cart.offcanvas">
+                                    <input type="hidden" name="lineItems[{{ p.id }}][id]" value="{{ p.id }}">
+                                    <input type="hidden" name="lineItems[{{ p.id }}][type]" value="product">
+                                    <input type="hidden" name="lineItems[{{ p.id }}][referencedId]" value="{{ p.id }}">
+                                    <input type="hidden" name="lineItems[{{ p.id }}][stackable]" value="1">
+                                    <input type="hidden" name="lineItems[{{ p.id }}][removable]" value="1">
+                                    <input type="hidden" name="lineItems[{{ p.id }}][quantity]" value="1">
+                                    <button type="submit" class="kt-textlink kt-textlink--magenta kt-knopf-als-link" data-kt="zeile-kaufen" data-nummer="{{ p.productNumber }}" aria-label="In den Warenkorb: {{ p.translated.name }}">{{ z.linkText|default('In den Warenkorb') }}</button>
+                                </form>
+                            {% endif %}
+                        {% elseif z.linkText and kt_link(z.link) %}
+                            <a class="kt-textlink kt-textlink--magenta" href="{{ kt_link(z.link) }}">{{ z.linkText }}</a>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if c.fussText.value %}<p class="kt-angebote-fuss">{{ c.fussText.value|kt_text }}</p>{% endif %}
+    </div>
+</section>
+{% endif %}

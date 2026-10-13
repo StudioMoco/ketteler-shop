@@ -434,3 +434,240 @@ h3, .h3 { font-size: 30px; line-height: 1.2; }
     .kt-kachel > .kt-cover--kachel .kt-cover-verlag { display: none; }
 }
 .header-logo-main { text-align: left; }
+
+// ---------------------------------------------------------------------------------------------------------------
+// Werkseiten (docs/design/werkseite-avr-entwurf.dc.html, -zmv-, -eichstaetter-): gemeinsames Layout „Werkseite“,
+// Inhalte je Kategorie. Überschriften h2 40 px, Bänder 1240 px.
+// ---------------------------------------------------------------------------------------------------------------
+.kt-fliesslink { border-bottom: 1px solid currentColor; }
+.kt-unterstrichen-magenta { color: $kt-magenta; border-bottom: 1px solid currentColor; }
+.kt-knopf--rand { min-height: 52px; padding: 0 28px; border: 1.5px solid $kt-text; border-radius: 26px; background: transparent; color: $kt-text; }
+.kt-knopf--rand:hover { border-color: $kt-magenta; color: $kt-magenta; }
+.kt-knopf--magenta { min-height: 52px; padding: 0 28px; border-radius: 26px; }
+.kt-knopf--magenta:hover { background: darken($kt-magenta, 6%); color: #ffffff; }
+.kt-knopf-als-link { padding: 0 0 2px; border: 0; border-bottom: 1.5px solid currentColor; border-radius: 0; background: none; font: inherit; font-weight: 500; cursor: pointer; }
+.kt-band--nur-oben { border-bottom: 0; }
+.kt-flaeche--rose { background: $kt-rose; --kt-flaeche-linie: #{$kt-linie-rose}; }
+.kt-flaeche--sand { background: $kt-sand; --kt-flaeche-linie: #{$kt-linie-sand}; }
+.kt-flaeche--blaugrau { background: $kt-blaugrau; --kt-flaeche-linie: #{$kt-linie-blaugrau}; }
+.kt-cover--werkkopf { --kt-cover-b: 250px; --kt-cover-h: 350px; --kt-cover-schrift: 32px; border-radius: 3px 6px 6px 3px; box-shadow: 0 26px 44px rgba(60, 30, 40, 0.2); }
+.kt-cover--werkkopf::after { width: 8px; }
+.kt-cover--werkkopf .kt-cover-platzhalter { padding: 28px 26px; }
+.kt-cover--werkkopf .kt-cover-verlag { font-size: 13px; }
+.kt-cover--heft { --kt-cover-b: 130px; --kt-cover-h: 182px; --kt-cover-schrift: 14px; box-shadow: 0 12px 24px rgba(60, 30, 40, 0.14); }
+.kt-cover--heft .kt-cover-platzhalter { padding: 12px; }
+.kt-cover--heft .kt-cover-verlag { display: none; }
+.kt-werkseite h2, .kt-angebote h2, .kt-vorteile h2, .kt-leseproben h2, .kt-hefte h2, .kt-ausgabe h2, .kt-fakten h2, .kt-rueckmeldung h2 {
+    font-size: 40px; line-height: 1.15; font-weight: 500;
+}
+
+// 1. Werk-Kopf (bringt eigene Brotkrumen nach der Vorlage mit; die von Shopware entfallen dort)
+.container-main:has(.kt-werkkopf) > .cms-breadcrumb { display: none; }
+.kt-werkkopf { padding-top: 28px; padding-bottom: 72px; }
+.kt-brotkrumen { margin-bottom: 36px; font-size: 14px; color: $kt-hinweis; }
+.kt-brotkrumen a { color: $kt-hinweis; }
+.kt-brotkrumen a:hover { color: $kt-magenta; }
+.kt-werkkopf-reihe { display: flex; flex-wrap: wrap; gap: 48px 80px; align-items: center; }
+.kt-werkkopf-bild { position: relative; flex: 0 1 380px; min-width: 0; display: flex; justify-content: center; padding: 24px 0; }
+.kt-werkkopf-bild::before { content: ''; position: absolute; left: 50%; top: 50%; width: 340px; height: 340px; margin: -170px 0 0 -170px; border-radius: 50%; background: $kt-rose; }
+.kt-werkkopf-bild--sand::before { background: $kt-sand; }
+.kt-werkkopf-bild--blaugrau::before { background: $kt-blaugrau-kreis; }
+.kt-werkkopf-bild .kt-cover { position: relative; }
+.kt-werkkopf-text { flex: 1 1 520px; min-width: 0; }
+.kt-werkkopf-dachzeile { margin: 0 0 12px; font-size: 16px; color: $kt-magenta; }
+.kt-werkkopf-titel { margin: 0 0 14px; font-size: 56px; line-height: 1.06; letter-spacing: -0.015em; }
+.kt-werkkopf-untertitel { margin: 0 0 26px; font-family: $kt-serif; font-style: italic; font-size: 22px; color: $kt-text-gedaempft; }
+.kt-werkkopf-beschreibung { margin: 0 0 16px; max-width: 600px; font-size: 18px; line-height: 1.6; color: $kt-text-gedaempft; }
+.kt-werkkopf-beschreibung:last-of-type { margin-bottom: 28px; }
+.kt-werkkopf-zusatz { margin: 0 0 28px; max-width: 600px; font-size: 18px; line-height: 1.6; }
+.kt-werkkopf-zusatz strong { font-weight: 500; }
+.kt-werkkopf-angaben { margin: 0 0 32px; font-size: 15px; color: $kt-hinweis; }
+.kt-werkkopf-aktionen { display: flex; flex-wrap: wrap; gap: 14px 28px; align-items: center; }
+.kt-werkkopf-bestand { margin: 28px 0 0; font-size: 15px; color: $kt-hinweis; }
+
+// 2. Angebote mit Hinweiszeilen
+.kt-angebote { padding-top: 80px; padding-bottom: 80px; }
+.kt-angebote-titel { margin: 0 0 40px; }
+.kt-angebote-reihe { display: flex; flex-wrap: wrap; gap: 24px; align-items: stretch; }
+.kt-angebote-reihe--einzeln { gap: 24px 56px; align-items: center; }
+.kt-angebot { flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column; padding: 34px 32px 30px; border: 1px solid $kt-linie; border-radius: 10px; background: #ffffff; }
+.kt-angebot--hervorgehoben { flex: 1.25 1 340px; border: 2px solid $kt-magenta; }
+.kt-angebote-reihe--einzeln .kt-angebot { flex: 0 1 460px; }
+.kt-angebot-nummer { margin: 0 0 6px; font-size: 15px; color: $kt-hinweis; }
+.kt-angebot--hervorgehoben .kt-angebot-nummer { color: $kt-magenta; }
+.kt-angebot-name { margin: 0 0 6px; font-size: 28px; line-height: 1.2; font-weight: 500; }
+.kt-angebot-zeile { margin: 0 0 22px; color: $kt-text-gedaempft; }
+.kt-angebot-preis { margin: 0 0 28px; }
+.kt-angebot-betrag { font-size: 36px; font-weight: 600; letter-spacing: -0.01em; }
+.kt-angebot-steuer { font-size: 15px; color: $kt-hinweis; }
+.kt-angebot-form { margin-top: auto; }
+.kt-angebot-knopf { width: 100%; min-height: 52px; border: 1.5px solid $kt-text; border-radius: 26px; background: #ffffff; color: $kt-text; font: inherit; font-weight: 500; cursor: pointer; }
+.kt-angebot-knopf:hover { border-color: $kt-magenta; color: $kt-magenta; }
+.kt-angebot--hervorgehoben .kt-angebot-knopf { border: 0; background: $kt-magenta; color: #ffffff; }
+.kt-angebot--hervorgehoben .kt-angebot-knopf:hover { background: darken($kt-magenta, 6%); color: #ffffff; }
+.kt-angebot-nicht-lieferbar { margin: auto 0 0; padding: 14px 0; text-align: center; border: 1px dashed $kt-linie-sand; border-radius: 26px; color: $kt-hinweis; }
+.kt-angebote-seitentext { flex: 1 1 380px; min-width: 0; }
+.kt-angebote-seitentitel { margin: 0 0 14px; font-family: $kt-serif; font-size: 24px; line-height: 1.35; }
+.kt-angebote-seitentext-text { margin: 0; font-size: 17px; color: $kt-text-gedaempft; }
+.kt-angebote-zeilen { display: flex; flex-direction: column; margin-top: 20px; }
+.kt-angebote-reihe--einzeln + .kt-angebote-zeilen { margin-top: 32px; }
+.kt-angebote-zeile { display: flex; flex-wrap: wrap; gap: 8px 32px; justify-content: space-between; align-items: baseline; padding: 10px 0; border-top: 1px solid $kt-linie; }
+.kt-angebote-zeile:last-child { border-bottom: 1px solid $kt-linie; }
+.kt-angebote-zeile p { margin: 0; font-size: 17px; }
+.kt-angebote-zeile strong { font-weight: 600; }
+.kt-angebote-zeile form { margin: 0; }
+.kt-angebote-zusatz { font-size: 14px; color: $kt-hinweis; }
+.kt-angebote-fuss { margin: 20px 0 0; font-size: 14px; color: $kt-hinweis; }
+.kt-angebote-fuss a { color: $kt-hinweis; }
+
+// 3. Vorteile / Liste
+.kt-vorteile { display: flex; flex-wrap: wrap; gap: 40px 80px; padding-top: 96px; padding-bottom: 80px; }
+.kt-vorteile--abstand-klein { padding-top: 24px; padding-bottom: 88px; }
+.kt-vorteile-kopf { flex: 1 1 360px; min-width: 0; }
+.kt-vorteile-kopf h2 { margin: 0 0 18px; }
+.kt-vorteile-einleitung { margin: 0 0 14px; max-width: 420px; font-size: 18px; color: $kt-text-gedaempft; }
+.kt-vorteile-hinweis { margin: 0; max-width: 420px; font-size: 16px; color: $kt-hinweis; }
+.kt-vorteile-liste { flex: 1.4 1 560px; min-width: 0; display: flex; flex-wrap: wrap; gap: 0 48px; align-content: flex-start; }
+.kt-vorteil { flex: 1 1 260px; min-width: 0; padding: 22px 0 24px; border-top: 1px solid $kt-linie; }
+.kt-vorteil-titel { margin: 0 0 6px; font-family: $kt-serif; font-size: 21px; line-height: 1.3; }
+.kt-vorteil-text { margin: 0; font-size: 16px; color: $kt-text-gedaempft; }
+.kt-vorteil-zeile { flex: 1 1 260px; min-width: 0; margin: 0; padding: 16px 0; border-top: 1px solid $kt-linie; font-size: 18px; }
+.kt-vorteil-buchstabe { flex: 1 1 100%; display: flex; gap: 24px; align-items: baseline; padding: 16px 0; border-top: 1px solid $kt-linie; font-size: 18px; }
+.kt-vorteil-anfang { flex: 0 0 24px; font-family: $kt-serif; font-style: italic; font-size: 22px; color: $kt-magenta; }
+.kt-vorteile-aufzaehlungen { flex: 1 1 100%; display: flex; flex-wrap: wrap; gap: 24px 48px; margin-top: 32px; }
+.kt-vorteile-aufzaehlung { flex: 1 1 260px; min-width: 0; }
+.kt-vorteile-aufzaehlung-titel { margin: 0 0 10px; font-family: $kt-serif; font-size: 22px; }
+.kt-vorteile-aufzaehlung ul { margin: 0; padding: 0 0 0 20px; color: $kt-text-gedaempft; display: flex; flex-direction: column; gap: 4px; }
+.kt-vorteile--buchstabe .kt-vorteile-aufzaehlungen { margin-top: 40px; }
+.kt-vorteile--buchstabe .kt-vorteile-aufzaehlung-titel { margin-bottom: 12px; }
+.kt-vorteile--buchstabe .kt-vorteile-aufzaehlung ul { gap: 6px; }
+
+// 4. Leseproben
+.kt-leseproben { display: flex; flex-wrap: wrap; gap: 40px 80px; padding-top: 88px; padding-bottom: 88px; }
+.kt-leseproben-kopf { flex: 1 1 360px; min-width: 0; }
+.kt-leseproben-kopf h2 { margin: 0 0 18px; }
+.kt-leseproben-text { margin: 0 0 28px; max-width: 420px; font-size: 18px; color: $kt-text-gedaempft; }
+.kt-leseproben-kasten { padding: 26px 28px; border-radius: 8px; background: #ffffff; }
+.kt-leseproben-kasten .kt-dachzeile { margin-bottom: 4px; }
+.kt-leseproben-kasten-titel { margin: 0 0 12px; font-family: $kt-serif; font-size: 21px; line-height: 1.3; }
+.kt-leseproben-kasten ul { margin: 0; padding: 0 0 0 18px; color: $kt-text-gedaempft; display: flex; flex-direction: column; gap: 4px; }
+.kt-leseproben-liste { flex: 1.4 1 560px; min-width: 0; margin: 0; padding: 0; list-style: none; }
+.kt-leseproben-liste li { border-top: 1px solid var(--kt-flaeche-linie, #{$kt-linie}); }
+.kt-leseproben-liste li:last-child { border-bottom: 1px solid var(--kt-flaeche-linie, #{$kt-linie}); }
+.kt-leseprobe { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; padding: 17px 0; color: $kt-text; }
+a.kt-leseprobe:hover { color: $kt-magenta; }
+.kt-leseprobe-name { display: flex; gap: 20px; align-items: baseline; min-width: 0; font-size: 18px; }
+.kt-leseprobe-kuerzel { flex: 0 0 34px; width: 34px; white-space: nowrap; font-family: $kt-serif; font-style: italic; color: $kt-magenta; }
+.kt-leseprobe-art { flex: 0 0 auto; font-size: 13px; color: $kt-hinweis; }
+
+// 5. Video mit Person
+.kt-videoperson { display: flex; flex-wrap: wrap; gap: 48px 72px; align-items: center; padding-top: 96px; padding-bottom: 88px; }
+.kt-videoperson-bild { position: relative; flex: 1.3 1 520px; min-width: 0; display: flex; align-items: center; justify-content: center; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 8px; background: $kt-videoflaeche; }
+.kt-videoperson-bild img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.kt-videoperson-start { position: relative; display: flex; align-items: center; justify-content: center; width: 80px; height: 80px; border-radius: 50%; background: $kt-magenta; }
+.kt-videoperson-bild:hover .kt-videoperson-start { background: darken($kt-magenta, 6%); }
+.kt-videoperson-text { flex: 1 1 380px; min-width: 0; }
+.kt-videoperson-text .kt-dachzeile { margin-bottom: 10px; }
+.kt-videoperson-text h2 { margin: 0 0 16px; font-size: 36px; line-height: 1.2; }
+.kt-videoperson-beschreibung { margin: 0 0 28px; font-size: 17px; color: $kt-text-gedaempft; }
+.kt-person { display: flex; gap: 18px; align-items: center; padding-top: 24px; border-top: 1px solid $kt-linie; }
+.kt-person-foto { flex: 0 0 64px; height: 64px; overflow: hidden; border-radius: 50%; background: #e9d9c4; }
+.kt-person-foto img { width: 100%; height: 100%; object-fit: cover; }
+.kt-person-titel { margin: 0; font-weight: 500; }
+.kt-person-name { margin: 0; font-size: 15px; color: $kt-hinweis; }
+.kt-person-link { color: $kt-magenta; }
+
+// 6. Einzelhefte mit Jahrgangsauswahl
+.kt-hefte { padding-top: 88px; padding-bottom: 24px; }
+.kt-hefte-kopf { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px 40px; margin-bottom: 28px; }
+.kt-hefte-kopf h2 { margin: 0 0 10px; }
+.kt-hefte-text { margin: 0; max-width: 620px; font-size: 18px; color: $kt-text-gedaempft; }
+.kt-hefte-reiter { display: flex; flex-wrap: wrap; gap: 6px 22px; font-size: 16px; }
+.kt-hefte-reiter button, .kt-hefte-archivlink { padding: 0 0 3px; border: 0; border-bottom: 2px solid transparent; background: none; font: inherit; color: $kt-text; cursor: pointer; }
+.kt-hefte-reiter button:hover, .kt-hefte-archivlink:hover { color: $kt-magenta; }
+.kt-hefte-reiter button[aria-selected='true'] { color: $kt-magenta; font-weight: 500; border-bottom-color: $kt-magenta; }
+.kt-hefte-raster { display: flex; flex-wrap: wrap; gap: 32px 28px; }
+.kt-hefte-raster:focus-visible { outline-offset: 6px; }
+.kt-heft { flex: 1 1 170px; min-width: 0; }
+.kt-heft-bild { display: flex; align-items: flex-end; height: 210px; margin-bottom: 16px; }
+.kt-heft-name { display: block; margin-bottom: 6px; font-size: 17px; font-weight: 500; color: $kt-text; }
+.kt-heft-preis { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; font-size: 17px; }
+.kt-heft-preis form { margin: 0; }
+.kt-heft-kaufen { padding: 0; border: 0; font-size: 15px; font-weight: 400; color: $kt-magenta; }
+.kt-hefte-online { margin: 28px 0 0; font-size: 16px; color: $kt-text-gedaempft; }
+.kt-hefte-archiv { display: flex; flex-wrap: wrap; gap: 28px 56px; margin-top: 56px; padding: 36px 36px 32px; border-radius: 10px; background: $kt-sand; }
+.kt-hefte-archiv-kopf { flex: 1 1 280px; min-width: 0; }
+.kt-hefte-archiv-kopf h3 { margin: 0 0 10px; font-size: 30px; line-height: 1.2; font-weight: 500; }
+.kt-hefte-archiv-kopf p { margin: 0 0 20px; color: $kt-text-gedaempft; }
+.kt-hefte-preise { flex: 1.6 1 460px; min-width: 0; }
+.kt-hefte-preise div { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-top: 1px solid $kt-linie-sand; }
+.kt-hefte-preise div:last-child { border-bottom: 1px solid $kt-linie-sand; }
+.kt-hefte-preise span + span { color: $kt-text-gedaempft; }
+
+// Hinweis mit Zeichen, Größe „normal“ (Werkseiten)
+.kt-hinweis--normal { padding-top: 96px; padding-bottom: 80px; }
+.kt-hinweis--normal .kt-hinweis-zeichen { font-size: 140px; }
+.kt-hinweis--normal .kt-hinweis-haupt { font-size: 30px; }
+.kt-hinweis--normal .kt-hinweis-unter { margin-bottom: 26px; }
+.kt-hinweis-vorspann { color: $kt-text-gedaempft; }
+
+// 7. Aktuelle Ausgabe
+.kt-ausgabe { display: flex; flex-wrap: wrap; gap: 40px 80px; padding-top: 88px; padding-bottom: 88px; }
+.kt-ausgabe-inhalt { flex: 1.3 1 520px; min-width: 0; }
+.kt-ausgabe-inhalt .kt-dachzeile { margin-bottom: 10px; }
+.kt-ausgabe-inhalt h2 { margin: 0 0 8px; }
+.kt-ausgabe-untertitel { margin: 0 0 28px; font-size: 18px; color: $kt-text-gedaempft; }
+.kt-ausgabe-tabelle div { display: flex; gap: 24px; padding: 14px 0; border-top: 1px solid var(--kt-flaeche-linie, #{$kt-linie}); }
+.kt-ausgabe-tabelle div:last-child { border-bottom: 1px solid var(--kt-flaeche-linie, #{$kt-linie}); }
+.kt-ausgabe-rubrik { flex: 0 0 140px; color: $kt-hinweis; }
+.kt-ausgabe-links { margin: 22px 0 0; display: flex; flex-wrap: wrap; gap: 10px 28px; }
+.kt-ausgabe-kasten { flex: 1 1 340px; min-width: 0; align-self: flex-start; padding: 34px 32px; border-radius: 10px; background: #ffffff; }
+.kt-ausgabe-kasten h3 { margin: 0 0 12px; font-size: 28px; line-height: 1.2; font-weight: 500; }
+.kt-ausgabe-kasten-text { margin: 0 0 24px; color: $kt-text-gedaempft; }
+.kt-ausgabe-knoepfe { display: flex; flex-direction: column; gap: 12px; }
+.kt-ausgabe-knoepfe .kt-knopf { justify-content: center; }
+.kt-ausgabe-kasten-fuss { margin: 22px 0 0; font-size: 15px; color: $kt-hinweis; }
+
+// 8. Fakten
+.kt-fakten { display: flex; flex-wrap: wrap; gap: 40px 80px; padding-top: 88px; padding-bottom: 96px; }
+.kt-fakten h2 { flex: 1 1 360px; min-width: 0; margin: 0; }
+.kt-fakten dl { flex: 1.4 1 560px; min-width: 0; margin: 0; }
+.kt-fakten dl div { display: flex; flex-wrap: wrap; gap: 4px 24px; padding: 14px 0; border-top: 1px solid $kt-linie; }
+.kt-fakten dt { flex: 0 0 200px; font-weight: 400; color: $kt-hinweis; }
+.kt-fakten dd { flex: 1 1 280px; margin: 0; }
+
+// 9. Rückmeldung
+.kt-rueckmeldung { display: flex; flex-wrap: wrap; gap: 40px 80px; padding-top: 88px; padding-bottom: 96px; }
+.kt-rueckmeldung h2 { flex: 1 1 360px; min-width: 0; margin: 0; }
+.kt-rueckmeldung > div { flex: 1.4 1 560px; min-width: 0; }
+.kt-rueckmeldung-text { margin: 0 0 22px; font-size: 20px; color: $kt-text-gedaempft; }
+
+// Werkseiten mobil: Karten untereinander, hervorgehobene Karte zuerst, kleinere Überschriften
+@media (max-width: 767.98px) {
+    .kt-werkkopf { padding-bottom: 48px; }
+    .kt-werkkopf-reihe { gap: 32px; }
+    .kt-werkkopf-bild { flex-basis: 100%; }
+    .kt-werkkopf-bild::before { width: 260px; height: 260px; margin: -130px 0 0 -130px; }
+    .kt-cover--werkkopf { --kt-cover-b: 180px; --kt-cover-h: 252px; --kt-cover-schrift: 24px; }
+    .kt-werkkopf-titel { font-size: 36px; }
+    .kt-werkkopf-untertitel { font-size: 19px; }
+    .kt-werkkopf-beschreibung, .kt-werkkopf-zusatz { font-size: 17px; }
+    .kt-angebote h2, .kt-vorteile h2, .kt-leseproben h2, .kt-hefte h2, .kt-ausgabe h2, .kt-fakten h2, .kt-rueckmeldung h2 { font-size: 30px; }
+    .kt-angebote, .kt-leseproben, .kt-ausgabe, .kt-fakten, .kt-rueckmeldung { padding-top: 56px; padding-bottom: 56px; }
+    .kt-vorteile, .kt-videoperson { padding-top: 56px; padding-bottom: 56px; gap: 28px; }
+    .kt-vorteile--abstand-klein { padding-top: 8px; }
+    .kt-hefte { padding-top: 56px; }
+    .kt-angebote-titel { margin-bottom: 28px; }
+    .kt-angebote-reihe { flex-direction: column; }
+    .kt-angebot, .kt-angebot--hervorgehoben, .kt-angebote-reihe--einzeln .kt-angebot { flex: 1 1 auto; padding: 26px 22px 24px; }
+    .kt-angebot--hervorgehoben { order: -1; }
+    .kt-angebot-name { font-size: 24px; }
+    .kt-angebot-betrag { font-size: 30px; }
+    .kt-angebote-zeile { flex-direction: column; gap: 6px; padding: 12px 0; }
+    .kt-heft { flex: 1 1 140px; }
+    .kt-hefte-archiv { padding: 26px 22px; }
+    .kt-ausgabe-rubrik { flex-basis: 110px; }
+    .kt-fakten dt { flex-basis: 100%; }
+    .kt-leseprobe-name { font-size: 17px; }
+    .kt-videoperson-text h2 { font-size: 28px; }
+}

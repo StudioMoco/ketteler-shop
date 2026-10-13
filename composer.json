@@ -90,7 +90,9 @@
             "Ketteler\\Mehrplatz\\": "custom/plugins/KettelerMehrplatz/src/",
             "Ketteler\\Mehrplatz\\Tests\\": "custom/plugins/KettelerMehrplatz/tests/",
             "Ketteler\\Steuern\\": "custom/plugins/KettelerSteuern/src/",
-            "Ketteler\\Steuern\\Tests\\": "custom/plugins/KettelerSteuern/tests/"
+            "Ketteler\\Steuern\\Tests\\": "custom/plugins/KettelerSteuern/tests/",
+            "Ketteler\\Theme\\": "custom/plugins/KettelerTheme/src/",
+            "Ketteler\\Theme\\Tests\\": "custom/plugins/KettelerTheme/tests/"
         }
     }
 }

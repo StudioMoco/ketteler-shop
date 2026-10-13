@@ -1,5 +1,5 @@
 {
-  "_hinweis": "Erlebniswelten, die ketteler:einrichten EINMAL anlegt (danach pflegt Ketteler sie in der Verwaltung; neu anlegen nur mit --erlebniswelten-neu). Texte wörtlich aus docs/design/startseite-entwurf.dc.html (die Vorlage nimmt sie aus content/). Verweise: @artikel:<Nummer>, @kategorie:<Schlüssel> (ID), @link-kategorie:<Schlüssel> und @link-artikel:<Nummer> (Link-Ziel), @medium:<Datei in daten/medien>. Preise kommen immer aus den Produkten.",
+  "_hinweis": "Erlebniswelten, die ketteler:einrichten EINMAL anlegt (danach pflegt Ketteler sie in der Verwaltung; neu anlegen nur mit --erlebniswelten-neu). Texte wörtlich aus docs/design/startseite-entwurf.dc.html (die Vorlage nimmt sie aus content/). Verweise: @artikel:<Nummer>, @kategorie:<Schlüssel> (ID), @link-kategorie:<Schlüssel> und @link-artikel:<Nummer> (Link-Ziel), @medium:<Datei in daten/medien>, @pdf:<Titel> (Platzhalter-PDF, bis Ketteler die Datei liefert), bibliothek (Link in die KETTELER-Bibliothek), Links im Text als [Text](@link-kategorie:<Schlüssel>). layouts: gemeinsame Layouts mit Inhalten je Kategorie. Preise kommen immer aus den Produkten.",
   "entfernt": [
     "sortiment"
   ],
@@ -228,6 +228,635 @@
           }
         }
       ]
+    }
+  ],
+  "layouts": [
+    {
+      "schluessel": "werkseite",
+      "name": "Werkseite",
+      "_hinweis": "Ein Layout für Zeitschrift ZMV, Eichstätter Kommentar und Kompendium AVR Caritas. Plätze in fester Reihenfolge, je Kategorie eigene Inhalte (Texte wörtlich aus docs/design/werkseite-*-entwurf.dc.html). Leere Plätze zeigen nichts.",
+      "bloecke": [
+        "werkkopf",
+        "angebote",
+        "einzelhefte",
+        "hinweis",
+        "vorteile",
+        "ausgabe",
+        "leseproben",
+        "video",
+        "fakten",
+        "rueckmeldung"
+      ],
+      "inhalte": {
+        "avr": {
+          "werkkopf": {
+            "produkt": "@artikel:TEST-O-AVR",
+            "bild": null,
+            "flaeche": "rose",
+            "dachzeile": "Kompendium AVR Caritas",
+            "titel": "Die AVR von A bis Z",
+            "untertitel": "Erläuterungen zu den Arbeitsvertragsrichtlinien des Deutschen Caritasverbandes",
+            "text": "Praxisbezogen und verständlich erläutert das Kompendium die AVR Caritas und alle für die Einrichtungen der Caritas geltenden staatlichen und kirchlichen Rechtsgrundlagen. Dabei erhalten Sie wertvolle Informationen sowohl zu Kernbereichen wie Arbeitszeit, Eingruppierung, Vergütung / Entgelt als auch zum gesamten staatlichen Arbeitsrecht mit Bezug zur AVR Caritas.",
+            "zusatz": "„Die AVR von A bis Z“ gibt es zukünftig **ausschließlich online**.",
+            "angaben": "Schriftleiter: Rechtsanwalt Marvin Milleschewski",
+            "knopfText": "Angebote ansehen",
+            "knopfLink": "#angebote",
+            "nebenLinkText": "Leseproben",
+            "nebenLink": "#leseproben",
+            "bestandText": "Sie haben schon einen Zugang?",
+            "bestandLinkText": "In der Bibliothek lesen",
+            "bestandLink": "bibliothek"
+          },
+          "angebote": {
+            "anker": "angebote",
+            "ueberschrift": "Kompendium bestellen",
+            "bestellnummer": true,
+            "werk": "avr",
+            "karten": [
+              {
+                "produkt": "@artikel:TEST-O-AVR",
+                "titel": "Die AVR von A bis Z - Digital",
+                "zeile": "Abonnement, zu lesen in der KETTELER-Bibliothek",
+                "hervorgehoben": true
+              },
+              {
+                "produkt": "@artikel:TEST-P-AVR",
+                "titel": "Die AVR von A bis Z",
+                "zeile": "Print, solange der Vorrat reicht",
+                "hervorgehoben": false
+              }
+            ],
+            "seitentitel": "",
+            "seitentext": "",
+            "zeilen": [
+              {
+                "text": "Mehrere Lizenzen für Ihre Einrichtung: **Mehrplatzlizenz auf Anfrage**",
+                "zusatz": "",
+                "art": "mehrplatz",
+                "linkText": "Lizenzen anfragen",
+                "link": null,
+                "produkt": null
+              }
+            ],
+            "fussText": "Beachten Sie auch unsere [AGB](@link-kategorie:fuss-agb)."
+          },
+          "vorteile": {
+            "anker": "",
+            "abstand": "gross",
+            "ueberschrift": "Ihre Vorteile im Überblick",
+            "einleitung": "Autorenteam: Praktiker, Referenten und Juristen, alle Expertinnen und Experten bei der Anwendung der AVR.",
+            "hinweis": "Rechtsänderungen werden zeitnah aufbereitet. Die enge Kooperation mit den Vertretern der Mitarbeiterinnen und Mitarbeiter prägt das AVR-Kompendium.",
+            "darstellung": "titel",
+            "eintraege": [
+              {
+                "titel": "Für Mitarbeitervertretungen",
+                "text": "Für Mitarbeitervertretungen und Mitarbeitende im Bereich der AVR, mit konkreten Zusammenfassungen und Handlungsempfehlungen für eine praxisgerechte Umsetzung im MAV-Alltag."
+              },
+              {
+                "titel": "Gliederung nach Stichworten",
+                "text": "Schnelles Auffinden der gewünschten leichtverständlichen Informationen mit Verweis auf die jeweiligen Paragrafen der AVR."
+              },
+              {
+                "titel": "Zielführend",
+                "text": "Modulfinder: von der AVR-Vorschrift direkt zu den Modulen, umfangreiches Stichwortverzeichnis."
+              },
+              {
+                "titel": "Praxisbezogen",
+                "text": "Thematischer Aufbau in Modulen, Erläuterungen von A bis Z mit Beispielen samt Lösungen, Checklisten und Übersichten."
+              },
+              {
+                "titel": "Aktuell",
+                "text": "Ständige Rubrik „Aktuelle Information“ mit ausgewählten Meldungen zur Arbeit in der Arbeitsrechtlichen Kommission, zu neuer Rechtsprechung und aktuellen Entwicklungen in der Gesetzgebung."
+              },
+              {
+                "titel": "Vertiefung",
+                "text": "Themengebiete, die für die Mitarbeitenden relevant sind, in den AVR aber bislang noch nicht geregelt wurden, wie zum Beispiel „Gewalt“."
+              },
+              {
+                "titel": "Informativ",
+                "text": "Übersicht zu den AVR (Allgemeiner Teil und Anlagen)."
+              },
+              {
+                "titel": "Hilfreich",
+                "text": "Rechts- und Fachbegriffe für AVR-Anwender."
+              }
+            ],
+            "aufzaehlungen": []
+          },
+          "leseproben": {
+            "anker": "leseproben",
+            "flaeche": "rose",
+            "ueberschrift": "Leseproben",
+            "text": "Wertvolle Einblicke geben unsere aktuellen Leseproben.",
+            "knopfText": "",
+            "knopfDatei": null,
+            "kastenDachzeile": "AVR aktuell 2/2026 (Juni 2026)",
+            "kastenTitel": "Themen in der AVR aktuell 2/2026",
+            "kastenPunkte": "Wahlzeitraum für die SBV-Wahlen steht vor der Tür\n§§-Übersicht AVR 2027\nAVR 2027: „TÜV“ für den Bereich Arbeitszeit Teil I\nNeues aus der Rechtsprechung",
+            "dateien": [
+              {
+                "kuerzel": "",
+                "titel": "Wahlzeitraum für die SBV-Wahlen steht vor der Tür",
+                "datei": "@pdf:AVR Leseprobe Wahlzeitraum für die SBV-Wahlen steht vor der Tür"
+              },
+              {
+                "kuerzel": "",
+                "titel": "AVR 2027: „TÜV“ für den Bereich Arbeitszeit Teil I (Ausschnitt)",
+                "datei": "@pdf:AVR Leseprobe AVR 2027: „TÜV“ für den Bereich Arbeitszeit Teil I (Ausschnitt)"
+              },
+              {
+                "kuerzel": "",
+                "titel": "Entgeltfortzahlungsanspruch bei Korrektur einer Lifestyle-Operation (Ausschnitt)",
+                "datei": "@pdf:AVR Leseprobe Entgeltfortzahlungsanspruch bei Korrektur einer Lifestyle-Operation (Ausschnitt)"
+              },
+              {
+                "kuerzel": "",
+                "titel": "Vorwort",
+                "datei": "@pdf:AVR Leseprobe Vorwort"
+              },
+              {
+                "kuerzel": "",
+                "titel": "Erläuterungen von A bis Z",
+                "datei": "@pdf:AVR Leseprobe Erläuterungen von A bis Z"
+              },
+              {
+                "kuerzel": "",
+                "titel": "Ausschnitt aus AVR aktuell 1/2026: Interview zu den AVR 2027",
+                "datei": "@pdf:AVR Leseprobe Ausschnitt aus AVR aktuell 1/2026: Interview zu den AVR 2027"
+              },
+              {
+                "kuerzel": "A 4",
+                "titel": "Arbeitsbefreiung und Sonderurlaub mit Gliederung",
+                "datei": "@pdf:AVR Leseprobe A 4 Arbeitsbefreiung und Sonderurlaub mit Gliederung"
+              },
+              {
+                "kuerzel": "A 11",
+                "titel": "Aufhebungs- und Abwicklungsverträge",
+                "datei": "@pdf:AVR Leseprobe A 11 Aufhebungs- und Abwicklungsverträge"
+              },
+              {
+                "kuerzel": "B 3",
+                "titel": "Betriebsübergang",
+                "datei": "@pdf:AVR Leseprobe B 3 Betriebsübergang"
+              },
+              {
+                "kuerzel": "D 4",
+                "titel": "Diskriminierungsschutz",
+                "datei": "@pdf:AVR Leseprobe D 4 Diskriminierungsschutz"
+              },
+              {
+                "kuerzel": "E 1",
+                "titel": "Eingruppierung mit Gliederung",
+                "datei": "@pdf:AVR Leseprobe E 1 Eingruppierung mit Gliederung"
+              },
+              {
+                "kuerzel": "G 1",
+                "titel": "Arbeits- und Gesundheitsschutz mit Gliederung",
+                "datei": "@pdf:AVR Leseprobe G 1 Arbeits- und Gesundheitsschutz mit Gliederung"
+              },
+              {
+                "kuerzel": "T 1",
+                "titel": "Teilzeitbeschäftigung",
+                "datei": "@pdf:AVR Leseprobe T 1 Teilzeitbeschäftigung"
+              },
+              {
+                "kuerzel": "Z 2",
+                "titel": "Zulagen",
+                "datei": "@pdf:AVR Leseprobe Z 2 Zulagen"
+              }
+            ]
+          },
+          "video": {
+            "video": "@medium:avr-2027-folge-1-platzhalter.mp4",
+            "videoPoster": "@medium:avr-2027-folge-1-platzhalter.jpg",
+            "videoUntertitel": "@medium:avr-2027-folge-1-platzhalter.vtt",
+            "dachzeile": "AVR 2027 nachgefragt: Praxiswissen kompakt",
+            "titel": "Folge 1: Wie ist die Struktur der neuen AVR 2027?",
+            "text": "Mit Rechtsanwalt Marvin Milleschewski, Schriftleiter von „Die AVR von A bis Z“.",
+            "foto": null,
+            "personTitel": "Grußwort des neuen Schriftleiters",
+            "personName": "Rechtsanwalt Marvin Milleschewski",
+            "links": [
+              {
+                "text": "Grußwort (PDF)",
+                "link": null,
+                "datei": "@pdf:AVR Grußwort des neuen Schriftleiters"
+              },
+              {
+                "text": "Pressemeldung",
+                "link": null,
+                "datei": "@pdf:AVR Pressemeldung neue Schriftleitung"
+              }
+            ]
+          },
+          "rueckmeldung": {
+            "ueberschrift": "Sie haben Anregungen & Feedback zu „Die AVR von A bis Z“?",
+            "text": "Wir freuen uns auf Ihre Rückmeldung.",
+            "knopfText": "kontakt@ketteler-verlag.de",
+            "knopfLink": "mailto:kontakt@ketteler-verlag.de"
+          }
+        },
+        "zmv": {
+          "werkkopf": {
+            "produkt": "@artikel:TEST-P-ZMV-2026-5",
+            "bild": null,
+            "flaeche": "sand",
+            "dachzeile": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+            "titel": "ZMV Die Mitarbeitervertretung",
+            "untertitel": "Führende Fachzeitschrift für die Praxis der Mitarbeitervertretung in den Einrichtungen der katholischen und evangelischen Kirche",
+            "text": "Die ZMV liefert fundierte Beiträge und hilfreiche Informationen aus dem kirchlichen und staatlichen Arbeitsrecht seit über 30 Jahren. Sie ist das praxisorientierte Informationsmedium für Basis- und Spezialwissen mit Antworten auf die täglichen Fragen und Anforderungen in den Mitarbeitervertretungen, Personalabteilungen, Arbeitsrechtlichen Kommissionen und für deren juristischen Berater.",
+            "zusatz": "",
+            "angaben": "",
+            "knopfText": "Angebote im Überblick",
+            "knopfLink": "#angebote",
+            "nebenLinkText": "Kostenloses Probeheft",
+            "nebenLink": "#probeheft",
+            "bestandText": "Sie haben schon ein Abonnement Digital?",
+            "bestandLinkText": "Online lesen",
+            "bestandLink": "bibliothek"
+          },
+          "angebote": {
+            "anker": "angebote",
+            "ueberschrift": "Angebote im Überblick",
+            "bestellnummer": false,
+            "werk": "zmv",
+            "karten": [
+              {
+                "produkt": "@artikel:TEST-ABO-ZMV-P",
+                "titel": "Abonnement Print",
+                "zeile": "6 Ausgaben pro Jahr",
+                "hervorgehoben": false
+              },
+              {
+                "produkt": "@artikel:TEST-ABO-ZMV-D",
+                "titel": "Abonnement Digital",
+                "zeile": "Inkl. Volltext-Archiv ab Jahrgang 2000",
+                "hervorgehoben": false
+              },
+              {
+                "produkt": "@artikel:TEST-ABO-ZMV-K",
+                "titel": "Abonnement Kombi",
+                "zeile": "Digital + Print",
+                "hervorgehoben": true
+              }
+            ],
+            "seitentitel": "",
+            "seitentext": "",
+            "zeilen": [
+              {
+                "text": "Abonnement Digital zusätzlich zum bestehenden Abonnement Print: **{preis}**",
+                "zusatz": "(gilt nicht für Universitäten, Bibliotheken, Gerichte)",
+                "art": "kaufen",
+                "linkText": "In den Warenkorb",
+                "link": null,
+                "produkt": "@artikel:TEST-ABO-ZMV-DZ"
+              },
+              {
+                "text": "Mehrere Lizenzen für Ihre Einrichtung: **Mehrplatzlizenz auf Anfrage**",
+                "zusatz": "",
+                "art": "mehrplatz",
+                "linkText": "Lizenzen anfragen",
+                "link": null,
+                "produkt": null
+              },
+              {
+                "text": "Lieber ein bestimmtes Heft? **Einzelhefte ab 24,50 €**",
+                "zusatz": "",
+                "art": "link",
+                "linkText": "Einzelhefte und Archiv",
+                "link": "#einzelhefte",
+                "produkt": null
+              }
+            ],
+            "fussText": "Preise gültig ab dem 01.01.2026. Beachten Sie auch unsere [AGB](@link-kategorie:fuss-agb) und die [Preise im Überblick](@link-kategorie:fuss-preise-zmv)."
+          },
+          "einzelhefte": {
+            "anker": "einzelhefte",
+            "ueberschrift": "Einzelhefte",
+            "text": "Sie nehmen am liebsten eine gedruckte Zeitschrift in die Hand? Ob Abonnement Print, kostenloses Probeheft oder ein bestimmtes Einzelheft: hier werden Sie fündig.",
+            "heftKategorie": "@kategorie:zmv-print",
+            "jahrgaenge": "5",
+            "onlineText": "Oder doch lieber online?",
+            "onlineLinkText": "Einzelhefte und Einzelartikel Digital",
+            "onlineLink": "@link-kategorie:zmv-digital",
+            "archivTitel": "Archiv",
+            "archivText": "Ältere Einzelhefte und Fachtagungsbände, 65 Titel.",
+            "archivLinkText": "Zum Archiv",
+            "archivLink": "@link-kategorie:zmv-archiv",
+            "preiszeilen": [
+              {
+                "text": "Einzelhefte 2020 bis 2022",
+                "preis": "je 17,50 €"
+              },
+              {
+                "text": "Einzelhefte 2018 und 2019",
+                "preis": "je 15,80 €"
+              },
+              {
+                "text": "Einzelhefte 2013 bis 2017",
+                "preis": "je 14,80 €"
+              },
+              {
+                "text": "Einzelhefte 2012",
+                "preis": "je 12,80 €"
+              },
+              {
+                "text": "Fachtagungsbände 2008 bis 2014",
+                "preis": "je 10,50 €"
+              }
+            ]
+          },
+          "hinweis": {
+            "zeichen": "§",
+            "groesse": "normal",
+            "dachzeile": "Ihr gutes Recht",
+            "haupttext": "Die ZMV gehört zu den *erforderlichen Sachmitteln* der Mitarbeitervertretungen kirchlicher Einrichtungen.",
+            "unterzeile": "Gemäß § 17 Abs. 1, 2 Rahmen-MAVO bzw. gemäß § 30 Abs. 1, 2 MVG-EKD.",
+            "text": "",
+            "linksVorspann": "Muster-Formular für den Dienstgeber:",
+            "links": [
+              {
+                "text": "Fachliteratur katholisch",
+                "link": "@link-kategorie:mav-aktuelles",
+                "datei": null
+              },
+              {
+                "text": "Fachliteratur evangelisch",
+                "link": "@link-kategorie:mav-aktuelles",
+                "datei": null
+              }
+            ]
+          },
+          "vorteile": {
+            "anker": "",
+            "abstand": "klein",
+            "ueberschrift": "Die Fachzeitschrift informiert aktuell und verständlich über",
+            "einleitung": "",
+            "hinweis": "",
+            "darstellung": "zeile",
+            "eintraege": [
+              {
+                "titel": "Mitarbeitervertretungsrecht MAVO und MVG-EKD",
+                "text": ""
+              },
+              {
+                "titel": "Arbeitsrecht individual und kollektiv",
+                "text": ""
+              },
+              {
+                "titel": "Arbeitsrechtliche Kommissionen",
+                "text": ""
+              },
+              {
+                "titel": "Tarifrecht des öffentlichen Dienstes",
+                "text": ""
+              },
+              {
+                "titel": "Arbeits- und Gesundheitsschutz",
+                "text": ""
+              },
+              {
+                "titel": "Sozial- und Sozialversicherungsrecht",
+                "text": ""
+              },
+              {
+                "titel": "Europarecht",
+                "text": ""
+              },
+              {
+                "titel": "Rechtsprechung mit wesentlichen Entscheidungen der staatlichen und kirchlichen Arbeitsgerichtsbarkeit",
+                "text": ""
+              }
+            ],
+            "aufzaehlungen": [
+              {
+                "titel": "Plus:",
+                "punkte": "Entscheidungen mit Leitsätzen für die tägliche Praxis der MAV-Arbeit\nGastkommentare zu aktuellen Fragen des (kirchlichen) Arbeitsrechts\nAntworten auf Leseranfragen\nTipps zur arbeitsrechtlichen Praxis\nEmpfehlungen zu Fachliteratur"
+              },
+              {
+                "titel": "Ihre zusätzlichen Vorteile ZMV Digital:",
+                "punkte": "Digitale Bibliothek: alle Ausgaben ab Jahrgang 2000\nUmfangreiche Suchfunktion\nDirekt: ZMV-Artikel zu den Urteilen in der Datenbank „Kirchliche Rechtsprechung“ auf www.zmv-online.de"
+              }
+            ]
+          },
+          "ausgabe": {
+            "anker": "probeheft",
+            "flaeche": "rose",
+            "dachzeile": "ZMV aktuell",
+            "titel": "Die neueste Ausgabe: ZMV 5/2026",
+            "untertitel": "September/Oktober 2026 · Rechtsfragen der MAV-Arbeit",
+            "zeilen": [
+              {
+                "rubrik": "Aufsätze",
+                "inhalt": "Öffentlichkeitsarbeit der MAV\nMitwirkung erkrankter MAV-Mitglieder an Sitzungen\nDie Grundlagen der Fristenberechnung"
+              },
+              {
+                "rubrik": "Rechtsprechung",
+                "inhalt": "Zuständigkeit zum Erlass der Reisekostenordnungen im Caritasbereich"
+              },
+              {
+                "rubrik": "Leseranfrage",
+                "inhalt": "Einladung der Vertrauensperson der Schwerbehinderten zu Sitzungen"
+              }
+            ],
+            "links": [
+              {
+                "text": "Inhaltsverzeichnis zum Download",
+                "link": null,
+                "datei": "@pdf:ZMV 5/2026 Inhaltsverzeichnis"
+              },
+              {
+                "text": "Print-Ausgabe",
+                "link": "@link-artikel:TEST-P-ZMV-2026-5",
+                "datei": null
+              },
+              {
+                "text": "Online-Ausgabe",
+                "link": "bibliothek",
+                "datei": null
+              }
+            ],
+            "kastenTitel": "Kostenloses ZMV-Probeheft",
+            "kastenText": "Print oder Digital, ohne Abonnement.",
+            "knoepfe": [
+              {
+                "text": "Probeheft Print anfordern",
+                "link": "@link-artikel:TEST-P-ZMV-PROBE",
+                "datei": null
+              },
+              {
+                "text": "Probeheft Digital herunterladen",
+                "link": null,
+                "datei": "@pdf:ZMV-Probeheft Digital"
+              }
+            ],
+            "kastenFussText": "Leseprobe:",
+            "kastenFussLinkText": "1/2021: „Du musst dein Mikro einschalten...“",
+            "kastenFussDatei": "@pdf:ZMV Leseprobe 1/2021 Du musst dein Mikro einschalten"
+          },
+          "fakten": {
+            "anker": "",
+            "ueberschrift": "Fakten, Zahlen, Konditionen",
+            "eintraege": [
+              {
+                "begriff": "Begründet von",
+                "wert": "Prof. Dr. Renate Oxenknecht-Witzsch"
+              },
+              {
+                "begriff": "ISSN",
+                "wert": "Abonnement Print 0939-8198 · Abonnement Digital 2363-7595"
+              },
+              {
+                "begriff": "Erscheinungsweise",
+                "wert": "6 Ausgaben / Jahr, 56-64 Seiten pro Ausgabe, Lieferung im 2-Monats-Rhythmus: Februar/April/Juni/August/Oktober/Dezember"
+              },
+              {
+                "begriff": "Mindestlaufzeit",
+                "wert": "12 Monate"
+              },
+              {
+                "begriff": "Kündigungsfrist",
+                "wert": "6 Wochen zum Ende eines Kalenderjahres"
+              },
+              {
+                "begriff": "Abos Digital",
+                "wert": "Einschließlich Abo Kombi: Einzelplatz. Bereitstellung sowie Berechnung ganzjährig. Zugriffsrecht bis Ende der Vertragslaufzeit."
+              }
+            ]
+          }
+        },
+        "eichstaetter": {
+          "werkkopf": {
+            "produkt": "@artikel:TEST-O-EK",
+            "bild": null,
+            "flaeche": "blaugrau",
+            "dachzeile": "Oxenknecht-Witzsch/Eder/Stöcke-Muhlack/Schmitz/Richartz (Hg)",
+            "titel": "Eichstätter Kommentar MAVO und KAGO",
+            "untertitel": "Das Mitarbeitervertretungsrecht in Praxis und Rechtsprechung",
+            "text": "Der „Eichstätter Kommentar“ hat sich als Praxisbegleitung für Mitarbeitervertretungen im Bereich der katholischen Kirche bewährt: Er erläutert zusammen in einem Band die beiden einschlägigen Regelungswerke der Rahmen-Mitarbeitervertretungsordnung (MAVO) und der Kirchlichen Arbeitsgerichtsordnung (KAGO).",
+            "zusatz": "",
+            "angaben": "2. aktualisierte, überarbeitete, erweiterte Auflage 2018 · 1120 Seiten · ISBN 978-3-944427-28-7",
+            "knopfText": "Kommentar bestellen",
+            "knopfLink": "#angebote",
+            "nebenLinkText": "Lesemuster",
+            "nebenLink": "#leseproben",
+            "bestandText": "Sie haben schon einen Zugang?",
+            "bestandLinkText": "Online lesen",
+            "bestandLink": "bibliothek"
+          },
+          "angebote": {
+            "anker": "angebote",
+            "ueberschrift": "Kommentar bestellen",
+            "bestellnummer": true,
+            "werk": "eichstaetter",
+            "karten": [
+              {
+                "produkt": "@artikel:TEST-O-EK",
+                "titel": "Eichstätter Kommentar MAVO & KAGO - Online-Zugang",
+                "zeile": "Zu lesen in der KETTELER-Bibliothek",
+                "hervorgehoben": true
+              }
+            ],
+            "seitentitel": "Zur Zeit nur als Online-Version verfügbar.",
+            "seitentext": "Der Online-Zugang gilt grundsätzlich nur bis zum Erscheinen einer neuen Auflage.",
+            "zeilen": [
+              {
+                "text": "Mehrere Lizenzen für Ihre Einrichtung: **Mehrplatzlizenz auf Anfrage**",
+                "zusatz": "",
+                "art": "mehrplatz",
+                "linkText": "Lizenzen anfragen",
+                "link": null,
+                "produkt": null
+              }
+            ],
+            "fussText": "Beachten Sie auch unsere [AGB](@link-kategorie:fuss-agb)."
+          },
+          "hinweis": {
+            "zeichen": "§",
+            "groesse": "normal",
+            "dachzeile": "Ihr gutes Recht",
+            "haupttext": "Der Eichstätter Kommentar gehört zu den *erforderlichen Sachmitteln* der Mitarbeitervertretungen kirchlicher Einrichtungen.",
+            "unterzeile": "Gemäß § 17 Abs. 1, 2 Rahmen-MAVO.",
+            "text": "",
+            "linksVorspann": "Muster-Formular für den Dienstgeber:",
+            "links": [
+              {
+                "text": "Fachliteratur katholisch",
+                "link": "@link-kategorie:mav-aktuelles",
+                "datei": null
+              }
+            ]
+          },
+          "vorteile": {
+            "anker": "",
+            "abstand": "klein",
+            "ueberschrift": "Was Sie erwartet",
+            "einleitung": "Der Kommentar richtet sich an Mitarbeitervertreter, Dienstgeber, Personalleiter, Rechtsanwälte, Richter sowie alle in der mitarbeitervertretungsrechtlichen Praxis und Wissenschaft tätigen Personen.",
+            "hinweis": "",
+            "darstellung": "buchstabe",
+            "eintraege": [
+              {
+                "titel": "Z",
+                "text": "Zwei Kommentierungen in einem Band: MAVO (Mitarbeitervertretungsordnung) und KAGO (Kirchliche Arbeitsgerichtsordnung)"
+              },
+              {
+                "titel": "V",
+                "text": "Verständliche Erläuterungen für die tägliche Praxis"
+              },
+              {
+                "titel": "R",
+                "text": "Rechtssicherer Durchblick bei zwei komplizierten Regelungswerken"
+              },
+              {
+                "titel": "D",
+                "text": "Direkt anwendbare Arbeitshilfen"
+              },
+              {
+                "titel": "S",
+                "text": "Schnelle Antworten durch umfangreiches Stichwortverzeichnis"
+              },
+              {
+                "titel": "I",
+                "text": "Inhaltliche Verweise auf entsprechende Beiträge der Zeitschrift ZMV"
+              }
+            ],
+            "aufzaehlungen": [
+              {
+                "titel": "Neu in der 2. Auflage",
+                "punkte": "Neu eingefügt wurde § 27b MAVO, der erstmals die Bildung von Wirtschaftsausschüssen ermöglicht.\nÜberarbeitet wurden u.a. die Regelungen zum Einrichtungsbegriff (§ 1a Abs. 2 MAVO) und zur Gesamtmitarbeitervertretung / erweiterten Gesamtmitarbeitervertretung (§ 24 MAVO).\nBerücksichtigt wurden Änderungen bei Leiharbeit und Fremdpersonaleinsatz sowie die Neustrukturierung des Schwerbehindertenrechts im SGB IX durch das Bundesteilhabegesetz (BTHG).\nBerücksichtigung der aktuellen kirchlichen und staatlichen Rechtsprechung."
+              }
+            ]
+          },
+          "leseproben": {
+            "anker": "leseproben",
+            "flaeche": "blaugrau",
+            "ueberschrift": "Leseproben",
+            "text": "",
+            "knopfText": "Lesemuster (PDF)",
+            "knopfDatei": "@pdf:Eichstätter Kommentar Lesemuster",
+            "kastenDachzeile": "",
+            "kastenTitel": "",
+            "kastenPunkte": "",
+            "dateien": [
+              {
+                "kuerzel": "",
+                "titel": "§ 14 Gliederung",
+                "datei": "@pdf:Eichstätter Kommentar Leseprobe § 14 Gliederung"
+              },
+              {
+                "kuerzel": "",
+                "titel": "§ 14 / III. Die Konstituierung der MAV",
+                "datei": "@pdf:Eichstätter Kommentar Leseprobe § 14 / III. Die Konstituierung der MAV"
+              },
+              {
+                "kuerzel": "",
+                "titel": "§ 14 / VI. Die Sitzungen der MAV",
+                "datei": "@pdf:Eichstätter Kommentar Leseprobe § 14 / VI. Die Sitzungen der MAV"
+              }
+            ]
+          }
+        }
+      }
     }
   ]
 }

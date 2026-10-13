@@ -1,0 +1,101 @@
+{#
+    Einzelhefte mit Jahrgangsauswahl (ZMV): Hefte der gewählten Kategorie, nach Jahrgang gruppiert (Resolver: Zusatzfeld
+    oder Artikelnummer Z5-2026). Reiter wechseln ohne Neuladen und sind per Tastatur bedienbar (Pfeiltasten, Pos1, Ende).
+    Darunter optional eine Zeile mit Link und der Kasten Archiv (Link und frei gepflegte Preiszeilen).
+#}
+{% set c = element.config %}
+{# Leer gelassen (z. B. auf einer Werkseite ohne diesen Bereich): nichts anzeigen #}
+{% if c.ueberschrift.value or c.heftKategorie.value %}
+{% set d = element.data %}
+{% set anzahl = (c.jahrgaenge.value|default(5))|abs ?: 5 %}
+{% set jahrgaenge = d.jahrgaenge|default([])|slice(0, anzahl, true) %}
+{% set kennung = 'kt-hefte-' ~ element.id %}
+<section class="kt-rahmen kt-hefte"{% if c.anker.value %} id="{{ c.anker.value }}"{% endif %} aria-label="{{ c.ueberschrift.value|striptags }}" data-kt="einzelhefte">
+    <div class="kt-hefte-kopf">
+        <div>
+            {% if c.ueberschrift.value %}<h2>{{ c.ueberschrift.value }}</h2>{% endif %}
+            {% if c.text.value %}<p class="kt-hefte-text">{{ c.text.value|kt_text }}</p>{% endif %}
+        </div>
+        {% if jahrgaenge is not empty %}
+            <div class="kt-hefte-reiter" role="tablist" aria-label="Jahrgang" data-kt="jahrgaenge">
+                {% for jahr, hefte in jahrgaenge %}
+                    <button type="button" role="tab" id="{{ kennung }}-reiter-{{ jahr }}" aria-controls="{{ kennung }}-{{ jahr }}" aria-selected="{{ loop.first ? 'true' : 'false' }}"{% if not loop.first %} tabindex="-1"{% endif %} data-kt="jahrgang-reiter">{{ jahr }}</button>
+                {% endfor %}
+                {% if c.archivTitel.value %}<a href="#{{ kennung }}-archiv" class="kt-hefte-archivlink">{{ c.archivTitel.value }}</a>{% endif %}
+            </div>
+        {% endif %}
+    </div>
+    {% for jahr, hefte in jahrgaenge %}
+        <div class="kt-hefte-raster" role="tabpanel" id="{{ kennung }}-{{ jahr }}" aria-labelledby="{{ kennung }}-reiter-{{ jahr }}" tabindex="0"{% if not loop.first %} hidden{% endif %} data-kt="jahrgang" data-jahr="{{ jahr }}">
+            {% for p in hefte %}
+                {% set url = seoUrl('frontend.detail.page', { productId: p.id }) %}
+                <article class="kt-heft" data-kt="heft" data-nummer="{{ p.productNumber }}">
+                    <a class="kt-heft-bild" href="{{ url }}" tabindex="-1" aria-hidden="true">
+                        {% sw_include '@KettelerTheme/storefront/component/ketteler/cover.html.twig' with { produkt: p, groesse: 'heft', dekorativ: true } only %}
+                    </a>
+                    <a class="kt-heft-name" href="{{ url }}">{{ p.translated.name }}</a>
+                    <div class="kt-heft-preis">{{ p.calculatedPrice.unitPrice|currency }}
+                        {% if p.available and p.calculatedMaxPurchase > 0 %}
+                            <form action="{{ path('frontend.checkout.line-item.add') }}" method="post" data-add-to-cart="true">
+                                <input type="hidden" name="redirectTo" value="frontend.cart.offcanvas">
+                                <input type="hidden" name="lineItems[{{ p.id }}][id]" value="{{ p.id }}">
+                                <input type="hidden" name="lineItems[{{ p.id }}][type]" value="product">
+                                <input type="hidden" name="lineItems[{{ p.id }}][referencedId]" value="{{ p.id }}">
+                                <input type="hidden" name="lineItems[{{ p.id }}][stackable]" value="1">
+                                <input type="hidden" name="lineItems[{{ p.id }}][removable]" value="1">
+                                <input type="hidden" name="lineItems[{{ p.id }}][quantity]" value="1">
+                                <button type="submit" class="kt-knopf-als-link kt-heft-kaufen" data-kt="heft-kaufen" aria-label="In den Warenkorb: {{ p.translated.name }}">In den Warenkorb</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% endfor %}
+    {% set online = kt_link(c.onlineLink.value) %}
+    {% if c.onlineText.value %}<p class="kt-hefte-online">{{ c.onlineText.value }}{% if c.onlineLinkText.value and online %} <a class="kt-textlink kt-textlink--magenta" href="{{ online }}">{{ c.onlineLinkText.value }}</a>{% endif %}</p>{% endif %}
+    {% if c.archivTitel.value %}
+        {% set archiv = kt_link(c.archivLink.value) %}
+        <div class="kt-hefte-archiv" id="{{ kennung }}-archiv" data-kt="archiv">
+            <div class="kt-hefte-archiv-kopf">
+                <h3>{{ c.archivTitel.value }}</h3>
+                {% if c.archivText.value %}<p>{{ c.archivText.value }}</p>{% endif %}
+                {% if c.archivLinkText.value and archiv %}<a class="kt-textlink" href="{{ archiv }}" data-kt="archiv-link">{{ c.archivLinkText.value }}</a>{% endif %}
+            </div>
+            {% set preise = c.preiszeilen.value|default([])|filter(z => z.text) %}
+            {% if preise is not empty %}
+                <div class="kt-hefte-preise">
+                    {% for z in preise %}<div><span>{{ z.text }}</span><span>{{ z.preis }}</span></div>{% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+</section>
+{% if jahrgaenge|length > 1 %}
+    <script>
+        (function () {
+            // Reiter nach WAI-ARIA: Klick oder Pfeiltasten wählen den Jahrgang, nur der gewählte Reiter ist im Tab-Ablauf
+            var liste = document.querySelector('#{{ kennung }}-reiter-{{ jahrgaenge|keys|first }}').parentNode;
+            var reiter = Array.prototype.slice.call(liste.querySelectorAll('[role="tab"]'));
+            function waehlen(r, fokus) {
+                reiter.forEach(function (x) {
+                    var an = x === r;
+                    x.setAttribute('aria-selected', an ? 'true' : 'false');
+                    x.tabIndex = an ? 0 : -1;
+                    document.getElementById(x.getAttribute('aria-controls')).hidden = !an;
+                });
+                if (fokus) { r.focus(); }
+            }
+            reiter.forEach(function (r, i) {
+                r.addEventListener('click', function () { waehlen(r, false); });
+                r.addEventListener('keydown', function (e) {
+                    var ziel = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: reiter.length - 1 }[e.key];
+                    if (ziel === undefined) { return; }
+                    e.preventDefault();
+                    waehlen(reiter[(ziel + reiter.length) % reiter.length], true);
+                });
+            });
+        })();
+    </script>
+{% endif %}
+{% endif %}
