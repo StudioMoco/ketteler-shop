@@ -39,7 +39,10 @@ def main():
 
     print("AVR Print: nur solange der Vorrat reicht")
     stand = dict(sql("SELECT product_number, CONCAT(stock, '/', is_closeout) FROM product WHERE product_number IN ('TEST-P-AVR','TEST-P-AVR-0')"))
-    e.pruefe(stand.get("TEST-P-AVR") == "3/1" and stand.get("TEST-P-AVR-0") == "0/1", "Abverkauf: TEST-P-AVR Bestand 3, TEST-P-AVR-0 Bestand 0", str(stand))
+    bestand = int(stand.get("TEST-P-AVR", "0/0").split("/")[0])
+    # TEST-P-AVR startet mit Bestand 3 (ketteler:einrichten); jede Testbestellung verringert ihn
+    e.pruefe(0 < bestand <= 3 and stand.get("TEST-P-AVR", "").endswith("/1") and stand.get("TEST-P-AVR-0") == "0/1",
+             "Abverkauf: TEST-P-AVR mit Bestand (%d), TEST-P-AVR-0 Bestand 0" % bestand, str(stand))
     korb, _ = warenkorb("DE", "TEST-P-AVR")
     e.pruefe(any(p.get("referencedId") == artikel_id("TEST-P-AVR") for p in korb.get("lineItems", [])), "Bestand 3: bestellbar")
     korb, _ = warenkorb("DE", "TEST-P-AVR-0")

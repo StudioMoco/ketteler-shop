@@ -20,12 +20,12 @@ Platzhalter für echte Cover; der Shop zeigt bis zur Lieferung der Cover ruhige 
 | ZMV aktuell (ohne Vorlage) | keine | [Staging](staging-story-zmv-aktuell-1440.png) | [Staging](staging-story-zmv-aktuell-390.png) |
 | Verlag (ohne Vorlage) | keine | [Staging](staging-story-verlag-1440.png) | [Staging](staging-story-verlag-390.png) |
 | Links (ohne Vorlage) | keine | [Staging](staging-story-links-1440.png) | [Staging](staging-story-links-390.png) |
-| Warenkorb | keine | fehlt | fehlt |
-| Kasse: Anmeldung oder Gast | keine | fehlt | fehlt |
-| Kasse: Bestellübersicht | keine | fehlt | fehlt |
-| Kundenkonto: Übersicht | keine | fehlt | fehlt |
-| Kundenkonto: Bestellungen | keine | fehlt | fehlt |
-| Mail: Bestellbestätigung (aus Mailpit) | keine | fehlt | fehlt |
+| Warenkorb | keine | [Staging](staging-warenkorb-1440.png) | [Staging](staging-warenkorb-390.png) |
+| Kasse: Anmeldung oder Gast | keine | [Staging](staging-kasse-anmeldung-1440.png) | [Staging](staging-kasse-anmeldung-390.png) |
+| Kasse: Bestellübersicht | keine | [Staging](staging-kasse-uebersicht-1440.png) | [Staging](staging-kasse-uebersicht-390.png) |
+| Kundenkonto: Übersicht | keine | [Staging](staging-konto-1440.png) | [Staging](staging-konto-390.png) |
+| Kundenkonto: Bestellungen | keine | [Staging](staging-konto-bestellungen-1440.png) | [Staging](staging-konto-bestellungen-390.png) |
+| Mail: Bestellbestätigung (aus Mailpit) | keine | [Staging](staging-mail-bestellbestaetigung-1440.png) | [Staging](staging-mail-bestellbestaetigung-390.png) |
 
 Weitere: [dropdown-1440](dropdown-1440.png), [produktkarten-1440](produktkarten-1440.png), [produktkarten-390](produktkarten-390.png).
 

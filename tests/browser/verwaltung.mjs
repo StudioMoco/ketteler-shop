@@ -107,7 +107,7 @@ try {
             await b.warte(1000);
             karte = await b.werte(`(document.querySelector('[data-kt="lizenzen-bestellung"]') || {}).innerText || ''`);
         }
-        pruefe(/TEST-O-AVR/.test(karte) && /Lizenz angelegt|wartet|Fehler|beendet/.test(karte), 'Bestellung: Karte „Online-Zugänge (Lizenzen)“ mit Stand je Position', karte.slice(0, 200));
+        pruefe(/TEST-O-AVR/.test(karte) && /: (Lizenz angelegt|wartet|Fehler|beendet|storniert|offen)/.test(karte), 'Bestellung: Karte „Online-Zugänge (Lizenzen)“ mit Stand je Position', karte.slice(0, 200));
     }
     if (bildIndex > 0) {
         await b.ganzeSeite(resolve(process.argv[bildIndex + 1]));
