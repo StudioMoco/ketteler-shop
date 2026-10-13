@@ -25,31 +25,29 @@ Dauer: etwa 15 Minuten. Sie brauchen ein PayPal-Konto von Studio Moco (ein norma
 
 ## 2. Werte in die .env eintragen
 
-Die Werte gehören nur in die Datei `.env` auf Ihrem Rechner, nie ins Repository und nie in einen Chat.
+Die Werte gehören nur in die `.env`, nie ins Repository und nie in einen Chat. Das Skript fragt sie nacheinander ab (das
+Secret ohne Anzeige), legt vorher eine Kopie der `.env` an und ändert nur die drei PayPal-Zeilen.
 
-1. Terminal öffnen und diesen Befehl ausführen, die Datei öffnet sich in TextEdit:
+- Auf Ihrem Mac (lokaler Shop):
 
-   ```bash
-   open -e ~/Developer/ketteler-shop/.env
-   ```
+  ```bash
+  ~/Developer/ketteler-shop/ops/staging/paypal-eintragen.sh
+  ```
 
-2. Diese drei Zeilen suchen und hinter dem Gleichheitszeichen den jeweiligen Wert einfügen (ohne Leerzeichen, ohne
-   Anführungszeichen):
+- Auf Staging (Shop auf ketteler-shop.mocodev.de):
 
-   ```
-   PAYPAL_SANDBOX_CLIENT_ID=Client ID aus Schritt 1.4
-   PAYPAL_SANDBOX_CLIENT_SECRET=Secret aus Schritt 1.4
-   PAYPAL_SANDBOX_MERCHANT_ID=Account ID aus Schritt 1.5
-   ```
+  ```bash
+  ssh -t ketteler '/opt/ketteler-shop/repo/ops/staging/paypal-eintragen.sh'
+  ```
 
-3. Speichern (Cmd + S) und TextEdit schließen.
+Danach Bescheid geben: Die Werte werden dann in den Shop übernommen (Container neu starten, `ketteler:einrichten`).
 
 ## 3. Im Shop übernehmen und prüfen
 
-1. Im Terminal:
+1. Im Terminal (Container lesen die .env neu, dann Einrichtung):
 
    ```bash
-   cd ~/Developer/ketteler-shop && make einrichten
+   cd ~/Developer/ketteler-shop && docker compose up -d web worker && make einrichten
    ```
 
 2. Automatischer Test (prüft: Testmodus an, PayPal in der Kasse wählbar, der Shop kann bei PayPal eine Zahlung anlegen):
