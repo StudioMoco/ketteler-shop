@@ -20,6 +20,13 @@ kopf=$(mit_pw -s -D - -o /tmp/shop-start.$$ --max-time 30 "$SHOP_URL/")
 echo "$kopf" | head -1 | grep -q ' 200' && grep -q 'KETTELER' /tmp/shop-start.$$ && ok "Shop mit Passwort: 200" || nok "Shop mit Passwort" "$(echo "$kopf" | head -1)"
 echo "$kopf" | grep -qi '^x-robots-tag: noindex, nofollow' && ok "X-Robots-Tag: noindex" || nok "X-Robots-Tag" "fehlt"
 grep -q 'kt-servicezeile' /tmp/shop-start.$$ && ok "Ketteler-Theme aktiv (Servicezeile im Kopf)" || nok "Ketteler-Theme aktiv" "Kopf ohne Servicezeile"
+# Übersetzte Theme-Dateien, auf die die Seite verweist, müssen da sein (sonst 410: Seite ohne Stile und Skripte)
+fehlend=""; anzahl=0
+for datei in $(grep -o '/theme/[0-9a-f]*/[a-z]*/[^"]*\.\(css\|js\)' /tmp/shop-start.$$ | sort -u); do
+  anzahl=$((anzahl + 1))
+  c=$(mit_pw -s -o /dev/null -w '%{http_code}' --max-time 20 "$SHOP_URL$datei"); [ "$c" = 200 ] || fehlend="$fehlend $c:$datei"
+done
+[ "$anzahl" -gt 0 ] && [ -z "$fehlend" ] && ok "Theme-Dateien (CSS, JavaScript) erreichbar" || nok "Theme-Dateien erreichbar" "${fehlend:-keine gefunden}"
 rm -f /tmp/shop-start.$$
 c=$(mit_pw -s -o /dev/null -w '%{http_code}' --max-time 30 "$SHOP_URL/admin"); [ "$c" = 200 ] && ok "Verwaltung mit Passwort: 200" || nok "Verwaltung mit Passwort" "$c"
 curl -s --max-time 10 "$SHOP_URL/robots.txt" | grep -qx 'Disallow: /' && ok "robots.txt sperrt alles" || nok "robots.txt" "falsch"

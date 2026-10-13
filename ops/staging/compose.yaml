@@ -20,6 +20,8 @@ x-shop: &shop
     - medien:/var/www/html/public/media
     - vorschaubilder:/var/www/html/public/thumbnail
     - dateien:/var/www/html/files
+    # Übersetztes Theme gemeinsam für web und worker: Shopware übersetzt teils über die Warteschlange (im worker)
+    - theme:/var/www/html/public/theme
     - zitadel-bootstrap:/zitadel-bootstrap:ro
   restart: unless-stopped
   <<: *protokoll
@@ -236,6 +238,7 @@ volumes:
   medien:
   vorschaubilder:
   dateien:
+  theme:
   mailpit:
   zitadel-db:
   zitadel-bootstrap:

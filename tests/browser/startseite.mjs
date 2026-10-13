@@ -95,14 +95,14 @@ try {
     }
 
     console.log('In den Warenkorb aus der Produktreihe');
-    const vorher = await b.werte(`document.querySelector('[data-kt="warenkorb-zahl"]').textContent.trim()`);
+    const vorher = await b.werte(`(document.querySelector('[data-kt="warenkorb-zahl"]')?.textContent || '').trim()`);
     const adresse = await b.werte('location.href');
     await b.werte(`document.querySelector('[data-kt="in-den-warenkorb"]').click()`);
     let nachher = vorher;
     let seitlich = false;
-    for (let i = 0; i < 30 && (nachher === vorher || !seitlich); i += 1) {
+    for (let i = 0; i < 40 && (nachher === vorher || nachher === '' || !seitlich); i += 1) {
         await b.warte(300);
-        nachher = await b.werte(`document.querySelector('[data-kt="warenkorb-zahl"]').textContent.trim()`);
+        nachher = await b.werte(`(document.querySelector('[data-kt="warenkorb-zahl"]')?.textContent || '').trim()`);
         seitlich = await b.werte(`!!document.querySelector('.offcanvas.show, .offcanvas.is-open, .offcanvas-cart.show')`);
     }
     pruefe(Number(nachher) === Number(vorher) + 1, 'Zähler im Kopf steigt um eins', vorher + ' -> ' + nachher);

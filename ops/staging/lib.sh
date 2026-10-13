@@ -83,9 +83,10 @@ shop_aktualisieren() {
 
 # KettelerTheme am Verkaufskanal festlegen und übersetzen. Nach einem Update des Theme-Plugins stand der Kanal einmal
 # wieder auf dem Standard-Theme (13.10.2026); darum bei jeder Auslieferung und Rücknahme ausdrücklich setzen.
+# --sync: sonst übersetzt Shopware über die Warteschlange im worker (eigenes Dateisystem, seit 13.10. gemeinsames Volume).
 theme_setzen() {
   konsole theme:refresh >/dev/null
-  konsole theme:change --all KettelerTheme >/dev/null
+  konsole theme:change --all KettelerTheme --sync >/dev/null
 }
 
 # Sicherung sofort; mit dem Sicherungsskript dieses Standes (nicht der im laufenden Stand eingebundenen Kopie)
