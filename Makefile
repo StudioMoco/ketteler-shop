@@ -22,8 +22,8 @@ stop: ## Container anhalten (Daten bleiben)
 status: ## Zeigt, welche Container laufen
 	@$(DOCKER) compose ps
 
-einrichten: ## Grundaufbau erneut anwenden (nach Änderungen an Kategorien oder Testartikeln)
-	@$(DOCKER) compose exec -T web bin/console ketteler:einrichten
+einrichten: ## Grundaufbau anwenden: nur Fehlendes anlegen (UEBERSCHREIBEN=1 schreibt alles, STARTSEITE_NEU=1 legt die Startseite neu an)
+	@$(DOCKER) compose exec -T web bin/console ketteler:einrichten $(if $(UEBERSCHREIBEN),--ueberschreiben,) $(if $(STARTSEITE_NEU),--erlebniswelten-neu,)
 	@$(DOCKER) compose exec -T web bin/console cache:clear >/dev/null
 
 test: ## Unit-Tests der eigenen Plugins (phpunit, ohne Datenbank)
@@ -39,11 +39,13 @@ test-e2e: ## Ende-zu-Ende-Tests gegen die laufende Umgebung (Anmeldung, Lizenzen
 
 test-browser: ## Startseite und Verwaltung im echten Browser (eigenes Headless-Chrome; BILDER=<ordner> für Bildschirmfotos)
 	@node tests/browser/startseite.mjs $(if $(BILDER),--bilder $(BILDER),)
+	@node tests/browser/unterstreichen.mjs
 	@node tests/browser/verwaltung.mjs
 
 test-staging: ## Dieselben Ende-zu-Ende-Tests gegen Staging (SSH-Zugang ketteler nötig; Zugangsdaten nur zur Laufzeit)
 	@rc=0; for t in anmeldung lizenz shop widerruf steuern paypal; do echo "== $$t"; KETTELER_ZIEL=staging python3 tests/e2e/$${t}_test.py || rc=1; done; \
 	 echo "== startseite (Browser)"; node tests/browser/startseite.mjs --staging $(if $(BILDER),--bilder $(BILDER),) || rc=1; \
+	 echo "== unterstreichen (Browser)"; node tests/browser/unterstreichen.mjs --staging || rc=1; \
 	 echo "== verwaltung (Browser)"; node tests/browser/verwaltung.mjs --staging || rc=1; exit $$rc
 
 konsole: ## Kommandozeile im Shop-Container öffnen

@@ -1,0 +1,81 @@
+{% sw_extends '@Storefront/storefront/layout/navigation/navigation.html.twig' %}
+
+{#
+    Hauptnavigation mit schlichtem Dropdown statt Shopware-Flyout (kein Mega-Menü, kein Schließen-Knopf, kein Bild):
+    direkt unter dem Menüpunkt, linke Kante bündig, am rechten Rand nach links verschoben. Öffnet beim Überfahren
+    (120 ms) und beim Tastaturfokus, Pfeil nach unten öffnet und springt in die Liste, Pfeiltasten wandern, Escape
+    schließt (Fokus zurück), Klick daneben schließt. Punkte ohne Unterkategorien: kein Dropdown, kein Pfeil.
+#}
+{% block layout_main_navigation %}
+    {% set activePath = '|' ~ shopware.navigation.pathIdList|join('|') ~ '|' %}
+    <div class="main-navigation kt-hauptnav" id="mainNavigation">
+        <div class="container">
+            <nav aria-label="Hauptnavigation">
+                <ul class="kt-hauptnav-liste">
+                    {% for treeItem in header.navigation.tree %}
+                        {% set category = treeItem.category %}
+                        {% set kinder = treeItem.children %}
+                        {% set aktiv = category.id == shopware.navigation.id or category.id in activePath %}
+                        <li class="kt-hauptnav-punkt{% if kinder|length %} kt-hat-dropdown{% endif %}">
+                            <a class="main-navigation-link kt-hauptnav-link{% if aktiv %} active{% endif %}"
+                               href="{{ category_url(category) }}"
+                               {% if aktiv %}aria-current="page"{% endif %}
+                               {% if kinder|length %}aria-haspopup="true" aria-expanded="false" aria-controls="kt-dd-{{ category.id }}"{% endif %}
+                               {% if category_linknewtab(category) %}target="_blank" rel="noopener"{% endif %}>{{ category.translated.name }}{% if kinder|length %}<svg class="kt-pfeil" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>{% endif %}</a>
+                            {% if kinder|length %}
+                                <ul class="kt-dropdown" id="kt-dd-{{ category.id }}" data-kt="dropdown" hidden>
+                                    {% for kind in kinder %}
+                                        <li><a href="{{ category_url(kind.category) }}"{% if category_linknewtab(kind.category) %} target="_blank" rel="noopener"{% endif %}>{{ kind.category.translated.name }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <script>
+        (function () {
+            var punkte = document.querySelectorAll('.kt-hat-dropdown');
+            var offen = null;
+            function schliessen(p, fokus) {
+                if (!p) { return; }
+                var l = p.querySelector('.kt-dropdown'), a = p.querySelector('.kt-hauptnav-link');
+                l.hidden = true; l.style.left = ''; a.setAttribute('aria-expanded', 'false');
+                if (offen === p) { offen = null; }
+                if (fokus) { a.focus(); }
+            }
+            function oeffnen(p) {
+                if (offen && offen !== p) { schliessen(offen); }
+                var l = p.querySelector('.kt-dropdown');
+                l.hidden = false; p.querySelector('.kt-hauptnav-link').setAttribute('aria-expanded', 'true'); offen = p;
+                l.style.left = '0px';
+                var ueber = l.getBoundingClientRect().right - (document.documentElement.clientWidth - 16);
+                if (ueber > 0) { l.style.left = (-ueber) + 'px'; }
+            }
+            punkte.forEach(function (p) {
+                var a = p.querySelector('.kt-hauptnav-link'), l = p.querySelector('.kt-dropdown'), uhr = null;
+                var eintraege = function () { return Array.prototype.slice.call(l.querySelectorAll('a')); };
+                p.addEventListener('mouseenter', function () { clearTimeout(uhr); uhr = setTimeout(function () { oeffnen(p); }, 120); });
+                p.addEventListener('mouseleave', function () { clearTimeout(uhr); uhr = setTimeout(function () { schliessen(p); }, 120); });
+                a.addEventListener('focus', function () { if (a.matches(':focus-visible')) { oeffnen(p); } });
+                p.addEventListener('focusout', function (e) { if (!p.contains(e.relatedTarget)) { schliessen(p); } });
+                a.addEventListener('keydown', function (e) {
+                    if (e.key === 'ArrowDown') { e.preventDefault(); oeffnen(p); eintraege()[0].focus(); }
+                    if (e.key === 'Escape') { schliessen(p, true); }
+                });
+                l.addEventListener('keydown', function (e) {
+                    var liste = eintraege(), i = liste.indexOf(document.activeElement);
+                    if (e.key === 'ArrowDown') { e.preventDefault(); liste[(i + 1) % liste.length].focus(); }
+                    if (e.key === 'ArrowUp') { e.preventDefault(); if (i <= 0) { a.focus(); } else { liste[i - 1].focus(); } }
+                    if (e.key === 'Home') { e.preventDefault(); liste[0].focus(); }
+                    if (e.key === 'End') { e.preventDefault(); liste[liste.length - 1].focus(); }
+                    if (e.key === 'Escape') { e.preventDefault(); schliessen(p, true); }
+                });
+            });
+            document.addEventListener('click', function (e) { if (offen && !offen.contains(e.target)) { schliessen(offen); } });
+            document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && offen) { schliessen(offen, offen.contains(document.activeElement)); } });
+        })();
+    </script>
+{% endblock %}

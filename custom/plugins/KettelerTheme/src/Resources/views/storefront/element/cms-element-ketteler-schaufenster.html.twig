@@ -30,11 +30,11 @@
                 </div>
             </div>
             {% if produkt %}
-                {% set preis = produkt.calculatedCheapestPrice.unitPrice ?? produkt.calculatedPrice.unitPrice %}
+                {% set preis = produkt.calculatedPrice.unitPrice %}
                 <a class="kt-schaufenster-produkt" href="{{ seoUrl('frontend.detail.page', { productId: produkt.id }) }}" data-kt="schaufenster-produkt">
                     {% sw_include '@KettelerTheme/storefront/component/ketteler/cover.html.twig' with { produkt: produkt, groesse: 'gross', drehung: 3, dekorativ: true } only %}
                     <span class="kt-schaufenster-produkt-name">{{ produkt.translated.name }}<br>
-                        <span class="kt-schaufenster-produkt-praefix">{{ c.preisPraefix.value|default('ab') }}</span> <span class="kt-preis">{{ preis|currency }}</span></span>
+                        {% if c.preisPraefix.value %}<span class="kt-schaufenster-produkt-praefix">{{ c.preisPraefix.value }}</span> {% endif %}<span class="kt-preis">{{ preis|currency }}</span></span>
                 </a>
             {% endif %}
         </div>

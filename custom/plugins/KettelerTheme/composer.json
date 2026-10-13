@@ -2,7 +2,7 @@
     "name": "ketteler/theme",
     "description": "Theme im Ketteler-Design (passend zur Bibliothek)",
     "type": "shopware-platform-plugin",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "license": "proprietary",
     "autoload": {
         "psr-4": {

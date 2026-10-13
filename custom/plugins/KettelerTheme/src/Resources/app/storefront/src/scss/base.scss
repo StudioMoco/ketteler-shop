@@ -44,6 +44,12 @@ body { background: $kt-papier; color: $kt-text; font-family: $kt-sans; font-size
 html, body { overflow-x: clip; }
 a { color: $kt-text; text-decoration: none; }
 a:hover { color: $kt-magenta; }
+// Beim Überfahren nie unterstreichen (Bootstrap/Shopware tun es an vielen Stellen): Rückmeldung nur über die Farbe.
+// Ausnahme: Links, die schon dauerhaft unterstrichen sind (Textlinks mit 1,5-px-Linie, Telefon, Fließtext-Links).
+a:hover, a:focus, .btn:hover, .btn-link:hover, button:hover, .nav-link:hover, .dropdown-item:hover { text-decoration: none !important; }
+.kt-unterstrichen, .kt-unterstrichen:hover { text-decoration: underline !important; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+// Links im Fließtext (Rechtstexte, Textblöcke): dauerhaft unterstrichen, sonst nur an der Farbe zu erkennen
+.cms-element-text a, .cms-element-text a:hover { text-decoration: underline !important; text-underline-offset: 3px; }
 h1, h2, h3, h4, .h1, .h2, .h3, .h4 { font-family: $kt-serif; font-weight: 500; color: $kt-text; letter-spacing: normal; text-transform: none; }
 h1, .h1 { font-size: 44px; line-height: 1.12; letter-spacing: -0.01em; }
 h2, .h2 { font-size: 42px; line-height: 1.15; }
@@ -97,14 +103,14 @@ h3, .h3 { font-size: 30px; line-height: 1.2; }
 .kt-servicezeile::after { content: ''; position: absolute; left: 50%; bottom: 0; width: 100vw; height: 1px; background: $kt-linie; transform: translateX(-50%); }
 .kt-servicezeile-innen { display: flex; flex-wrap: wrap; gap: 6px 24px; justify-content: space-between; }
 .kt-servicezeile a { color: $kt-hinweis; }
-.kt-servicezeile a[href^='tel:'], .kt-fuss-kontakt a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.kt-servicezeile a[href^='tel:'], .kt-fuss-kontakt a { text-decoration: underline !important; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 .kt-servicezeile a:hover { color: $kt-magenta; }
 .kt-servicezeile-links { display: flex; gap: 22px; }
 .kt-servicezeile .kt-servicezeile-bibliothek { color: $kt-magenta; }
 @media (max-width: 575.98px) { .kt-servicezeile-zeiten { display: none; } }
 
 .header-row { padding: 26px 0 18px; row-gap: 18px; }
-.header-logo-main-img { width: 218px; height: auto; max-height: 57px; }
+.header-logo-main-img { width: 240px; height: auto; }
 .header-logo-col { margin: 0 !important; }
 .header-search-form .input-group { border-bottom: 1.5px solid $kt-text; flex-wrap: nowrap; }
 .header-search-input, .header-search-input:focus {
@@ -131,15 +137,6 @@ h3, .h3 { font-size: 30px; line-height: 1.2; }
 .main-navigation-link, .main-navigation-link.nav-link { padding: 10px 0 16px; font-size: 16px; font-weight: 400; color: $kt-text; }
 .main-navigation-link-text { padding: 0; border-bottom: 0 !important; }
 .main-navigation-link.active, .main-navigation-link:hover, .main-navigation-link.is-open { color: $kt-magenta; }
-.navigation-flyouts { background: transparent; border: 0; box-shadow: none; }
-.navigation-flyout { background: transparent; border: 0; box-shadow: none; }
-.navigation-flyout .container { padding-top: 0; padding-bottom: 0; }
-.kt-flyout { position: relative; display: inline-block; min-width: 280px; margin-top: -1px; padding: 14px 0; background: #ffffff; border: 1px solid $kt-linie; border-radius: 0 0 8px 8px; box-shadow: 0 10px 24px rgba(60, 30, 40, 0.08); }
-.kt-flyout-liste { list-style: none; margin: 0; padding: 0; }
-.kt-flyout-liste a { display: block; padding: 7px 44px 7px 22px; font-size: 15px; color: $kt-text; }
-.kt-flyout-liste a:hover { color: $kt-magenta; background: $kt-papier; }
-.kt-flyout-liste .kt-flyout-alles a { color: $kt-magenta; font-weight: 500; }
-.kt-flyout-schliessen { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; border: 0; background: none; color: $kt-hinweis; font-size: 20px; line-height: 1; cursor: pointer; }
 
 // Menü-Schublade (mobil): Shopware-Offcanvas in derselben Ruhe
 .offcanvas.navigation-offcanvas, .offcanvas { background: $kt-papier; }
@@ -152,11 +149,15 @@ h3, .h3 { font-size: 30px; line-height: 1.2; }
 .footer-main { background: $kt-sand; border-top: 0; color: $kt-text-gedaempft; font-size: 15px; }
 .kt-fuss-oben { display: flex; flex-wrap: wrap; gap: 40px 48px; padding: 72px 0 48px; }
 .kt-fuss-kontakt { flex: 1.6 1 320px; min-width: 0; }
-.kt-fuss-frage { font-family: $kt-serif; font-size: 26px; line-height: 1.3; color: $kt-text; margin: 0 0 16px; }
+.kt-fuss-logo { display: block; width: 168px; height: auto; margin: 0 0 24px; }
+.kt-fuss-frage { font-family: $kt-serif; font-size: 26px; font-weight: 400; line-height: 1.3; color: $kt-text; margin: 0 0 16px; }
+.kt-fuss-spalte:nth-of-type(3) { flex: 1.3 1 220px; }
+.kt-fuss-zeiten { flex: 1 1 200px; }
+.kt-fuss-zeiten p { margin: 0; line-height: 1.7; }
 .kt-fuss-kontakt p { line-height: 1.75; }
 .kt-fuss-kontakt a { color: $kt-magenta; }
 .kt-fuss-spalte { flex: 1 1 160px; min-width: 0; }
-.kt-fuss-titel { font-family: $kt-sans; font-size: 15px; font-weight: 600; line-height: 1.6; color: $kt-text; margin: 0 0 13px; }
+.kt-fuss-titel { font-family: $kt-sans; font-size: 15px; font-weight: 600; line-height: 1.6; color: $kt-text; margin: 0 0 13px; letter-spacing: 0; }
 .kt-fuss-spalte ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
 .kt-fuss-spalte a { color: $kt-text; }
 .kt-fuss-spalte a:hover { color: $kt-magenta; }
@@ -236,7 +237,7 @@ h3, .h3 { font-size: 30px; line-height: 1.2; }
 .kt-kachel--sand { background: $kt-sand; }
 .kt-kachel--rose { background: $kt-rose; }
 .kt-kachel-text { flex: 1 1 auto; min-width: 0; }
-.kt-kachel-titel { font-family: $kt-serif; font-size: 26px; line-height: 1.2; margin: 0 0 10px; }
+.kt-kachel-titel { font-family: $kt-serif; font-size: 25px; line-height: 1.2; margin: 0 0 10px; }
 .kt-kachel-beschreibung { margin: 0 0 16px; font-size: 15px; color: $kt-text-gedaempft; }
 .kt-kachel .kt-textlink { font-size: 15px; }
 .kt-kachel > .kt-cover--kachel { --kt-drehung: -3deg; }
@@ -278,6 +279,9 @@ h3, .h3 { font-size: 30px; line-height: 1.2; }
 // 3. Werke
 .kt-werke { padding-top: 88px; padding-bottom: 72px; }
 .kt-werke h2 { margin: 0 0 48px; }
+.kt-werke h2.kt-werke-mit-text { margin-bottom: 14px; }
+.kt-werke-einleitung { margin: 0 0 40px; max-width: 760px; font-size: 18px; color: $kt-text-gedaempft; }
+.kt-werk-oberzeile { margin: 0 0 6px; font-size: 15px; color: $kt-hinweis; }
 .kt-werke-liste { list-style: none; margin: 0; padding: 0; }
 .kt-werk { display: flex; flex-wrap: wrap; gap: 28px 56px; align-items: center; padding: 36px 0; border-top: 1px solid $kt-linie; }
 .kt-werk:last-child { border-bottom: 1px solid $kt-linie; }
@@ -303,7 +307,9 @@ h3, .h3 { font-size: 30px; line-height: 1.2; }
 .kt-hinweis-inhalt { flex: 1 1 560px; min-width: 0; }
 .kt-hinweis-haupt { margin: 0 0 22px; max-width: 820px; font-family: $kt-serif; font-size: 34px; line-height: 1.35; font-weight: 400; }
 .kt-hinweis-unter { margin: 0 0 30px; font-size: 16px; color: $kt-hinweis; }
-.kt-hinweis-text { margin: 0; max-width: 640px; font-size: 17px; color: $kt-text-gedaempft; }
+.kt-hinweis-dachzeile { margin: 0 0 14px; font-size: 16px; color: $kt-magenta; }
+.kt-hinweis-text { margin: 0 0 10px; max-width: 640px; font-size: 17px; color: $kt-text-gedaempft; }
+.kt-hinweis-links { margin: 0; display: flex; flex-wrap: wrap; gap: 10px 28px; }
 @media (max-width: 767.98px) {
     .kt-hinweis { padding-top: 64px; padding-bottom: 56px; gap: 16px; }
     .kt-hinweis-zeichen { font-size: 96px; }
@@ -326,8 +332,9 @@ h3, .h3 { font-size: 30px; line-height: 1.2; }
 // 6. Nummerierte Liste mit Einleitung
 .kt-liste { display: flex; flex-wrap: wrap; gap: 40px 80px; padding-top: 104px; padding-bottom: 88px; }
 .kt-liste-einleitung { flex: 1 1 360px; min-width: 0; }
-.kt-liste-einleitung h2 { margin: 0 0 18px; }
-.kt-liste-einleitung p { margin: 0; max-width: 420px; font-size: 18px; color: $kt-text-gedaempft; }
+.kt-liste-einleitung h2 { margin: 0 0 18px; font-size: 38px; line-height: 1.2; }
+.kt-liste-einleitung p { margin: 0; max-width: 440px; font-size: 18px; color: $kt-text-gedaempft; }
+.kt-liste-einleitung p.kt-liste-dachzeile { margin: 0 0 12px; font-size: 16px; color: $kt-magenta; }
 .kt-liste-eintraege { flex: 1.3 1 520px; min-width: 0; list-style: none; margin: 0; padding: 0; counter-reset: kt-liste; }
 .kt-liste-eintraege li { border-top: 1px solid $kt-linie; counter-increment: kt-liste; }
 .kt-liste-eintraege li:last-child { border-bottom: 1px solid $kt-linie; }
@@ -339,25 +346,73 @@ h3, .h3 { font-size: 30px; line-height: 1.2; }
     .kt-liste-eintraege a { font-size: 18px; gap: 18px; padding: 16px 0; }
 }
 
-// 7. Produktreihe
+// 7. Produktreihe und Produktkarte (alle Produktlisten)
 .kt-produktreihe { padding-top: 88px; padding-bottom: 96px; }
 .kt-produktreihe .kt-kopfzeile { margin-bottom: 40px; gap: 16px; }
-.kt-produktreihe-liste { display: flex; flex-wrap: wrap; gap: 40px 32px; list-style: none; margin: 0; padding: 0; }
-.kt-produktreihe-liste > li { flex: 1 1 190px; min-width: 0; }
-.kt-buch-cover { display: flex; align-items: flex-end; height: 230px; margin-bottom: 20px; }
-.kt-buch-autor { margin: 0 0 4px; font-size: 14px; color: $kt-hinweis; }
-.kt-buch-titel { display: block; margin-bottom: 10px; font-size: 17px; font-weight: 500; line-height: 1.35; color: $kt-text; }
-.kt-buch-kauf { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin: 0; font-size: 17px; }
-.kt-buch-kauf .kt-preis { font-weight: 400; }
-.kt-buch-kauf form { display: inline; margin: 0; }
-.kt-in-den-warenkorb { padding: 0; border: 0; background: none; font: inherit; font-size: 15px; color: $kt-magenta; cursor: pointer; }
-.kt-in-den-warenkorb:hover { text-decoration: underline; text-underline-offset: 4px; }
+.kt-karten-raster, .cms-listing-row {
+    display: grid !important; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 24px;
+    list-style: none; margin: 0 !important; padding: 0;
+}
+.kt-karten-raster > li, .cms-listing-row > .cms-listing-col { display: flex; min-width: 0; width: auto; max-width: none; flex: none; padding: 0 !important; margin: 0 !important; }
+.kt-karte {
+    display: flex; flex-direction: column; width: 100%; height: 100%; background: #ffffff; border: 1px solid $kt-linie;
+    border-radius: 14px; overflow: hidden; transition: border-color 0.15s, box-shadow 0.15s;
+}
+.kt-karte:hover { border-color: $kt-linie-sand; box-shadow: 0 10px 24px rgba(60, 30, 40, 0.08); }
+.kt-karte:hover .kt-karte-titel { color: $kt-magenta; }
+.kt-karte-bild { display: flex; align-items: center; justify-content: center; height: 250px; background: $kt-sand; }
+.kt-cover--karte { --kt-cover-b: 128px; --kt-cover-h: 180px; --kt-cover-schrift: 15px; box-shadow: 0 12px 24px rgba(60, 30, 40, 0.16); }
+.kt-karte-inhalt { display: flex; flex-direction: column; flex: 1 1 auto; padding: 18px 20px 20px; }
+.kt-karte .kt-kennzeichen { margin-bottom: 4px; }
+.kt-karte-autor { margin: 0 0 6px; font-size: 14px; color: $kt-hinweis; }
+.kt-karte-titel { display: block; margin-bottom: 16px; font-size: 17px; font-weight: 500; line-height: 1.35; color: $kt-text; }
+.kt-karte-fuss {
+    margin-top: auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 12px;
+    padding-top: 14px; border-top: 1px solid $kt-linie-hell;
+}
+.kt-karte-fuss form { margin: 0; }
+.kt-karte-preis { font-family: $kt-serif; font-size: 21px; font-weight: 500; white-space: nowrap; color: $kt-text; }
+.kt-karte-ab { font-family: $kt-sans; font-size: 14px; color: $kt-hinweis; }
+.kt-pille {
+    display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border: 0; border-radius: 26px;
+    background: $kt-magenta; color: #ffffff; font: inherit; font-size: 15px; font-weight: 500; line-height: 1.3; cursor: pointer; white-space: nowrap;
+}
+.kt-pille:hover { background: darken($kt-magenta, 6%); color: #ffffff; }
+.kt-karte-steuer { margin: 8px 0 0; font-size: 13px; color: $kt-hinweis; }
+.kt-karte-steuer a { color: $kt-hinweis; text-decoration: underline !important; text-underline-offset: 2px; }
+.kt-karte-steuer a:hover { color: $kt-magenta; }
 @media (max-width: 767.98px) {
     .kt-produktreihe { padding-top: 56px; padding-bottom: 64px; }
-    .kt-produktreihe-liste > li { flex: 1 1 140px; }
-    .kt-buch-cover { height: 200px; }
-    .kt-buch-cover .kt-cover--reihe { --kt-cover-b: 120px; --kt-cover-h: 168px; }
+    .kt-karten-raster--reihe {
+        grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 72%; overflow-x: auto;
+        scroll-snap-type: x mandatory; padding-bottom: 8px; margin-right: -16px !important; padding-right: 16px;
+    }
+    .kt-karten-raster--reihe > li { scroll-snap-align: start; }
 }
+
+// Hauptnavigation mit schlichtem Dropdown (statt Shopware-Flyout)
+.kt-hauptnav-liste { display: flex; flex-wrap: wrap; gap: 0 30px; list-style: none; margin: 0; padding: 0; }
+.kt-hauptnav-punkt { position: relative; }
+.kt-hauptnav-link { display: inline-flex; align-items: center; gap: 6px; padding: 10px 0 16px; font-size: 16px; color: $kt-text; }
+.kt-hauptnav-link .kt-pfeil { color: $kt-hinweis; transition: transform 0.15s; }
+.kt-hauptnav-link[aria-expanded='true'] { color: $kt-magenta; }
+.kt-hauptnav-link[aria-expanded='true'] .kt-pfeil { transform: rotate(180deg); color: $kt-magenta; }
+.kt-dropdown {
+    position: absolute; top: calc(100% - 6px); left: 0; z-index: 1050; min-width: 240px; max-width: 360px; width: max-content;
+    margin: 0; padding: 12px; list-style: none; background: #ffffff; border: 1px solid $kt-linie; border-radius: 14px;
+    box-shadow: 0 10px 24px rgba(60, 30, 40, 0.08);
+}
+.kt-dropdown[hidden] { display: none; }
+.kt-dropdown a { display: block; padding: 8px 12px; border-radius: 8px; font-size: 15px; line-height: 1.5; color: $kt-text; }
+.kt-dropdown a:hover, .kt-dropdown a:focus-visible { background: $kt-sand; color: $kt-magenta; }
+
+// Menü-Schublade (mobil): aufklappbare Unterpunkte
+.kt-schublade-gruppe summary { display: flex; justify-content: space-between; align-items: center; list-style: none; cursor: pointer; }
+.kt-schublade-gruppe summary::-webkit-details-marker { display: none; }
+.kt-schublade-gruppe details[open] > summary { color: $kt-magenta; }
+.kt-schublade-gruppe details[open] > summary .kt-pfeil { transform: rotate(180deg); }
+.kt-schublade-unter { margin: 0 0 8px; padding-left: 16px; border-left: 2px solid $kt-sand; }
+.kt-schublade-unter .nav-link { padding: 8px 12px; font-size: 16px; }
 
 // Video im Dialog (selbst gehostet)
 .kt-video-dialog { width: min(960px, calc(100vw - 32px)); padding: 0; border: 0; border-radius: 8px; background: #ffffff; }
@@ -369,7 +424,7 @@ h3, .h3 { font-size: 30px; line-height: 1.2; }
 @media (max-width: 575.98px) {
     .header-row { padding: 18px 0 12px; row-gap: 10px; }
     .header-logo-col { text-align: left; }
-    .header-logo-main-img { width: 170px; }
+    .header-logo-main-img { width: 180px; max-width: 180px; }
     .header-logo-picture { margin: 0 !important; }
     .header-actions-col > .row { gap: 0 16px; flex-wrap: nowrap; }
     .kt-kachel-titel { font-size: 22px; }

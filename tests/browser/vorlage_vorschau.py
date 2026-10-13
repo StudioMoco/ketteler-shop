@@ -13,7 +13,10 @@ import sys
 WURZEL = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 VORLAGE = os.path.join(WURZEL, "docs/design/startseite-entwurf.dc.html")
 SCHRIFTEN = os.path.join(WURZEL, "custom/plugins/KettelerTheme/src/Resources/app/storefront/src/assets/fonts")
-LOGO = os.path.join(WURZEL, "custom/plugins/KettelerTheme/src/Resources/public/logo/ketteler-logo.png")
+LOGO_ORDNER = os.path.join(WURZEL, "custom/plugins/KettelerTheme/src/Resources/public/logo")
+LOGO = os.path.join(LOGO_ORDNER, "ketteler-logo-fachverlag.png")
+if not os.path.exists(LOGO):
+    LOGO = os.path.join(LOGO_ORDNER, "ketteler-logo.png")
 
 
 def js_liste(quelle, name):
@@ -50,6 +53,8 @@ def main(ziel):
                 schriften.append("@font-face{font-family:'%s';font-weight:%d;font-style:%s;src:url('file://%s/%s-latin-%d-%s.woff2') format('woff2')}"
                                  % (familie, g, stil, SCHRIFTEN, datei, g, stil))
     html = html.replace("<style>", "<style>" + "".join(schriften), 1)
+    # Platzhalter-Cover der Vorlage (farbige Bücher) kennzeichnen: ihre Aufschriften sind kein Seitentext
+    html = re.sub(r'<div style="([^"]*border-radius: 2px [345]px [345]px 2px[^"]*)"', r'<div data-cover="1" style="\1"', html)
     open(ziel, "w", encoding="utf-8").write(html)
 
 

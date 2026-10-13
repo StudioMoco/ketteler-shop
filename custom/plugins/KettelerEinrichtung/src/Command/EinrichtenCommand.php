@@ -23,8 +23,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
- * Grundaufbau des Ketteler-Shops. Idempotent: alle Datensätze haben feste IDs (aus festen Schlüsseln abgeleitet),
- * jeder Lauf schreibt denselben Stand. Daten: src/Resources/daten/*.json.
+ * Grundaufbau des Ketteler-Shops. Alle Datensätze haben feste IDs (aus festen Schlüsseln abgeleitet).
+ * Erster Lauf auf einer Datenbank: schreibt alles. Danach „nur anlegen“: nur fehlende Datensätze und nicht gesetzte
+ * Einstellungen kommen dazu, was Ketteler in der Verwaltung pflegt, bleibt. --ueberschreiben schreibt wieder alles
+ * (Staging, ausdrücklich). Startseite: --erlebniswelten-neu. Daten: src/Resources/daten/*.json.
  */
 #[AsCommand(name: 'ketteler:einrichten', description: 'Grundeinstellungen, Zusatzfelder, Kategorien und Testartikel anlegen')]
 class EinrichtenCommand extends Command
@@ -34,6 +36,11 @@ class EinrichtenCommand extends Command
     private Context $context;
 
     private SymfonyStyle $io;
+
+    /** true: alles schreiben (erster Lauf oder --ueberschreiben); false: nur anlegen */
+    private bool $ueberschreiben = true;
+
+    public const MARKE = 'KettelerEinrichtung.eingerichtetAm';
 
     public function __construct(
         private readonly DefinitionInstanceRegistry $registry,
@@ -46,13 +53,16 @@ class EinrichtenCommand extends Command
 
     protected function configure(): void
     {
-        $this->addOption('erlebniswelten-neu', null, InputOption::VALUE_NONE, 'Startseite und Sortiment neu anlegen (überschreibt die Pflege in der Verwaltung)');
+        $this->addOption('erlebniswelten-neu', null, InputOption::VALUE_NONE, 'Startseite neu anlegen (überschreibt die Pflege in der Verwaltung)');
+        $this->addOption('ueberschreiben', null, InputOption::VALUE_NONE, 'Alles neu schreiben (Kategorien, Rechtstexte, Mails, Testartikel, Einstellungen), nicht nur Fehlendes anlegen');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->io = new SymfonyStyle($input, $output);
         $this->context = Context::createCLIContext();
+        $this->ueberschreiben = (bool) $input->getOption('ueberschreiben') || !$this->config->get(self::MARKE);
+        $this->io->writeln($this->ueberschreiben ? 'Modus: alles schreiben.' : 'Modus: nur anlegen (Gepflegtes bleibt; --ueberschreiben schreibt alles).');
 
         $salesChannelId = $this->storefrontId();
         $laender = $this->laender();
@@ -73,6 +83,9 @@ class EinrichtenCommand extends Command
         $this->einstellungen();
         $this->mails($salesChannelId);
 
+        if (!$this->config->get(self::MARKE)) {
+            $this->config->set(self::MARKE, (new \DateTimeImmutable())->format(\DATE_ATOM));
+        }
         $this->io->success('Grundaufbau fertig.');
 
         return self::SUCCESS;
@@ -81,6 +94,35 @@ class EinrichtenCommand extends Command
     private function id(string $schluessel): string
     {
         return Uuid::fromStringToHex('ketteler.' . $schluessel);
+    }
+
+    /** Wie upsert; im Modus „nur anlegen“ nur Zeilen, deren ID es noch nicht gibt */
+    private function schreiben(string $entity, array $zeilen): void
+    {
+        if (!$this->ueberschreiben) {
+            $ids = array_values(array_filter(array_column($zeilen, 'id')));
+            $vorhanden = $ids === [] ? [] : $this->repo($entity)->searchIds(new Criteria($ids), $this->context)->getIds();
+            $zeilen = array_values(array_filter($zeilen, static fn (array $z): bool => !isset($z['id']) || !\in_array($z['id'], $vorhanden, true)));
+        }
+        if ($zeilen !== []) {
+            $this->repo($entity)->upsert($zeilen, $this->context);
+        }
+    }
+
+    /** Bestehendes ändern: nur im Modus „alles schreiben“ */
+    private function aendern(string $entity, array $zeilen): void
+    {
+        if ($this->ueberschreiben && $zeilen !== []) {
+            $this->repo($entity)->update($zeilen, $this->context);
+        }
+    }
+
+    /** Einstellung setzen; im Modus „nur anlegen“ nur, wenn sie noch nicht gesetzt ist */
+    private function einstellen(string $schluessel, mixed $wert): void
+    {
+        if ($this->ueberschreiben || $this->config->get($schluessel) === null) {
+            $this->config->set($schluessel, $wert);
+        }
     }
 
     private function repo(string $entity): EntityRepository
@@ -136,7 +178,7 @@ class EinrichtenCommand extends Command
                 'checkVatIdPattern' => $code !== 'CH' && $code !== 'GB',
             ];
         }
-        $this->repo('country')->update($zeilen, $this->context);
+        $this->aendern('country', $zeilen);
         $this->io->writeln(\sprintf('%d Lieferländer eingerichtet (CH und GB ohne Umsatzsteuer, EU-Firmen mit USt-IdNr. steuerfrei).', \count($ids)));
 
         return $ids;
@@ -159,7 +201,7 @@ class EinrichtenCommand extends Command
             $id = $schluessel === 'online' ? $onlineId : ($this->ersteId('tax', (new Criteria())
                 ->addFilter(new EqualsFilter('taxRate', (float) $steuer['satz']))
                 ->addFilter(new NotFilter(NotFilter::CONNECTION_AND, [new EqualsFilter('id', $onlineId)]))) ?? $this->id('steuer.' . $schluessel));
-            $this->repo('tax')->upsert([['id' => $id, 'taxRate' => (float) $steuer['satz'], 'name' => $steuer['name'], 'position' => \count($ergebnis) + 1]], $this->context);
+            $this->schreiben('tax', [['id' => $id, 'taxRate' => (float) $steuer['satz'], 'name' => $steuer['name'], 'position' => \count($ergebnis) + 1]]);
             $ergebnis[$schluessel] = $id;
         }
 
@@ -177,7 +219,7 @@ class EinrichtenCommand extends Command
             $werte,
         );
 
-        $this->repo('custom_field_set')->upsert([[
+        $this->schreiben('custom_field_set', [[
             'id' => $this->id('zusatzfelder.artikel'),
             'name' => 'ketteler_artikel',
             'config' => ['label' => ['de-DE' => 'Ketteler', 'en-GB' => 'Ketteler'], 'translated' => true],
@@ -237,7 +279,7 @@ class EinrichtenCommand extends Command
                     ],
                 ],
             ],
-        ]], $this->context);
+        ]]);
         // allowCartExpose: Shopware gibt die Felder nur dann an Warenkorb und Bestellpositionen weiter
         $this->io->writeln('Zusatzfelder ketteler_artikelart, ketteler_produkt, ketteler_abo und ketteler_autor angelegt.');
     }
@@ -271,7 +313,7 @@ class EinrichtenCommand extends Command
             ]],
         ]];
 
-        $this->repo('rule')->upsert([
+        $this->schreiben('rule', [
             [
                 'id' => $versand,
                 'name' => 'Warenkorb enthält Artikel mit Versand',
@@ -291,7 +333,7 @@ class EinrichtenCommand extends Command
                 'priority' => 100,
                 'conditions' => $regel('regel.nur-online', $alleVersandfrei('regel.nur-online')),
             ],
-        ], $this->context);
+        ]);
         $this->io->writeln('Regeln für Versand und Online angelegt.');
 
         return [$versand, $online];
@@ -334,7 +376,7 @@ class EinrichtenCommand extends Command
                 ]],
             ];
         }
-        $this->repo('rule')->upsert($zeilen, $this->context);
+        $this->schreiben('rule', $zeilen);
 
         return $zonen;
     }
@@ -344,10 +386,10 @@ class EinrichtenCommand extends Command
     {
         $post = $this->id('lieferzeit.post');
         $sofort = $this->id('lieferzeit.sofort');
-        $this->repo('delivery_time')->upsert([
+        $this->schreiben('delivery_time', [
             ['id' => $post, 'name' => '2 bis 4 Werktage', 'min' => 2, 'max' => 4, 'unit' => 'day'],
             ['id' => $sofort, 'name' => 'sofort nach dem Kauf', 'min' => 0, 'max' => 0, 'unit' => 'day'],
-        ], $this->context);
+        ]);
 
         return [$post, $sofort];
     }
@@ -369,10 +411,10 @@ class EinrichtenCommand extends Command
         $andere = $this->repo('shipping_method')->searchIds(new Criteria(), $this->context)->getIds();
         $aus = array_values(array_filter($andere, static fn (string $id): bool => !\in_array($id, [$post, $online], true)));
         if ($aus !== []) {
-            $this->repo('shipping_method')->update(array_map(static fn (string $id): array => ['id' => $id, 'active' => false], $aus), $this->context);
+            $this->aendern('shipping_method', array_map(static fn (string $id): array => ['id' => $id, 'active' => false], $aus));
         }
 
-        $this->repo('shipping_method')->upsert([
+        $this->schreiben('shipping_method', [
             [
                 'id' => $post,
                 'technicalName' => 'ketteler_post',
@@ -402,9 +444,9 @@ class EinrichtenCommand extends Command
                     'currencyPrice' => $preis(0.0),
                 ]],
             ],
-        ], $this->context);
+        ]);
         // Pauschalpreis aus dem ersten Grundaufbau entfernen (erst jetzt, sonst hätte die Versandart kurz keinen Preis)
-        if ($this->repo('shipping_method_price')->searchIds(new Criteria([$this->id('versand.post.preis')]), $this->context)->getTotal() > 0) {
+        if ($this->ueberschreiben && $this->repo('shipping_method_price')->searchIds(new Criteria([$this->id('versand.post.preis')]), $this->context)->getTotal() > 0) {
             $this->repo('shipping_method_price')->delete([['id' => $this->id('versand.post.preis')]], $this->context);
         }
         $this->io->writeln('Versandarten „Versand per Post“ (Gewichtsstaffeln je Zone) und „Ohne Versand (Online-Zugang)“ angelegt.');
@@ -485,7 +527,7 @@ class EinrichtenCommand extends Command
                 }
             }
         }
-        $this->repo('payment_method')->update($updates, $this->context);
+        $this->aendern('payment_method', $updates);
         $this->io->writeln($paypal !== null ? 'Zahlarten „Rechnung“ und „PayPal“ (Testmodus) aktiv, andere aus.' : 'Zahlart „Rechnung“ aktiv (PayPal-Plugin fehlt).');
 
         return array_values(array_filter([$rechnung, $paypal]));
@@ -505,10 +547,10 @@ class EinrichtenCommand extends Command
         $this->kategorieKinder($daten['fuss']['kinder'], $fuss, $zeilen, true);
 
         // Eltern vor Kindern schreiben (afterCategoryId zeigt immer auf ein schon geschriebenes Geschwister)
-        $this->repo('category')->upsert($zeilen, $this->context);
+        $this->schreiben('category', $zeilen);
         // Nicht mehr vorgesehene Kategorien (z. B. alte Fußspalte „Service“) entfernen, sofern leer
         $weg = array_map(fn (string $k): array => ['id' => $this->id('kategorie.' . $k)], $daten['entfernt'] ?? []);
-        $vorhanden = $weg === [] ? [] : $this->repo('category')->searchIds(new Criteria(array_column($weg, 'id')), $this->context)->getIds();
+        $vorhanden = $weg === [] || !$this->ueberschreiben ? [] : $this->repo('category')->searchIds(new Criteria(array_column($weg, 'id')), $this->context)->getIds();
         if ($vorhanden !== []) {
             $this->repo('category')->delete(array_map(static fn (string $id): array => ['id' => $id], $vorhanden), $this->context);
         }
@@ -564,7 +606,7 @@ class EinrichtenCommand extends Command
         // Formular (Typ revocationRequest), eingetragen als Widerrufsseite in den Shop-Einstellungen.
         $empfaenger = trim((string) ($_SERVER['KETTELER_WIDERRUF_EMAIL'] ?? getenv('KETTELER_WIDERRUF_EMAIL') ?: ''));
         $seite = $this->id('cms.widerrufsfunktion');
-        $this->repo('cms_page')->upsert([[
+        $this->schreiben('cms_page', [[
             'id' => $seite,
             'type' => 'page',
             'name' => 'Widerruf erklären (EU-Widerrufsfunktion, Texte von Ketteler zu prüfen)',
@@ -608,10 +650,10 @@ class EinrichtenCommand extends Command
                     ],
                 ],
             ]],
-        ]], $this->context);
-        $this->config->set('core.basicInformation.revocationRequestPage', $seite);
-        $this->config->set('core.basicInformation.showRevocationButton', true);
-        $this->repo('category')->update([['id' => $this->id('kategorie.fuss-widerruf-erklaeren'), 'cmsPageId' => $seite, 'description' => null]], $this->context);
+        ]]);
+        $this->einstellen('core.basicInformation.revocationRequestPage', $seite);
+        $this->einstellen('core.basicInformation.showRevocationButton', true);
+        $this->aendern('category', [['id' => $this->id('kategorie.fuss-widerruf-erklaeren'), 'cmsPageId' => $seite, 'description' => null]]);
         $this->io->writeln(\sprintf('Widerrufsfunktion eingeschaltet (Empfänger: %s).', $empfaenger !== '' ? 'aus KETTELER_WIDERRUF_EMAIL' : 'Shop-E-Mail, KETTELER_WIDERRUF_EMAIL fehlt'));
     }
 
@@ -627,7 +669,9 @@ class EinrichtenCommand extends Command
             'agb' => ['Allgemeine Geschäftsbedingungen', 'fuss-agb', 'core.basicInformation.tosPage'],
             'widerruf' => ['Widerrufsbelehrung', 'fuss-widerruf', 'core.basicInformation.revocationPage'],
             'datenschutz' => ['Datenschutzerklärung', 'fuss-datenschutz', 'core.basicInformation.privacyPage'],
-            'versand-lieferung' => ['Versand und Lieferung', 'fuss-versand', 'core.basicInformation.shippingPaymentInfoPage'],
+            'versand-lieferung' => ['Versand & Lieferung', 'fuss-versand', 'core.basicInformation.shippingPaymentInfoPage'],
+            'preise-zmv' => ['Preise ZMV', 'fuss-preise-zmv', null],
+            'agb-anzeigen' => ['AGB für Anzeigen und Beilagen', 'fuss-agb-anzeigen', null],
         ];
         $seiten = [];
         $kategorien = [];
@@ -676,10 +720,12 @@ class EinrichtenCommand extends Command
                 ]],
             ];
             $kategorien[] = ['id' => $this->id('kategorie.' . $kategorie), 'cmsPageId' => $id, 'description' => null];
-            $this->config->set($einstellung, $id);
+            if ($einstellung !== null) {
+                $this->einstellen($einstellung, $id);
+            }
         }
-        $this->repo('cms_page')->upsert($seiten, $this->context);
-        $this->repo('category')->update($kategorien, $this->context);
+        $this->schreiben('cms_page', $seiten);
+        $this->aendern('category', $kategorien);
         $this->io->writeln(\sprintf('%d Rechtstexte als Seiten angelegt (Entwürfe, von Ketteler zu prüfen).', \count($seiten)));
     }
 
@@ -692,7 +738,7 @@ class EinrichtenCommand extends Command
     {
         $landId = $laender['DE'];
         $zahlart = $zahlarten[0];
-        $this->repo('sales_channel')->update([[
+        $this->aendern('sales_channel', [[
             'id' => $id,
             'name' => 'KETTELER-Verlag',
             'languageId' => Defaults::LANGUAGE_SYSTEM,
@@ -709,8 +755,13 @@ class EinrichtenCommand extends Command
             'languages' => [['id' => Defaults::LANGUAGE_SYSTEM]],
             'paymentMethods' => array_map(static fn (string $z): array => ['id' => $z], $zahlarten),
             'shippingMethods' => array_map(static fn (string $v): array => ['id' => $v], $versandarten),
-        ]], $this->context);
+        ]]);
 
+        if (!$this->ueberschreiben) {
+            $this->io->writeln('Verkaufskanal: bleibt, wie er ist (nur anlegen).');
+
+            return;
+        }
         // Zuordnungen, die die Installation zusätzlich angelegt hat, entfernen: nur die Lieferländer, Euro, Deutsch
         $kanal = Uuid::fromHexToBytes($id);
         $this->db->executeStatement(
@@ -739,7 +790,7 @@ class EinrichtenCommand extends Command
                 ->addFilter(new EqualsFilter('type.technicalName', $typ))
                 ->addFilter(new EqualsFilter('global', true)));
             if ($id !== null) {
-                $this->repo('number_range')->update([['id' => $id, 'pattern' => $muster, 'start' => 100000]], $this->context);
+                $this->aendern('number_range', [['id' => $id, 'pattern' => $muster, 'start' => 100000]]);
             }
         }
         $this->io->writeln('Nummernkreise: Bestellungen SW100000 ff., Kunden SK100000 ff.');
@@ -749,7 +800,7 @@ class EinrichtenCommand extends Command
     private function artikel(string $salesChannelId, array $steuern, string $lieferzeitPost, string $lieferzeitSofort): void
     {
         $hersteller = $this->id('hersteller.ketteler');
-        $this->repo('product_manufacturer')->upsert([['id' => $hersteller, 'name' => 'KETTELER-Verlag']], $this->context);
+        $this->schreiben('product_manufacturer', [['id' => $hersteller, 'name' => 'KETTELER-Verlag']]);
 
         $zeilen = [];
         foreach ($this->json('artikel.json')['artikel'] as $a) {
@@ -791,7 +842,13 @@ class EinrichtenCommand extends Command
                 'categories' => array_map(fn (string $k): array => ['id' => $this->id('kategorie.' . $k)], $a['kategorien']),
             ];
         }
-        $this->repo('product')->upsert($zeilen, $this->context);
+        $this->schreiben('product', $zeilen);
+        // Testartikel, die es nicht mehr gibt (nur beim Überschreiben)
+        $alt = array_map(fn (string $n): string => $this->id('artikel.' . $n), $this->json('artikel.json')['entfernt'] ?? []);
+        $alt = $alt === [] || !$this->ueberschreiben ? [] : $this->repo('product')->searchIds(new Criteria($alt), $this->context)->getIds();
+        if ($alt !== []) {
+            $this->repo('product')->delete(array_map(static fn (string $id): array => ['id' => $id], $alt), $this->context);
+        }
         $this->io->writeln(\sprintf('%d Testartikel angelegt.', \count($zeilen)));
     }
 
@@ -816,19 +873,19 @@ class EinrichtenCommand extends Command
                 $this->io->warning('Mailvorlage ' . $typ . ' nicht gefunden.');
                 continue;
             }
-            $this->repo('mail_template')->update([[
+            $this->aendern('mail_template', [[
                 'id' => $id,
                 'senderName' => 'KETTELER-Verlag',
                 'subject' => trim($lesen($typ . '/betreff.txt')),
                 'contentHtml' => $lesen($typ . '/inhalt.html.twig'),
                 'contentPlain' => $lesen($typ . '/inhalt.txt.twig'),
-            ]], $this->context);
+            ]]);
             ++$anzahl;
         }
 
         $kopfFuss = $this->ersteId('mail_header_footer', (new Criteria())->addFilter(new EqualsFilter('systemDefault', true)))
             ?? $this->id('mail.kopf-fuss');
-        $this->repo('mail_header_footer')->upsert([[
+        $this->schreiben('mail_header_footer', [[
             'id' => $kopfFuss,
             'systemDefault' => true,
             'name' => 'KETTELER-Verlag',
@@ -837,8 +894,8 @@ class EinrichtenCommand extends Command
             'footerHtml' => $lesen('_kopf_fuss/fuss.html.twig'),
             'headerPlain' => $lesen('_kopf_fuss/kopf.txt.twig'),
             'footerPlain' => $lesen('_kopf_fuss/fuss.txt.twig'),
-        ]], $this->context);
-        $this->repo('sales_channel')->update([['id' => $salesChannelId, 'mailHeaderFooterId' => $kopfFuss]], $this->context);
+        ]]);
+        $this->aendern('sales_channel', [['id' => $salesChannelId, 'mailHeaderFooterId' => $kopfFuss]]);
         $this->io->writeln(\sprintf('%d Mailtexte und Kopf und Fuß der Mails eingespielt.', $anzahl));
     }
 
@@ -849,13 +906,15 @@ class EinrichtenCommand extends Command
             'core.basicInformation.email' => 'shop@ketteler-verlag.test',
             'core.loginRegistration.showAccountTypeSelection' => true,
             'core.cart.showDeliveryTime' => true,
+            // Merkliste (Kopf: „Merkliste“ laut Vorlage)
+            'core.cart.wishlistEnabled' => true,
         ];
         // Einrichtungsassistent von Shopware überspringen: den Grundaufbau macht dieser Befehl
         if (!$this->config->get('core.frw.completedAt')) {
             $werte['core.frw.completedAt'] = (new \DateTimeImmutable())->format(\DATE_ATOM);
         }
         foreach ($werte as $schluessel => $wert) {
-            $this->config->set($schluessel, $wert);
+            $this->einstellen($schluessel, $wert);
         }
         // Link „Kontakt“ in Kopf und Fuß: nur vorbelegen, nicht überschreiben (Pflege unter Erweiterungen > Ketteler Theme)
         if (!$this->config->getString('KettelerTheme.config.kontaktKategorie')) {

@@ -57,9 +57,9 @@ try {
     pruefe(blocke.kategorien === 5, 'Im Sortiment: fünf Kategorien', String(blocke.kategorien));
     pruefe(blocke.werke === 3, 'Drei Werke', String(blocke.werke));
     pruefe(blocke.hinweis === 1, 'Hinweis mit Zeichen');
-    pruefe(blocke.beitraege === 3, 'Aus dem Verlag: drei Beiträge');
-    pruefe(blocke.liste === 5, 'Neu gewählt in die MAV: fünf Einträge');
-    pruefe(blocke.buecher === 5, 'Für den Schreibtisch: fünf Bücher');
+    pruefe(blocke.beitraege === 3, 'Nachrichten und Aktuelles: drei Beiträge');
+    pruefe(blocke.liste === 5, 'MAV Einstieg: fünf Einträge');
+    pruefe(blocke.buecher === 5, 'Weitere Empfehlungen: fünf Produktkarten');
     pruefe(blocke.h1 === 1, 'genau eine Hauptüberschrift (h1)', String(blocke.h1));
     pruefe(blocke.ueberschriften.startsWith('H1H2') && !/H1.*H1/.test(blocke.ueberschriften) && !/H2H4/.test(blocke.ueberschriften), 'Überschriften in richtiger Reihenfolge', blocke.ueberschriften);
     pruefe(!blocke.preisPlatzhalter, 'nirgends „[Preis]“');
@@ -116,6 +116,121 @@ try {
     const hosts = [...new Set(b.anfragen.filter((u) => /^https?:/.test(u)).map((u) => new URL(u).host))];
     pruefe(hosts.length === 1 && hosts[0] === new URL(SHOP).host, 'nur der eigene Server (' + hosts.join(', ') + ')');
 
+
+    console.log('Texte aus der Vorlage (docs/design/startseite-entwurf.dc.html)');
+    const vorschau = join(dirname(fileURLToPath(import.meta.url)), '.vorlage-vorschau.html');
+    execFileSync('python3', [join(WURZEL, 'tests/browser/vorlage_vorschau.py'), vorschau]);
+    await b.groesse(1440, 900);
+    await b.laden('file://' + vorschau);
+    const vorlageTexte = await b.werte(`(() => {
+        // Sichtbare Texte ohne Platzhalter-Cover und ohne Zierzahlen; Preise kommen aus dem Produkt und zählen nicht
+        document.querySelectorAll('[data-cover], svg').forEach((e) => e.remove());
+        const zeilen = document.body.innerText.split('\\n').map((z) => z.replace(/\\s+/g, ' ').trim()).filter(Boolean);
+        const ohnePreis = zeilen.map((z) => z.replace(/(ab )?\\d{1,3}(\\.\\d{3})*,\\d{2} €/g, '').trim()).filter((z) => z && !/^\\d+$/.test(z) && z !== 'ab');
+        return [...new Set(ohnePreis)];
+    })()`);
+    await b.laden(SHOP + '/');
+    const seitenText = await b.werte(`document.body.innerText.replace(/\\s+/g, ' ')`);
+    const fehlen = vorlageTexte.filter((t) => !seitenText.includes(t));
+    const platzhalter = await b.werte(`document.querySelector('.header-search-input')?.getAttribute('placeholder')`);
+    pruefe(fehlen.length === 0, `Textvergleich: ${vorlageTexte.length - fehlen.length} von ${vorlageTexte.length} Texten der Vorlage auf der Startseite`, fehlen.join(' | ').slice(0, 900));
+    pruefe(platzhalter === 'Suchen', 'Suchfeld: Platzhalter „Suchen“', String(platzhalter));
+    const verboten = ['Serviceunternehmen der KAB', 'Wir sind für Sie da', 'Drei Werke, die jede MAV kennt', 'Aus dem Verlag', 'Neu gewählt in die MAV',
+        'Für den Schreibtisch', 'als Sachmittel vorgesehen', 'Print mit Online-Zugang', 'Wir machen Ihnen ein Angebot',
+        'Reihe zum kirchlichen Arbeitsrecht', 'Neu in der MAV', 'ab 9,80'];
+    const attribute = await b.werte(`[...document.querySelectorAll('[alt],[title],[aria-label]')].map((e) => [e.getAttribute('alt'), e.getAttribute('title'), e.getAttribute('aria-label')].join(' ')).join(' ')`);
+    const gefunden = verboten.filter((w) => (seitenText + ' ' + attribute).replace(/\\u00a0/g, ' ').includes(w));
+    pruefe(gefunden.length === 0, `Negativliste: ${verboten.length - gefunden.length} von ${verboten.length} Wendungen nicht vorhanden`, gefunden.join(' | '));
+    const preise = await b.werte(`[...document.querySelectorAll('[data-kt="werk-preis"]')].map((e) => e.textContent.replace(/\\s+/g, ' ').trim())`);
+    pruefe(JSON.stringify(preise) === JSON.stringify(['ab 129,80 €', '89,90 €', '198,90 €']), 'Werke-Preise: ab 129,80 €, 89,90 €, 198,90 €', JSON.stringify(preise));
+
+    console.log('Logo');
+    const logo = await b.werte(`(() => { const i = document.querySelector('[data-kt="logo"]'); const r = i.getBoundingClientRect(); return { src: i.currentSrc, nw: i.naturalWidth, nh: i.naturalHeight, w: Math.round(r.width), h: Math.round(r.height), alt: i.alt }; })()`);
+    pruefe(/ketteler-logo-fachverlag\\.png/.test(logo.src) && logo.nw === 1064 && logo.nh === 208, 'Logo-Datei ausgeliefert (1064 × 208)', JSON.stringify(logo));
+    pruefe(logo.w === 240 && Math.abs(logo.h - 47) <= 1, 'Logo am Desktop 240 × 47 px', logo.w + ' × ' + logo.h);
+    pruefe(logo.alt === 'KETTELER-Verlag', 'Logo: Alt-Text „KETTELER-Verlag“', logo.alt);
+
+    console.log('Produktkarten (Weitere Empfehlungen)');
+    const karten = await b.werte(`(() => {
+        const k = [...document.querySelectorAll('.kt-produktreihe [data-kt="produktkarte"]')];
+        const reihen = {};
+        k.forEach((e) => { const r = e.getBoundingClientRect(); (reihen[Math.round(r.top)] ||= []).push(Math.round(r.height)); });
+        return { anzahl: k.length, gleich: Object.values(reihen).every((h) => new Set(h).size === 1), proReihe: Math.max(...Object.values(reihen).map((h) => h.length)),
+                 preisUndKnopf: k.every((e) => e.querySelector('.kt-karte-preis')?.getBoundingClientRect().height > 0 && e.querySelector('.kt-pille')?.getBoundingClientRect().height > 0),
+                 labels: k.every((e) => (e.querySelector('[data-kt="in-den-warenkorb"]')?.getAttribute('aria-label') || '').includes(e.querySelector('.kt-karte-titel').textContent.trim())) };
+    })()`);
+    pruefe(karten.anzahl === 5 && karten.proReihe === 5, 'fünf Karten in einer Reihe (1440 px)', JSON.stringify(karten));
+    pruefe(karten.gleich, 'Karten einer Reihe gleich hoch');
+    pruefe(karten.preisUndKnopf, 'Preis und Knopf auf jeder Karte sichtbar');
+    pruefe(karten.labels, 'Warenkorb-Knopf mit aria-label samt Produktname');
+    await b.laden(SHOP + '/Zeitschrift-ZMV/ZMV-Print/');
+    const abo = await b.werte(`[...document.querySelectorAll('[data-kt="produktkarte"]')].filter((k) => k.querySelector('.kt-abo')).map((k) => !!k.querySelector('[data-kt="zum-angebot"]') && !k.querySelector('[data-kt="in-den-warenkorb"]'))`);
+    pruefe(abo.length > 0 && abo.every(Boolean), 'Abo-Karten zeigen „Zum Angebot“ statt „In den Warenkorb“', JSON.stringify(abo));
+
+    console.log('Kategorien: Titel ohne Umbruch (1440 und 1280 px)');
+    for (const breite of [1440, 1280]) {
+        await b.groesse(breite, 900);
+        await b.laden(SHOP + '/');
+        const kat = await b.werte(`[...document.querySelectorAll('.kt-kategorie-name')].map((e) => ({ t: e.textContent, zeilen: Math.round(e.getBoundingClientRect().height / parseFloat(getComputedStyle(e).lineHeight)), ab: e.scrollWidth > e.clientWidth }))`);
+        pruefe(kat.length === 5 && kat.every((k) => k.zeilen === 1 && !k.ab), `fünf Kategorien, alle Titel einzeilig (${breite} px)`, JSON.stringify(kat.filter((k) => k.zeilen !== 1 || k.ab)));
+    }
+
+    console.log('Dropdown in der Hauptnavigation');
+    for (const breite of [1440, 1280]) {
+        await b.groesse(breite, 900);
+        await b.laden(SHOP + '/');
+        const punkte = await b.werte(`[...document.querySelectorAll('.kt-hat-dropdown')].map((p) => p.querySelector('.kt-hauptnav-link').textContent.trim())`);
+        let lage = [];
+        for (let i = 0; i < punkte.length; i += 1) {
+            const r = await b.werte(`(() => { const p = document.querySelectorAll('.kt-hat-dropdown')[${i}]; const q = p.querySelector('.kt-hauptnav-link').getBoundingClientRect(); return { x: q.x + q.width / 2, y: q.y + q.height / 2 }; })()`);
+            await b.cdp('Input.dispatchMouseEvent', { type: 'mouseMoved', x: r.x - 2, y: r.y });
+            await b.cdp('Input.dispatchMouseEvent', { type: 'mouseMoved', x: r.x, y: r.y });
+            for (let t = 0; t < 10 && !(await b.werte(`!document.querySelectorAll('.kt-hat-dropdown')[${i}].querySelector('.kt-dropdown').hidden`)); t += 1) { await b.warte(100); }
+            lage.push(await b.werte(`(() => { const p = document.querySelectorAll('.kt-hat-dropdown')[${i}]; const a = p.querySelector('.kt-hauptnav-link'); const l = p.querySelector('.kt-dropdown');
+                const ra = a.getBoundingClientRect(), rl = l.getBoundingClientRect();
+                return { name: a.textContent.trim(), offen: !l.hidden, aria: a.getAttribute('aria-expanded'), links: Math.round(rl.left - ra.left), rechts: Math.round(document.documentElement.clientWidth - rl.right) }; })()`));
+            await b.cdp('Input.dispatchMouseEvent', { type: 'mouseMoved', x: 5, y: 600 });
+            await b.warte(400);
+        }
+        const verschoben = lage.filter((l) => l.links !== 0);
+        pruefe(lage.length > 0 && lage.every((l) => l.offen && l.aria === 'true'), `Maus: jedes Dropdown öffnet, aria-expanded=true (${breite} px)`, JSON.stringify(lage.filter((l) => !l.offen)));
+        pruefe(lage.every((l) => Math.abs(l.links) <= 2 || l.rechts >= 0) && lage.every((l) => l.rechts >= 0), `Position: linke Kante bündig (±2 px), rechter Rand im Bild (${breite} px)`, JSON.stringify(lage));
+        if (breite === 1440) { console.log('  verschoben am rechten Rand: ' + (verschoben.map((l) => l.name + ' ' + l.links + ' px').join(', ') || 'keins')); }
+    }
+    const ohneKinder = await b.werte(`[...document.querySelectorAll('.kt-hauptnav-punkt:not(.kt-hat-dropdown)')].every((p) => !p.querySelector('.kt-pfeil, .kt-dropdown'))`);
+    const knoepfe = await b.werte(`document.querySelectorAll('.kt-dropdown button, .js-close-flyout-menu, .navigation-flyout, .kt-flyout-schliessen').length`);
+    pruefe(ohneKinder, 'Menüpunkte ohne Unterkategorien: kein Pfeil, kein Dropdown');
+    pruefe(knoepfe === 0, 'kein Schließen-Knopf und kein Shopware-Flyout im DOM', String(knoepfe));
+    await b.groesse(1440, 900);
+    await b.laden(SHOP + '/');
+    await b.werte(`document.querySelector('.kt-hauptnav-link').focus()`);
+    await b.taste('Tab', 'Tab', 9);
+    await b.warte(250);
+    const tastatur = await b.werte(`(() => { const a = document.activeElement; const p = a.closest('.kt-hat-dropdown'); return { name: a.textContent.trim(), offen: p ? !p.querySelector('.kt-dropdown').hidden : null }; })()`);
+    await b.werte(`(() => { const p = document.querySelector('.kt-hat-dropdown'); p.querySelector('.kt-hauptnav-link').focus(); })()`);
+    await b.taste('ArrowDown', 'ArrowDown', 40);
+    await b.warte(150);
+    const erster = await b.werte(`(() => { const p = document.querySelector('.kt-hat-dropdown'); return document.activeElement === p.querySelector('.kt-dropdown a'); })()`);
+    await b.taste('ArrowDown', 'ArrowDown', 40);
+    const zweiter = await b.werte(`(() => { const p = document.querySelector('.kt-hat-dropdown'); return document.activeElement === p.querySelectorAll('.kt-dropdown a')[1]; })()`);
+    await b.taste('Escape', 'Escape', 27);
+    await b.warte(150);
+    const esc = await b.werte(`(() => { const p = document.querySelector('.kt-hat-dropdown'); const a = p.querySelector('.kt-hauptnav-link'); return { zu: p.querySelector('.kt-dropdown').hidden, fokus: document.activeElement === a, aria: a.getAttribute('aria-expanded') }; })()`);
+    pruefe(tastatur.offen !== false, 'Tastatur: Fokus per Tab öffnet das Dropdown', JSON.stringify(tastatur));
+    pruefe(erster && zweiter, 'Pfeil nach unten öffnet und wandert durch die Einträge');
+    pruefe(esc.zu && esc.fokus && esc.aria === 'false', 'Escape schließt, Fokus zurück auf dem Menüpunkt, aria-expanded=false', JSON.stringify(esc));
+    if (BILDER) {
+        const ziel = await b.werte(`[...document.querySelectorAll('.kt-hat-dropdown')].findIndex((p) => /Praxishandbücher/.test(p.textContent))`);
+        const index = ziel >= 0 ? ziel : 0;
+        const r = await b.werte(`(() => { const q = document.querySelectorAll('.kt-hat-dropdown')[${index}].querySelector('.kt-hauptnav-link').getBoundingClientRect(); return { x: q.x + q.width / 2, y: q.y + q.height / 2 }; })()`);
+        await b.cdp('Input.dispatchMouseEvent', { type: 'mouseMoved', x: r.x, y: r.y });
+        await b.warte(400);
+        const bild = await b.cdp('Page.captureScreenshot', { format: 'png', clip: { x: 0, y: 0, width: 1440, height: 520, scale: 1 } });
+        mkdirSync(BILDER, { recursive: true });
+        writeFileSync(join(BILDER, 'dropdown-1440.png'), Buffer.from(bild.data, 'base64'));
+        await b.cdp('Input.dispatchMouseEvent', { type: 'mouseMoved', x: 5, y: 700 });
+    }
+
     console.log('Mobil (390 px)');
     await b.groesse(390, 844, true);
     await b.laden(SHOP + '/');
@@ -140,6 +255,14 @@ try {
         const name = STAGING ? 'staging' : 'lokal';
         const vorlage = join(BILDER, 'vorlage-vorschau.html');
         execFileSync('python3', [join(WURZEL, 'tests/browser/vorlage_vorschau.py'), vorlage]);
+        // Produktreihe allein (1440 und 390 px)
+        for (const [breite, mobilAn] of [[1440, false], [390, true]]) {
+            await b.groesse(breite, 900, mobilAn);
+            await b.laden(SHOP + '/');
+            const r = await b.werte(`(() => { const e = document.querySelector('.kt-produktreihe'); e.scrollIntoView(); const q = e.getBoundingClientRect(); return { x: q.left + scrollX, y: q.top + scrollY, w: q.width, h: q.height }; })()`);
+            const bild = await b.cdp('Page.captureScreenshot', { format: 'png', captureBeyondViewport: true, clip: { x: r.x, y: r.y, width: r.w, height: r.h, scale: 1 } });
+            writeFileSync(join(BILDER, `produktkarten-${breite}.png`), Buffer.from(bild.data, 'base64'));
+        }
         // Bilder wie für einen wiederkehrenden Besucher: Cookie-Leiste schon beantwortet (nur technisch notwendige)
         await b.cdp('Network.setCookie', { name: 'cookie-preference', value: '1', url: SHOP + '/' });
         for (const [breite, mobilAn] of [[1440, false], [390, true]]) {

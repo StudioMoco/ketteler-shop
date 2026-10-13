@@ -1,13 +1,56 @@
 {% sw_extends '@Storefront/storefront/component/product/card/box-standard.html.twig' %}
 
-{% block component_product_box_name %}
-    {% set ktArt = product.translated.customFields.ketteler_artikelart ?? null %}
-    {% set ktAbo = product.translated.customFields.ketteler_abo ?? null %}
-    {% if ktArt or ktAbo %}
-        <div class="kt-kennzeichen">
-            {% if ktArt %}<span class="kt-artikelart">{{ ('ketteler.artikelart.' ~ ktArt)|trans|sw_sanitize }}</span>{% endif %}
-            {% if ktAbo %}<span class="kt-artikelart kt-abo">{{ 'ketteler.abo.kennzeichen'|trans|sw_sanitize }}</span>{% endif %}
-        </div>
+{#
+    Produktkarte des KETTELER-Verlags (alle Produktlisten: Kategorien, Suche, Querverweise, Startseite):
+    Bildfläche in Sand mit Cover, Autor/Herausgeber, Titel, unten bündig Preis (Serif) und Knopf. Print: „In den
+    Warenkorb“ (ohne Seitenwechsel, Warenkorb öffnet seitlich). Abos und Online-Zugänge: „Zum Angebot“ (Werkseite,
+    dort wird die Variante gewählt). Kennzeichen (Online-Zugang, Abo) als ruhige Textzeile.
+#}
+{% block component_product_box %}
+    {% if product %}
+        {% set name = product.translated.name %}
+        {% set url = seoUrl('frontend.detail.page', { productId: product.id }) %}
+        {% set ktArt = product.translated.customFields.ketteler_artikelart ?? null %}
+        {% set ktAbo = product.translated.customFields.ketteler_abo ?? null %}
+        {% set autor = product.translated.customFields.ketteler_autor ?? null %}
+        {% set zumAngebot = ktAbo or ktArt == 'online' or ktArt == 'bundle' %}
+        {% set ab = product.childCount > 0 or product.calculatedPrices|length > 1 %}
+        {% set preis = ab ? product.calculatedCheapestPrice.unitPrice : product.calculatedPrice.unitPrice %}
+        {% set versandSeite = config('core.basicInformation.shippingPaymentInfoPage') %}
+        <article class="card product-box box-standard kt-karte" data-kt="produktkarte">
+            <a class="kt-karte-bild" href="{{ url }}" tabindex="-1" aria-hidden="true">
+                {% sw_include '@KettelerTheme/storefront/component/ketteler/cover.html.twig' with { produkt: product, groesse: 'karte', dekorativ: true } only %}
+            </a>
+            <div class="kt-karte-inhalt">
+                {% if ktArt or ktAbo %}
+                    <div class="kt-kennzeichen">
+                        {% if ktArt and ktArt != 'print' %}<span class="kt-artikelart">{{ ('ketteler.artikelart.' ~ ktArt)|trans|sw_sanitize }}</span>{% endif %}
+                        {% if ktAbo %}<span class="kt-artikelart kt-abo">{{ 'ketteler.abo.kennzeichen'|trans|sw_sanitize }}</span>{% endif %}
+                    </div>
+                {% endif %}
+                {% if autor %}<p class="kt-karte-autor">{{ autor }}</p>{% endif %}
+                <a class="kt-karte-titel product-name" href="{{ url }}">{{ name }}</a>
+                <div class="kt-karte-fuss">
+                    <span class="kt-karte-preis">{% if ab %}<span class="kt-karte-ab">ab</span> {% endif %}{{ preis|currency }}</span>
+                    {% if zumAngebot %}
+                        <a class="kt-pille" href="{{ kt_werk_link(product) }}" data-kt="zum-angebot" aria-label="Zum Angebot: {{ name }}">Zum Angebot</a>
+                    {% elseif product.available and product.calculatedMaxPurchase > 0 and not ab %}
+                        <form action="{{ path('frontend.checkout.line-item.add') }}" method="post" data-add-to-cart="true">
+                            <input type="hidden" name="redirectTo" value="frontend.cart.offcanvas">
+                            <input type="hidden" name="lineItems[{{ product.id }}][id]" value="{{ product.id }}">
+                            <input type="hidden" name="lineItems[{{ product.id }}][type]" value="product">
+                            <input type="hidden" name="lineItems[{{ product.id }}][referencedId]" value="{{ product.id }}">
+                            <input type="hidden" name="lineItems[{{ product.id }}][stackable]" value="1">
+                            <input type="hidden" name="lineItems[{{ product.id }}][removable]" value="1">
+                            <input type="hidden" name="lineItems[{{ product.id }}][quantity]" value="1">
+                            <button type="submit" class="kt-pille" data-kt="in-den-warenkorb" aria-label="In den Warenkorb: {{ name }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.6 12.4a1.5 1.5 0 0 0 1.5 1.1h8.6a1.5 1.5 0 0 0 1.5-1.1L21 7H6"/></svg>In den Warenkorb</button>
+                        </form>
+                    {% else %}
+                        <a class="kt-pille" href="{{ url }}" aria-label="Zum Artikel: {{ name }}">Zum Artikel</a>
+                    {% endif %}
+                </div>
+                <p class="kt-karte-steuer">inkl. MwSt.{% if not product.shippingFree %}, zzgl. {% if versandSeite %}<a href="{{ path('frontend.cms.page', { id: versandSeite }) }}" data-ajax-modal="true" data-url="{{ path('frontend.cms.page', { id: versandSeite }) }}">Versand</a>{% else %}Versand{% endif %}{% endif %}</p>
+            </div>
+        </article>
     {% endif %}
-    {{ parent() }}
 {% endblock %}

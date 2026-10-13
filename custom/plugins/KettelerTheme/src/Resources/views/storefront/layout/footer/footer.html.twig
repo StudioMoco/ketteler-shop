@@ -1,9 +1,9 @@
 {% sw_extends '@Storefront/storefront/layout/footer/footer.html.twig' %}
 
 {#
-    Fuß nach docs/design/kopf-fuss.md: links Kontakt (Werte aus Erweiterungen > Ketteler Theme), dann die Spalten aus der
-    Fuß-Kategorie (Verlag, Bestellen, Rechtliches), darunter Adresse und Hinweis. Die Seite der EU-Widerrufsfunktion
-    erscheint als Widerrufsknopf von Shopware (footer-revocation-button) an ihrer Stelle in der Spalte.
+    Fuß nach docs/design/kopf-fuss.md: Kontakt (Werte aus Erweiterungen > Ketteler Theme), die Spalten aus der
+    Fuß-Kategorie (KETTELER-Verlag GmbH, Rechtliches & Informationen), Servicezeiten; darunter Copyright und Hinweis.
+    Die Seite der EU-Widerrufsfunktion erscheint als Widerrufsknopf von Shopware (footer-revocation-button).
 #}
 {% block layout_footer_inner_container %}
     {% set service = kt_service(context.salesChannel.id) %}
@@ -11,10 +11,12 @@
     <div class="container">
         <div class="kt-fuss-oben">
             <div class="kt-fuss-kontakt">
-                <p class="kt-fuss-frage">Fragen zu einer Bestellung oder zu Ihrem Abo?</p>
-                <p>Rufen Sie uns an: <a href="tel:{{ service.telefonLink }}">{{ service.telefon }}</a><br>
-                    {{ service.servicezeiten }}<br>
-                    oder schreiben Sie an <a href="mailto:{{ service.email }}">{{ service.email }}</a></p>
+                <img class="kt-fuss-logo" src="{{ asset(service.logo, 'asset') }}" alt="" width="{{ (service.logoBreite * 0.7)|round }}" height="{{ (service.logoHoehe * 0.7)|round }}" loading="lazy">
+                <h2 class="kt-fuss-frage">Kontakt</h2>
+                <p>{{ service.firma }}<br>
+                    {{ service.anschrift }}<br>
+                    Tel: <a href="{{ service.telefonWahl }}">{{ service.telefonNummer }}</a> · Fax: {{ service.fax }}<br>
+                    E-Mail: <a href="mailto:{{ service.email }}">{{ service.email }}</a></p>
             </div>
             {% for spalte in footer.navigation.tree %}
                 <nav class="kt-fuss-spalte" aria-labelledby="kt-fuss-{{ spalte.category.id }}">
@@ -37,10 +39,14 @@
                     </ul>
                 </nav>
             {% endfor %}
+            <div class="kt-fuss-spalte kt-fuss-zeiten">
+                <h2 class="kt-fuss-titel">Servicezeiten</h2>
+                <p>{{ service.zeitenTage1 }}<br>{{ service.zeitenUhr1 }}<br>{{ service.zeitenTage2 }}<br>{{ service.zeitenUhr2 }}</p>
+            </div>
         </div>
         <div class="kt-fuss-unten">
-            <span>{{ service.adresse }}</span>
-            <span>{{ service.fussHinweis }}</span>
+            <span>© {{ 'now'|date('Y') }} {{ service.firma }}</span>
+            <span>{{ service.fussZeile }}</span>
         </div>
     </div>
 {% endblock %}

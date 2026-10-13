@@ -73,7 +73,13 @@ shop_aktualisieren() {
   konsole plugin:install --activate --no-interaction $EIGENE_PLUGINS >/dev/null
   # shellcheck disable=SC2086
   konsole plugin:update --no-interaction $EIGENE_PLUGINS >/dev/null 2>&1 || true
-  konsole ketteler:einrichten >/dev/null
+  # Grundaufbau: nur anlegen (Gepflegtes bleibt). Ausdrücklich überschreiben bzw. Startseite neu anlegen mit
+  #   KETTELER_EINRICHTEN_UEBERSCHREIBEN=1 / KETTELER_ERLEBNISWELTEN_NEU=1 bash ausliefern.sh <tag>
+  local schalter=""
+  [ "${KETTELER_EINRICHTEN_UEBERSCHREIBEN:-0}" = 1 ] && schalter="$schalter --ueberschreiben"
+  [ "${KETTELER_ERLEBNISWELTEN_NEU:-0}" = 1 ] && schalter="$schalter --erlebniswelten-neu"
+  # shellcheck disable=SC2086
+  konsole ketteler:einrichten $schalter >/dev/null
   konsole ketteler:steuern:anwenden >/dev/null
   konsole assets:install >/dev/null
   theme_setzen

@@ -13,7 +13,7 @@ import re
 WURZEL = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 QUELLE = os.path.join(WURZEL, "content", "rechtstexte")
 ZIEL = os.path.join(WURZEL, "custom", "plugins", "KettelerEinrichtung", "src", "Resources", "daten", "rechtstexte")
-TEXTE = ["impressum", "agb", "widerruf", "datenschutz", "versand-lieferung"]
+TEXTE = ["impressum", "agb", "widerruf", "datenschutz", "versand-lieferung", "preise-zmv", "agb-anzeigen"]
 # Kein Vermerk auf der Seite selbst (auch nicht im Quelltext): Kunden sehen sie. „Entwurf, von Ketteler zu prüfen“
 # steht im Seitennamen in der Verwaltung, in docs/plan.md und in docs/rechtstexte-pruefliste.md.
 

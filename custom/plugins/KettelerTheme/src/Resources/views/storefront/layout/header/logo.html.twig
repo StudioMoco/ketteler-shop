@@ -1,11 +1,11 @@
 {% sw_extends '@Storefront/storefront/layout/header/logo.html.twig' %}
 
-{# Logo fest aus dem Theme (wie in der Bibliothek), nicht über die Medienverwaltung #}
+{# Logo fest aus dem Theme, nicht über die Medienverwaltung. Vorläufig PNG, bis Ketteler eine SVG liefert. #}
 {% block layout_header_logo_image %}
+    {% set service = kt_service(context.salesChannel.id) %}
     <picture class="header-logo-picture d-inline-block">
-        <img src="{{ asset('bundles/kettelertheme/logo/ketteler-logo.png', 'asset') }}"
-             alt="{{ 'header.logoLink'|trans|striptags }}"
-             width="218" height="57"
-             class="img-fluid header-logo-main-img">
+        <img src="{{ asset(service.logo, 'asset') }}" alt="KETTELER-Verlag"
+             width="{{ service.logoBreite }}" height="{{ service.logoHoehe }}"
+             class="img-fluid header-logo-main-img" data-kt="logo">
     </picture>
 {% endblock %}

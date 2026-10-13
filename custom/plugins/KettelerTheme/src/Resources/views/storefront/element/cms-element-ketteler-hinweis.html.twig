@@ -1,13 +1,18 @@
-{# Hinweis mit Zeichen („Ihr gutes Recht“): großes Zeichen, Haupttext mit *Kursiv*, Unterzeile, Text mit Link #}
+{# Hinweis mit Zeichen („Ihr gutes Recht“): großes Zeichen, Dachzeile, Haupttext mit *Kursiv*, Unterzeile, Text, Links #}
 {% set c = element.config %}
 <div class="kt-rahmen">
-    <section class="kt-hinweis" aria-label="{{ c.unterzeile.value|default(c.haupttext.value)|striptags|replace({'*': ''}) }}">
+    <section class="kt-hinweis" aria-label="{{ c.dachzeile.value|default(c.unterzeile.value)|striptags }}">
         <div class="kt-hinweis-zeichen" aria-hidden="true">{{ c.zeichen.value|default('§') }}</div>
         <div class="kt-hinweis-inhalt">
+            {% if c.dachzeile.value %}<p class="kt-hinweis-dachzeile">{{ c.dachzeile.value }}</p>{% endif %}
             <p class="kt-hinweis-haupt">{{ c.haupttext.value|kt_kursiv }}</p>
             {% if c.unterzeile.value %}<p class="kt-hinweis-unter">{{ c.unterzeile.value }}</p>{% endif %}
-            {% if c.text.value or c.linkText.value %}
-                <p class="kt-hinweis-text">{{ c.text.value }}{% if c.linkText.value and kt_link(c.link.value) %} <a class="kt-textlink kt-textlink--magenta" href="{{ kt_link(c.link.value) }}" data-kt="hinweis-link">{{ c.linkText.value }}</a>{% endif %}</p>
+            {% if c.text.value %}<p class="kt-hinweis-text">{{ c.text.value }}</p>{% endif %}
+            {% set links = c.links.value|default([])|filter(l => l.text and kt_link(l.link)) %}
+            {% if links is not empty %}
+                <p class="kt-hinweis-links">
+                    {% for l in links %}<a class="kt-textlink kt-textlink--magenta" href="{{ kt_link(l.link) }}" data-kt="hinweis-link">{{ l.text }}</a>{% endfor %}
+                </p>
             {% endif %}
         </div>
     </section>

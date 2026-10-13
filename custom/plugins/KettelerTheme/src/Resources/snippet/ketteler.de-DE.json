@@ -28,7 +28,7 @@
     },
     "header": {
         "supportInfo": "<strong>Fragen zu Ihrer Bestellung?</strong><br /><strong><a href=\"tel:+499972941451\">09972 94 14-51</a></strong>",
-        "searchPlaceholder": "Suchen nach Titel, Autor, Stichwort"
+        "searchPlaceholder": "Suchen"
     },
     "checkout": {
         "lineItemDeliveryDate": "Lieferung: %earliest% bis %latest%"

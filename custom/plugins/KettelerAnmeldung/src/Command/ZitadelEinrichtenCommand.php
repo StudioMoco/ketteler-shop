@@ -7,6 +7,7 @@ use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -42,6 +43,11 @@ class ZitadelEinrichtenCommand extends Command
         parent::__construct();
     }
 
+    protected function configure(): void
+    {
+        $this->addOption('admin-passwort', null, InputOption::VALUE_NONE, 'Passwort des ZITADEL-Admins (zitadel-admin@ketteler.test) auf ZITADEL_ADMIN_PASSWORT aus der .env setzen');
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->io = new SymfonyStyle($input, $output);
@@ -62,6 +68,17 @@ class ZitadelEinrichtenCommand extends Command
         $this->mailversand();
         foreach (self::TESTKUNDEN as $email => [$vorname, $nachname, $bestaetigt]) {
             $this->testkunde($orgId, $email, $vorname, $nachname, $bestaetigt, $testPasswort);
+        }
+        if ($input->getOption('admin-passwort')) {
+            // Erneuern (z. B. nachdem ein Wert offen lag): neuer Wert nur in der .env, hier ohne Ausgabe übernommen
+            $neu = Konfiguration::env('ZITADEL_ADMIN_PASSWORT');
+            $treffer = $this->api('POST', '/v2/users', ['queries' => [['emailQuery' => ['emailAddress' => 'zitadel-admin@ketteler.test', 'method' => 'TEXT_QUERY_METHOD_EQUALS']]]]);
+            $id = $treffer['result'][0]['userId'] ?? null;
+            if ($neu === '' || !\is_string($id)) {
+                throw new \RuntimeException('ZITADEL-Admin nicht gefunden oder ZITADEL_ADMIN_PASSWORT leer.');
+            }
+            $this->api('POST', '/v2/users/' . $id . '/password', ['newPassword' => ['password' => $neu, 'changeRequired' => false]]);
+            $this->io->writeln('Passwort des ZITADEL-Admins aus der .env übernommen.');
         }
 
         $this->config->set('KettelerAnmeldung.config.clientId', $clientId);

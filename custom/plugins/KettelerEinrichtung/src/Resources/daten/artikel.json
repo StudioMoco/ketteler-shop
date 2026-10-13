@@ -31,7 +31,7 @@
     },
     {
       "nummer": "TEST-O-AVR",
-      "name": "Die AVR von A bis Z, Online (Test)",
+      "name": "Die AVR von A bis Z - Digital (Test)",
       "artikelart": "online",
       "produkt": "avr",
       "steuer": "online",
@@ -74,11 +74,11 @@
     },
     {
       "nummer": "TEST-P-ZMV",
-      "name": "ZMV Einzelheft (Test)",
+      "name": "ZMV-Einzelheft (Test)",
       "artikelart": "print",
       "produkt": null,
       "steuer": "print7",
-      "preis": 9.8,
+      "preis": 24.5,
       "gewicht": 0.15,
       "kategorien": [
         "zmv-print"
@@ -130,16 +130,16 @@
     },
     {
       "nummer": "TEST-P-ZMV-2026-5",
-      "name": "ZMV Heft 5/2026 (Test)",
+      "name": "ZMV-Einzelheft 5/2026 (Test)",
       "artikelart": "print",
       "produkt": null,
       "steuer": "print7",
-      "preis": 9.8,
+      "preis": 24.5,
       "gewicht": 0.15,
       "kategorien": [
         "zmv-print"
       ],
-      "beschreibung": "Testartikel für die Startseite: Rechtsprechung, Gastkommentar und Leserfragen aus der MAV-Praxis.",
+      "beschreibung": "Testartikel für die Startseite. Echte Daten kommen aus weclapp.",
       "abo": null
     },
     {
@@ -153,13 +153,13 @@
       "kategorien": [
         "praxishandbuecher"
       ],
-      "autor": "Oxenknecht-Witzsch (Hg.)",
+      "autor": "Oxenknecht-Witzsch (Hg)",
       "beschreibung": "Testartikel für die Startseite (Titel aus der Gestaltungsvorlage). Echte Daten kommen aus weclapp.",
       "abo": null
     },
     {
       "nummer": "TEST-PH-EINGRUPPIERUNG",
-      "name": "AVR Eingruppierung (Test)",
+      "name": "AVR - Eingruppierung (Test)",
       "artikelart": "print",
       "produkt": null,
       "steuer": "print7",
@@ -168,7 +168,7 @@
       "kategorien": [
         "praxishandbuecher"
       ],
-      "autor": "Simone Küster",
+      "autor": "Simone Küster (Autorin)",
       "beschreibung": "Testartikel für die Startseite (Titel aus der Gestaltungsvorlage). Echte Daten kommen aus weclapp.",
       "abo": null
     },
@@ -183,7 +183,7 @@
       "kategorien": [
         "praxishandbuecher"
       ],
-      "autor": "Dr. Sebastian Weber",
+      "autor": "Dr. Sebastian Weber (Autor)",
       "beschreibung": "Testartikel für die Startseite (Titel aus der Gestaltungsvorlage). Echte Daten kommen aus weclapp.",
       "abo": null
     },
@@ -198,24 +198,27 @@
       "kategorien": [
         "praxishandbuecher"
       ],
-      "autor": "Ulrich Richartz",
+      "autor": "Ulrich Richartz (Autor)",
       "beschreibung": "Testartikel für die Startseite (Titel aus der Gestaltungsvorlage). Echte Daten kommen aus weclapp.",
       "abo": null
     },
     {
-      "nummer": "TEST-PH-PRAXISWISSEN",
-      "name": "Praxiswissen Arbeitsrecht 2026 katholisch (Test)",
+      "nummer": "TEST-PH-DATENSCHUTZ",
+      "name": "Beschäftigtendatenschutz der katholischen Kirche (Test)",
       "artikelart": "print",
       "produkt": null,
       "steuer": "print7",
-      "preis": 12.9,
+      "preis": 39.9,
       "gewicht": 0.45,
       "kategorien": [
         "praxishandbuecher"
       ],
-      "autor": null,
+      "autor": "Matthias Ullrich (Autor)",
       "beschreibung": "Testartikel für die Startseite (Titel aus der Gestaltungsvorlage). Echte Daten kommen aus weclapp.",
       "abo": null
     }
+  ],
+  "entfernt": [
+    "TEST-PH-PRAXISWISSEN"
   ]
 }

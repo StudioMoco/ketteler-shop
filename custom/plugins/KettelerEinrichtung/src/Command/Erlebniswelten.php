@@ -35,6 +35,15 @@ class Erlebniswelten
     public function anlegen(Context $context, SymfonyStyle $io, bool $neu): void
     {
         $daten = json_decode((string) file_get_contents(self::DATEN . 'erlebniswelten.json'), true, 512, \JSON_THROW_ON_ERROR);
+        // Nicht mehr vorgesehene Seiten entfernen, sofern keine Kategorie sie mehr nutzt
+        foreach ($daten['entfernt'] ?? [] as $schluessel) {
+            $alt = self::id('cms.' . $schluessel);
+            $genutzt = $this->repo('category')->searchIds((new Criteria())->addFilter(new EqualsFilter('cmsPageId', $alt)), $context)->getTotal() > 0;
+            if (!$genutzt && $this->repo('cms_page')->searchIds(new Criteria([$alt]), $context)->firstId() !== null) {
+                $this->repo('cms_page')->delete([['id' => $alt]], $context);
+                $io->writeln(\sprintf('Erlebniswelt „%s“ entfernt.', $schluessel));
+            }
+        }
         foreach ($daten['seiten'] as $seite) {
             $id = self::id('cms.' . $seite['schluessel']);
             $kategorie = self::id('kategorie.' . $seite['kategorie']);

@@ -5,28 +5,70 @@
         <title>Contact and service (header and footer)</title>
         <title lang="de-DE">Kontakt und Service (Kopf und Fuß)</title>
         <input-field type="text">
-            <name>telefon</name>
-            <label>Phone (display)</label>
+            <name>firma</name>
+            <label>Company</label>
+            <label lang="de-DE">Firma</label>
+            <defaultValue>KETTELER-Verlag GmbH</defaultValue>
+        </input-field>
+        <input-field type="text">
+            <name>anschrift</name>
+            <label>Address</label>
+            <label lang="de-DE">Anschrift (Fuß, Kontakt)</label>
+            <defaultValue>Schloßhof 1, 93449 Waldmünchen</defaultValue>
+        </input-field>
+        <input-field type="text">
+            <name>telefonNummer</name>
+            <label>Phone</label>
             <label lang="de-DE">Telefon (Anzeige)</label>
-            <defaultValue>09972 9414-51</defaultValue>
+            <defaultValue>09972-9414-51</defaultValue>
         </input-field>
         <input-field type="text">
-            <name>telefonLink</name>
-            <label>Phone (for dialing, international)</label>
-            <label lang="de-DE">Telefon zum Wählen (international, ohne Leerzeichen)</label>
-            <defaultValue>+499972941451</defaultValue>
+            <name>telefonWahl</name>
+            <label>Phone for dialing</label>
+            <label lang="de-DE">Telefon zum Wählen (international, ohne Leerzeichen, mit +)</label>
+            <defaultValue>tel:+499972941451</defaultValue>
         </input-field>
         <input-field type="text">
-            <name>servicezeiten</name>
-            <label>Service hours</label>
-            <label lang="de-DE">Servicezeiten</label>
-            <defaultValue>Mo, Di, Do 8 bis 13 Uhr, Mi und Fr 8 bis 12 Uhr</defaultValue>
+            <name>fax</name>
+            <label>Fax</label>
+            <label lang="de-DE">Fax</label>
+            <defaultValue>09972-9414-55</defaultValue>
         </input-field>
         <input-field type="text">
             <name>email</name>
             <label>E-mail</label>
             <label lang="de-DE">E-Mail-Adresse</label>
             <defaultValue>kontakt@ketteler-verlag.de</defaultValue>
+        </input-field>
+        <input-field type="text">
+            <name>zeitenTage1</name>
+            <label>Service days 1</label>
+            <label lang="de-DE">Servicezeiten: Tage 1</label>
+            <defaultValue>Montag, Dienstag, Donnerstag</defaultValue>
+        </input-field>
+        <input-field type="text">
+            <name>zeitenUhr1</name>
+            <label>Service hours 1</label>
+            <label lang="de-DE">Servicezeiten: Uhrzeit 1</label>
+            <defaultValue>von 8.00 bis 13.00 Uhr</defaultValue>
+        </input-field>
+        <input-field type="text">
+            <name>zeitenTage2</name>
+            <label>Service days 2</label>
+            <label lang="de-DE">Servicezeiten: Tage 2</label>
+            <defaultValue>Mittwoch und Freitag</defaultValue>
+        </input-field>
+        <input-field type="text">
+            <name>zeitenUhr2</name>
+            <label>Service hours 2</label>
+            <label lang="de-DE">Servicezeiten: Uhrzeit 2</label>
+            <defaultValue>von 8.00 bis 12.00 Uhr</defaultValue>
+        </input-field>
+        <input-field type="text">
+            <name>fussZeile</name>
+            <label>Footer note</label>
+            <label lang="de-DE">Hinweis (Fuß unten rechts)</label>
+            <defaultValue>Klimafreundlicher Versand · GoGreen Plus</defaultValue>
         </input-field>
         <input-field type="url">
             <name>bibliothekUrl</name>
@@ -40,17 +82,5 @@
             <label>Contact page</label>
             <label lang="de-DE">Seite „Kontakt“ (Kategorie)</label>
         </component>
-        <input-field type="text">
-            <name>adresse</name>
-            <label>Address line (footer)</label>
-            <label lang="de-DE">Adresszeile (Fuß)</label>
-            <defaultValue>KETTELER-Verlag GmbH · Schloßhof 1 · 93449 Waldmünchen</defaultValue>
-        </input-field>
-        <input-field type="text">
-            <name>fussHinweis</name>
-            <label>Note (footer)</label>
-            <label lang="de-DE">Hinweis (Fuß, rechts)</label>
-            <defaultValue>Klimafreundlicher Versand mit GoGreen Plus · Alle Preise inkl. MwSt.</defaultValue>
-        </input-field>
     </card>
 </config>

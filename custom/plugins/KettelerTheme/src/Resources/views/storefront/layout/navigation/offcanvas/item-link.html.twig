@@ -1,0 +1,20 @@
+{% sw_extends '@Storefront/storefront/layout/navigation/offcanvas/item-link.html.twig' %}
+
+{# Menü-Schublade (mobil): Unterpunkte klappen an Ort und Stelle auf, statt eine neue Ebene nachzuladen #}
+{% block layout_navigation_offcanvas_navigation_category_item_link %}
+    {% if item.children|length > 0 %}
+        <li class="navigation-offcanvas-list-item kt-schublade-gruppe">
+            <details>
+                <summary class="navigation-offcanvas-link nav-item nav-link">{{ item.category.translated.name }}<svg class="kt-pfeil" width="12" height="12" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+                <ul class="list-unstyled kt-schublade-unter">
+                    <li><a class="navigation-offcanvas-link nav-link" href="{{ category_url(item.category) }}">Übersicht</a></li>
+                    {% for kind in item.children %}
+                        <li><a class="navigation-offcanvas-link nav-link" href="{{ category_url(kind.category) }}"{% if category_linknewtab(kind.category) %} target="_blank" rel="noopener"{% endif %}>{{ kind.category.translated.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </details>
+        </li>
+    {% else %}
+        {{ parent() }}
+    {% endif %}
+{% endblock %}

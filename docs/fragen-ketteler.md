@@ -56,14 +56,20 @@ Erklärung geht per E-Mail an Sie und steht an der Bestellung. Dazu brauchen wir
 
 ## Zur neuen Startseite
 
-15. **Video „AVR 2027 nachgefragt“:** Bitte die Folgen als MP4 liefern, dazu Untertitel (WebVTT) und ein Vorschaubild.
-    Bis dahin zeigt der Shop einen klar gekennzeichneten Platzhalter. Wohin soll „Alle Folgen“ führen?
-16. **Seiten mit Platzhaltertext:** Grundwissen und Basisausstattung, Praktische Arbeitshilfen, Literatur nach Themen,
-    Aktuelles und Vorlagen, Hilfreiche Adressen im Netz, Über uns, ZMV-Fachtagung, Im Gespräch, Verlagsprogramm 2026,
-    Kontakt, Zahlung auf Rechnung. Wir übernehmen die Texte aus dem heutigen Shop, sobald Sie sie freigeben.
+15. **Video „AVR 2027 nachgefragt: Praxiswissen kompakt“:** Bitte Folge 1 als MP4 liefern, dazu Untertitel (WebVTT)
+    und ein Vorschaubild. Bis dahin zeigt der Shop einen klar gekennzeichneten Platzhalter.
+16. **Seiten mit Platzhaltertext:** MAV Einstieg (Grundausstattung/Basiswissen für die MAV, Praktische Arbeitshilfen,
+    Themenbezogene Literatur, Aktuell & interessant, Hilfreiche Links), Verlag, ZMV Fachtagung, Interviews Autoren &
+    Schriftleiter, Verlagsprogramm 2026, Links, Kontakt. Die Texte des heutigen Shops liegen vor; wir übernehmen sie mit
+    den Werkseiten.
 17. **Beschreibung für Suchmaschinen:** Ein Satz, der in Suchergebnissen unter „KETTELER-Verlag“ stehen soll (bis zu
     155 Zeichen).
 18. **Fuß:** Dort steht „Widerruf erklären“ (führt zur Widerrufsfunktion) und „Verträge hier kündigen“ (diese Beschriftung
     schreibt das Gesetz für den Kündigungsknopf vor). Bitte die Beschriftung „Widerruf erklären“ mit Ihrer Rechtsberatung
     prüfen; Shopware verwendet dafür „Vertrag widerrufen“.
+19. **Logo:** Der Shop zeigt vorläufig `ketteler-logo-fachverlag.png` (1064 × 208). Bitte liefern Sie das Logo als SVG,
+    dann wird es überall scharf dargestellt.
+20. **Muster-Formulare „Fachliteratur katholisch“ und „Fachliteratur evangelisch“:** Bitte die beiden Word-Dateien
+    liefern (oder freigeben, dass wir sie aus dem heutigen Shop übernehmen). Bis dahin führen beide Links auf die Seite
+    „Aktuell & interessant“.
 

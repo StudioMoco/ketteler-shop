@@ -56,6 +56,9 @@ ssh ketteler 'bash /opt/ketteler-shop/repo/ops/staging/redaktion-pruefen.sh'
 ```
 
 - Ausgeliefert wird nur ein Tag `shop-staging-JJJJ-MM-TT.N` von GitHub; je Tag ein eigener, unveränderter Arbeitsstand.
+- `ketteler:einrichten` legt bei jeder Auslieferung nur Fehlendes an (was in der Verwaltung gepflegt ist, bleibt).
+  Ausdrücklich alles neu schreiben bzw. die Startseite neu anlegen:
+  `KETTELER_EINRICHTEN_UEBERSCHREIBEN=1 KETTELER_ERLEBNISWELTEN_NEU=1 bash …/ausliefern.sh <tag>` (Live: nie).
 - `ausliefern.sh`: Redaktion-Stand vorher, Tag holen, Bild bauen, Sicherung von Shop- und ZITADEL-Datenbank (geprüft),
   Wartungsmodus, neuen Stand starten, `system:update:finish`, Plugins, `ketteler:einrichten`, Steuerregeln, Theme, Cache,
   Caddy-Datei nur bei Änderung, 16 Prüfungen (`pruefen.sh`). Scheitert etwas: automatisch `zurueck.sh` auf den vorherigen

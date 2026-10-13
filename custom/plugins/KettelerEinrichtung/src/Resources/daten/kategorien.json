@@ -1,21 +1,10 @@
 {
-  "_hinweis": "Kategorien nach der Startseiten-Vorlage (docs/design/startseite-entwurf.dc.html). Schlüssel sind fest, daraus entstehen die IDs. Reihenfolge = Reihenfolge im Menü. platzhalter: Seite ohne Produkte mit Platzhaltertext; versteckt: nicht im Menü; link: Verweis auf eine Kategorie oder eine Adresse. „Verträge hier kündigen“ bleibt wörtlich so (gesetzliche Beschriftung des Kündigungsknopfs, § 312k BGB).",
+  "_hinweis": "Kategorien nach der Startseiten-Vorlage (docs/design/startseite-entwurf.dc.html), Namen aus Vorlage und content/. Schlüssel sind fest, daraus entstehen die IDs. Reihenfolge = Reihenfolge im Menü. platzhalter: Seite ohne Produkte mit Platzhaltertext; versteckt: nicht im Menü; link: Verweis auf eine Kategorie oder eine Adresse. „Verträge hier kündigen“ (§ 312k BGB) und „Widerruf erklären“ (EU-Widerrufsfunktion) stehen zusätzlich zur Vorlage im Fuß.",
   "wurzel": {
     "schluessel": "katalog",
     "name": "KETTELER-Verlag"
   },
   "navigation": [
-    {
-      "schluessel": "avr",
-      "name": "Die AVR von A bis Z",
-      "kinder": [
-        {
-          "schluessel": "avr-nachgefragt",
-          "name": "AVR 2027 nachgefragt",
-          "platzhalter": true
-        }
-      ]
-    },
     {
       "schluessel": "zmv",
       "name": "Zeitschrift ZMV",
@@ -43,16 +32,20 @@
       "name": "Eichstätter Kommentar"
     },
     {
+      "schluessel": "avr",
+      "name": "Kompendium AVR Caritas"
+    },
+    {
       "schluessel": "praxishandbuecher",
       "name": "Praxishandbücher"
     },
     {
       "schluessel": "neu-in-der-mav",
-      "name": "Neu in der MAV",
+      "name": "MAV Einstieg",
       "kinder": [
         {
           "schluessel": "mav-grundwissen",
-          "name": "Grundwissen und Basisausstattung",
+          "name": "Grundausstattung/Basiswissen für die MAV",
           "platzhalter": true
         },
         {
@@ -62,24 +55,24 @@
         },
         {
           "schluessel": "mav-literatur",
-          "name": "Literatur nach Themen",
+          "name": "Themenbezogene Literatur",
           "platzhalter": true
         },
         {
           "schluessel": "mav-aktuelles",
-          "name": "Aktuelles und Vorlagen zum Herunterladen",
+          "name": "Aktuell & interessant: hilfreiche Artikel aus der ZMV",
           "platzhalter": true
         },
         {
           "schluessel": "mav-links",
-          "name": "Hilfreiche Adressen im Netz",
+          "name": "Hilfreiche Links",
           "platzhalter": true
         }
       ]
     },
     {
       "schluessel": "kab",
-      "name": "KAB-Service",
+      "name": "KAB Service",
       "kinder": [
         {
           "schluessel": "kab-buecher",
@@ -180,20 +173,16 @@
     {
       "schluessel": "verlag",
       "name": "Verlag",
+      "platzhalter": true,
       "kinder": [
         {
-          "schluessel": "verlag-ueber-uns",
-          "name": "Über uns",
-          "platzhalter": true
-        },
-        {
           "schluessel": "verlag-fachtagung",
-          "name": "ZMV-Fachtagung",
+          "name": "ZMV Fachtagung",
           "platzhalter": true
         },
         {
           "schluessel": "verlag-gespraech",
-          "name": "Im Gespräch",
+          "name": "Interviews Autoren & Schriftleiter",
           "platzhalter": true
         },
         {
@@ -202,16 +191,16 @@
           "platzhalter": true
         },
         {
+          "schluessel": "verlag-links",
+          "name": "Links",
+          "platzhalter": true
+        },
+        {
           "schluessel": "fuss-kontakt",
           "name": "Kontakt",
           "platzhalter": true
         }
       ]
-    },
-    {
-      "schluessel": "sortiment",
-      "name": "Sortiment",
-      "versteckt": true
     }
   ],
   "fuss": {
@@ -220,27 +209,20 @@
     "kinder": [
       {
         "schluessel": "fuss-verlag",
-        "name": "Verlag",
+        "name": "KETTELER-Verlag GmbH",
         "kinder": [
           {
-            "schluessel": "fuss-ueber-uns",
-            "name": "Über uns",
+            "schluessel": "fuss-verlag-seite",
+            "name": "Verlag",
             "link": {
-              "kategorie": "verlag-ueber-uns"
+              "kategorie": "verlag"
             }
           },
           {
-            "schluessel": "fuss-kab",
-            "name": "KAB-Service",
+            "schluessel": "fuss-links",
+            "name": "Links",
             "link": {
-              "kategorie": "kab"
-            }
-          },
-          {
-            "schluessel": "fuss-programm",
-            "name": "Verlagsprogramm 2026",
-            "link": {
-              "kategorie": "verlag-programm"
+              "kategorie": "verlag-links"
             }
           },
           {
@@ -253,31 +235,8 @@
         ]
       },
       {
-        "schluessel": "fuss-bestellen",
-        "name": "Bestellen",
-        "kinder": [
-          {
-            "schluessel": "fuss-versand",
-            "name": "Versand und Lieferung"
-          },
-          {
-            "schluessel": "fuss-rechnung",
-            "name": "Zahlung auf Rechnung",
-            "platzhalter": true
-          },
-          {
-            "schluessel": "fuss-kuendigen",
-            "name": "Verträge hier kündigen"
-          },
-          {
-            "schluessel": "fuss-widerruf-erklaeren",
-            "name": "Widerruf erklären"
-          }
-        ]
-      },
-      {
         "schluessel": "fuss-rechtliches",
-        "name": "Rechtliches",
+        "name": "Rechtliches & Informationen",
         "kinder": [
           {
             "schluessel": "fuss-impressum",
@@ -288,18 +247,46 @@
             "name": "AGB"
           },
           {
-            "schluessel": "fuss-datenschutz",
-            "name": "Datenschutz"
+            "schluessel": "fuss-preise-zmv",
+            "name": "Preise ZMV"
+          },
+          {
+            "schluessel": "fuss-agb-anzeigen",
+            "name": "AGB für Anzeigen/Beilagen"
           },
           {
             "schluessel": "fuss-widerruf",
             "name": "Widerrufsbelehrung"
+          },
+          {
+            "schluessel": "fuss-versand",
+            "name": "Versand & Lieferung"
+          },
+          {
+            "schluessel": "fuss-datenschutz",
+            "name": "Datenschutzerklärung"
+          },
+          {
+            "schluessel": "fuss-kuendigen",
+            "name": "Verträge hier kündigen"
+          },
+          {
+            "schluessel": "fuss-widerruf-erklaeren",
+            "name": "Widerruf erklären"
           }
         ]
       }
     ]
   },
   "entfernt": [
-    "fuss-service"
+    "fuss-service",
+    "fuss-bestellen",
+    "fuss-ueber-uns",
+    "fuss-kab",
+    "fuss-programm",
+    "fuss-rechnung",
+    "verlag-ueber-uns",
+    "avr-nachgefragt",
+    "sortiment"
   ]
 }

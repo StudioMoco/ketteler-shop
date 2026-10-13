@@ -1,8 +1,9 @@
-{# Nummerierte Liste mit Einleitung („Neu gewählt in die MAV?“): Überschrift, Text, bis zu acht Einträge mit Link #}
+{# Nummerierte Liste mit Einleitung („MAV Einstieg“): Dachzeile, Überschrift, Text, bis zu acht Einträge mit Link #}
 {% set c = element.config %}
 <div class="kt-rahmen">
     <section class="kt-liste" aria-labelledby="kt-liste-{{ element.id }}">
         <div class="kt-liste-einleitung">
+            {% if c.dachzeile.value %}<p class="kt-liste-dachzeile">{{ c.dachzeile.value }}</p>{% endif %}
             <h2 id="kt-liste-{{ element.id }}">{{ c.ueberschrift.value }}</h2>
             {% if c.text.value %}<p>{{ c.text.value }}</p>{% endif %}
         </div>

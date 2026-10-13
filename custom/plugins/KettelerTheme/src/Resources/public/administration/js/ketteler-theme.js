@@ -31,7 +31,7 @@
                 { name: 'nebenLinkText', label: 'Nebenlink: Text', typ: 'text' },
                 { name: 'nebenLink', label: 'Nebenlink: Link', typ: 'link' },
                 { name: 'produkt', label: 'Produkt (Cover, Name, Preis)', typ: 'produkt' },
-                { name: 'preisPraefix', label: 'Vor dem Preis, z. B. „Online ab“', typ: 'text' },
+                { name: 'preisPraefix', label: 'Vor dem Preis, z. B. „ab“ (leer: nur der Preis)', typ: 'text' },
                 {
                     name: 'kacheln', label: 'Nebenkacheln', typ: 'liste', max: 2, eintrag: 'Kachel',
                     felder: [
@@ -70,15 +70,17 @@
             beschreibung: 'Redaktionelle Zeilen mit Cover, Text, Formaten und Preis',
             felder: [
                 { name: 'ueberschrift', label: 'Überschrift', typ: 'text' },
+                { name: 'text', label: 'Einleitung', typ: 'textarea' },
                 {
                     name: 'eintraege', label: 'Werke', typ: 'liste', max: 8, eintrag: 'Werk',
                     felder: [
-                        { name: 'produkt', label: 'Produkt (Cover und „ab“-Preis)', typ: 'produkt' },
+                        { name: 'produkt', label: 'Produkt (Cover und Preis; der Preis kommt genau aus diesem Produkt)', typ: 'produkt' },
                         { name: 'bild', label: 'Coverbild (statt Produktcover)', typ: 'medium', akzeptiert: 'image/*' },
+                        { name: 'oberzeile', label: 'Zeile über dem Titel (z. B. Herausgeber)', typ: 'text' },
                         { name: 'titel', label: 'Titel', typ: 'text' },
                         { name: 'text', label: 'Text', typ: 'textarea' },
                         { name: 'formate', label: 'Formatzeile, z. B. „Online · Print · im Abo“', typ: 'text' },
-                        { name: 'preisPraefix', label: 'Vor dem Preis', typ: 'text' },
+                        { name: 'preisPraefix', label: 'Vor dem Preis, z. B. „ab“ (leer: nur der Preis)', typ: 'text' },
                         { name: 'linkText', label: 'Linktext', typ: 'text' },
                         { name: 'link', label: 'Link', typ: 'link' }
                     ]
@@ -87,14 +89,20 @@
         },
         hinweis: {
             label: 'Hinweis mit Zeichen',
-            beschreibung: 'Großes Zeichen, Haupttext, Unterzeile, Text mit Link',
+            beschreibung: 'Großes Zeichen, Dachzeile, Haupttext, Unterzeile, Text und Links',
             felder: [
                 { name: 'zeichen', label: 'Zeichen', typ: 'text' },
+                { name: 'dachzeile', label: 'Dachzeile', typ: 'text' },
                 { name: 'haupttext', label: 'Haupttext (*Wörter zwischen Sternchen* werden kursiv)', typ: 'textarea' },
                 { name: 'unterzeile', label: 'Unterzeile', typ: 'text' },
                 { name: 'text', label: 'Text', typ: 'textarea' },
-                { name: 'linkText', label: 'Linktext', typ: 'text' },
-                { name: 'link', label: 'Link', typ: 'link' }
+                {
+                    name: 'links', label: 'Links', typ: 'liste', max: 4, eintrag: 'Link',
+                    felder: [
+                        { name: 'text', label: 'Text', typ: 'text' },
+                        { name: 'link', label: 'Ziel', typ: 'link' }
+                    ]
+                }
             ]
         },
         beitraege: {
@@ -115,8 +123,9 @@
         },
         liste: {
             label: 'Nummerierte Liste mit Einleitung',
-            beschreibung: 'Überschrift, Text und bis zu acht Einträge',
+            beschreibung: 'Dachzeile, Überschrift, Text und bis zu acht Einträge',
             felder: [
+                { name: 'dachzeile', label: 'Dachzeile', typ: 'text' },
                 { name: 'ueberschrift', label: 'Überschrift', typ: 'text' },
                 { name: 'text', label: 'Text', typ: 'textarea' },
                 {
@@ -130,7 +139,7 @@
         },
         produktreihe: {
             label: 'Produktreihe',
-            beschreibung: 'Produkte mit Cover, Autor, Preis und „In den Warenkorb“',
+            beschreibung: 'Produktkarten mit Cover, Autor, Preis und „In den Warenkorb“ bzw. „Zum Angebot“',
             felder: [
                 { name: 'ueberschrift', label: 'Überschrift', typ: 'text' },
                 { name: 'linkText', label: 'Link rechts: Text', typ: 'text' },

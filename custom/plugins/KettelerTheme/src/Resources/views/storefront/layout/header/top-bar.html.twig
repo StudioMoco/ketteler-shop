@@ -5,7 +5,7 @@
     {% set service = kt_service(context.salesChannel.id) %}
     <div class="top-bar kt-servicezeile">
         <div class="kt-servicezeile-innen">
-            <span>Wir sind für Sie da: <a href="tel:{{ service.telefonLink }}">{{ service.telefon }}</a><span class="kt-servicezeile-zeiten">, {{ service.servicezeiten }}</span></span>
+            <span><span class="kt-servicezeile-zeiten">Servicezeiten: {{ service.servicezeiten }} · </span>Tel. <a href="{{ service.telefonWahl }}">{{ service.telefonNummer }}</a></span>
             <span class="kt-servicezeile-links">
                 <a class="kt-servicezeile-bibliothek" href="{{ service.bibliothekUrl }}" data-kt="zur-bibliothek">Zur Bibliothek</a>
                 <a href="{{ service.kontaktUrl }}">Kontakt</a>

@@ -13,6 +13,13 @@
     </div>
 {% endblock %}
 
+{# Merkliste als Textlink (laut Vorlage), ohne Herz-Symbol #}
+{% block layout_header_actions_wishlist %}
+    <div class="col-auto">
+        <a class="kt-kopf-link" href="{{ path('frontend.wishlist.page') }}" data-kt="merkliste">Merkliste</a>
+    </div>
+{% endblock %}
+
 {% block layout_header_actions_cart %}
     <div class="col-auto">
         <div class="header-cart" data-off-canvas-cart="true" data-off-canvas-cart-options="{{ { autoFocus: true }|json_encode }}">

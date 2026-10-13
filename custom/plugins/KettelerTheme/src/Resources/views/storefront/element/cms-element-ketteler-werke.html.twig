@@ -1,12 +1,14 @@
 {#
-    Werke (redaktionelle Zeilen): je Zeile Cover (Bild oder Produktcover), Titel, Text, Formatzeile, „ab“-Preis aus
-    dem gewählten Produkt und Link. Auch für die Werkseiten gedacht.
+    Werke (redaktionelle Zeilen): Überschrift und Einleitung, je Zeile Cover (Bild oder Produktcover), Zeile über dem
+    Titel (Herausgeber), Titel, Text, Formatzeile, Preis aus dem im Block gewählten Produkt (mit Vorsatz wie „ab“,
+    nie der günstigste Artikel der Kategorie) und Link. Auch für die Werkseiten gedacht.
 #}
 {% set c = element.config %}
 {% set d = element.data %}
 <section class="kt-band--weiss" aria-labelledby="kt-werke-{{ element.id }}">
     <div class="kt-rahmen kt-werke">
-        {% if c.ueberschrift.value %}<h2 id="kt-werke-{{ element.id }}">{{ c.ueberschrift.value }}</h2>{% endif %}
+        {% if c.ueberschrift.value %}<h2 id="kt-werke-{{ element.id }}"{% if c.text.value %} class="kt-werke-mit-text"{% endif %}>{{ c.ueberschrift.value }}</h2>{% endif %}
+        {% if c.text.value %}<p class="kt-werke-einleitung">{{ c.text.value }}</p>{% endif %}
         <ul class="kt-werke-liste">
             {% for e in c.eintraege.value|default([]) %}
                 {% set produkt = e.produkt ? d.produkte[e.produkt] ?? null : null %}
@@ -15,14 +17,14 @@
                 <li class="kt-werk" data-kt="werk">
                     {% sw_include '@KettelerTheme/storefront/component/ketteler/cover.html.twig' with { produkt: produkt, medium: bild, titel: e.titel, groesse: 'werk', dekorativ: true } only %}
                     <div class="kt-werk-text">
+                        {% if e.oberzeile %}<p class="kt-werk-oberzeile">{{ e.oberzeile }}</p>{% endif %}
                         <h3>{{ e.titel }}</h3>
                         {% if e.text %}<p class="kt-werk-beschreibung">{{ e.text }}</p>{% endif %}
                         {% if e.formate %}<p class="kt-werk-formate">{{ e.formate }}</p>{% endif %}
                     </div>
                     <div class="kt-werk-kauf">
                         {% if produkt %}
-                            {% set preis = produkt.calculatedCheapestPrice.unitPrice ?? produkt.calculatedPrice.unitPrice %}
-                            <span class="kt-werk-preis">{{ e.preisPraefix|default('ab') }} <span class="kt-preis">{{ preis|currency }}</span></span>
+                            <span class="kt-werk-preis" data-kt="werk-preis">{% if e.preisPraefix %}{{ e.preisPraefix }} {% endif %}<span class="kt-preis">{{ produkt.calculatedPrice.unitPrice|currency }}</span></span>
                         {% endif %}
                         {% if ziel and e.linkText %}<a class="kt-textlink kt-textlink--magenta" href="{{ ziel }}">{{ e.linkText }}</a>{% endif %}
                     </div>
