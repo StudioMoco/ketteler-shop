@@ -1,0 +1,270 @@
+{
+  "_hinweis": "Erlebniswelten, die ketteler:einrichten EINMAL anlegt (danach pflegt Ketteler sie in der Verwaltung; neu anlegen nur mit --erlebniswelten-neu). Texte wörtlich aus docs/design/startseite-entwurf.dc.html. Verweise: @artikel:<Nummer>, @kategorie:<Schlüssel> (ID), @link-kategorie:<Schlüssel> und @link-artikel:<Nummer> (Link-Ziel), @medium:<Datei in daten/medien>. Preise kommen immer aus den Produkten.",
+  "seiten": [
+    {
+      "schluessel": "startseite",
+      "name": "Startseite",
+      "kategorie": "katalog",
+      "bloecke": [
+        {
+          "typ": "schaufenster",
+          "config": {
+            "dachzeile": "AVR 2027 nachgefragt · Videoreihe",
+            "titel": "Die neue AVR 2027 kommt. Was ändert sich für Ihre Einrichtung?",
+            "text": "Rechtsanwalt Marvin Milleschewski erklärt die neue Struktur in kurzen Folgen. Im Detail nachlesen können Sie jedes Thema im Kompendium.",
+            "knopfText": "Folge 1 ansehen",
+            "knopfLink": "@link-kategorie:avr-nachgefragt",
+            "video": "@medium:avr-2027-folge-1-platzhalter.mp4",
+            "videoPoster": "@medium:avr-2027-folge-1-platzhalter.jpg",
+            "videoUntertitel": "@medium:avr-2027-folge-1-platzhalter.vtt",
+            "nebenLinkText": "Alle Folgen",
+            "nebenLink": "@link-kategorie:avr-nachgefragt",
+            "produkt": "@artikel:TEST-O-AVR",
+            "preisPraefix": "Online ab",
+            "kacheln": [
+              {
+                "dachzeile": "Soeben erschienen",
+                "titel": "ZMV Heft 5/2026",
+                "text": "Rechtsprechung, Gastkommentar und Leserfragen aus der MAV-Praxis.",
+                "linkText": "Heft ansehen",
+                "link": "@link-artikel:TEST-P-ZMV-2026-5",
+                "flaeche": "sand",
+                "bild": null,
+                "produkte": [
+                  "@artikel:TEST-P-ZMV-2026-5"
+                ]
+              },
+              {
+                "dachzeile": "Neu gewählt in die MAV?",
+                "titel": "Die Grundausstattung",
+                "text": "ZMV, Eichstätter Kommentar und die AVR von A bis Z. Für die MAV als Sachmittel vorgesehen.",
+                "linkText": "Zusammenstellung ansehen",
+                "link": "@link-kategorie:mav-grundwissen",
+                "flaeche": "rose",
+                "bild": null,
+                "produkte": [
+                  "@artikel:TEST-ABO-ZMV-P",
+                  "@artikel:TEST-O-EK",
+                  "@artikel:TEST-O-AVR"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "typ": "kategorien",
+          "config": {
+            "ueberschrift": "Im Sortiment",
+            "linkText": "Alle Kategorien",
+            "link": "@link-kategorie:sortiment",
+            "eintraege": [
+              {
+                "kategorie": "@kategorie:praxishandbuecher",
+                "titel": "Praxishandbücher",
+                "untertitel": "Eingruppierung, Arbeitszeit, Zeugnisse",
+                "bilder": []
+              },
+              {
+                "kategorie": "@kategorie:zmv-print",
+                "titel": "ZMV-Einzelhefte",
+                "untertitel": "Aktuelle Hefte und Archiv",
+                "bilder": []
+              },
+              {
+                "kategorie": "@kategorie:eichstaetter-schriften",
+                "titel": "Eichstätter Schriften",
+                "untertitel": "Reihe zum kirchlichen Arbeitsrecht",
+                "bilder": []
+              },
+              {
+                "kategorie": "@kategorie:kab-buecher",
+                "titel": "KAB Bücher und Magazine",
+                "untertitel": "Impuls, Themenhefte, Sozialethik",
+                "bilder": []
+              },
+              {
+                "kategorie": "@kategorie:kab-produkte",
+                "titel": "KAB Bedarf",
+                "untertitel": "Kerzen, Fahnen, Urkunden, Abzeichen",
+                "bilder": []
+              }
+            ]
+          }
+        },
+        {
+          "typ": "werke",
+          "config": {
+            "ueberschrift": "Drei Werke, die jede MAV kennt",
+            "eintraege": [
+              {
+                "produkt": "@artikel:TEST-O-AVR",
+                "bild": null,
+                "titel": "Die AVR von A bis Z",
+                "text": "Das Kompendium zur AVR Caritas. Von Arbeitszeit bis Vergütung, mit Beispielen, Checklisten und dem Modulfinder von der Vorschrift zum passenden Kapitel. Neu: online in der Bibliothek, laufend aktualisiert.",
+                "formate": "Online · Print · im Abo",
+                "preisPraefix": "ab",
+                "linkText": "Zum Kompendium",
+                "link": "@link-kategorie:avr"
+              },
+              {
+                "produkt": "@artikel:TEST-P-ZMV",
+                "bild": null,
+                "titel": "ZMV Die Mitarbeitervertretung",
+                "text": "Die Fachzeitschrift für die MAV-Praxis, seit über 30 Jahren. Sechs Hefte im Jahr mit Rechtsprechung, Gastkommentaren und Antworten auf Leserfragen. Digital mit allen Ausgaben seit 2000.",
+                "formate": "Abo Print · Abo Digital · Kombi · Einzelhefte",
+                "preisPraefix": "ab",
+                "linkText": "Zur Zeitschrift",
+                "link": "@link-kategorie:zmv"
+              },
+              {
+                "produkt": "@artikel:TEST-O-EK",
+                "bild": null,
+                "titel": "Eichstätter Kommentar MAVO und KAGO",
+                "text": "Zwei Regelwerke in einem Band: die Rahmen-MAVO und die Kirchliche Arbeitsgerichtsordnung, erläutert mit Beispielen, Mustern und Verweisen auf die ZMV.",
+                "formate": "Print mit Online-Zugang · nur Online",
+                "preisPraefix": "ab",
+                "linkText": "Zum Kommentar",
+                "link": "@link-kategorie:eichstaetter"
+              }
+            ]
+          }
+        },
+        {
+          "typ": "hinweis",
+          "config": {
+            "zeichen": "§",
+            "haupttext": "Die ZMV und der Eichstätter Kommentar gehören zu den *erforderlichen Sachmitteln* der Mitarbeitervertretung.",
+            "unterzeile": "Ihr gutes Recht nach § 17 Abs. 1, 2 Rahmen-MAVO bzw. § 30 Abs. 1, 2 MVG-EKD.",
+            "text": "Mehrere Leserinnen und Leser in Ihrer Einrichtung? Wir machen Ihnen ein Angebot für eine Mehrplatzlizenz.",
+            "linkText": "Lizenzen anfragen",
+            "link": "/mehrplatz-anfrage"
+          }
+        },
+        {
+          "typ": "beitraege",
+          "config": {
+            "ueberschrift": "Aus dem Verlag",
+            "eintraege": [
+              {
+                "dachzeile": "März 2027",
+                "titel": "Einladung zur 29. ZMV-Fachtagung",
+                "text": "Programm, Referenten und Anmeldung. Dazu Rückblicke auf die vergangenen Tagungen.",
+                "link": "@link-kategorie:verlag-fachtagung"
+              },
+              {
+                "dachzeile": "Im Gespräch",
+                "titel": "Autoren und Schriftleiter über ihre Arbeit",
+                "text": "Fünf Interviews mit den Menschen hinter unseren Werken.",
+                "link": "@link-kategorie:verlag-gespraech"
+              },
+              {
+                "dachzeile": "Zum Download",
+                "titel": "Verlagsprogramm 2026",
+                "text": "Alle Titel auf einen Blick. Die gedruckte Ausgabe schicken wir Ihnen gern zu.",
+                "link": "@link-kategorie:verlag-programm"
+              }
+            ]
+          }
+        },
+        {
+          "typ": "liste",
+          "config": {
+            "ueberschrift": "Neu gewählt in die MAV?",
+            "text": "Willkommen. Hier haben wir zusammengestellt, was Ihnen in den ersten Monaten hilft.",
+            "eintraege": [
+              {
+                "text": "Grundwissen und Basisausstattung",
+                "link": "@link-kategorie:mav-grundwissen"
+              },
+              {
+                "text": "Praktische Arbeitshilfen",
+                "link": "@link-kategorie:mav-arbeitshilfen"
+              },
+              {
+                "text": "Literatur nach Themen",
+                "link": "@link-kategorie:mav-literatur"
+              },
+              {
+                "text": "Aktuelles und Vorlagen zum Herunterladen",
+                "link": "@link-kategorie:mav-aktuelles"
+              },
+              {
+                "text": "Hilfreiche Adressen im Netz",
+                "link": "@link-kategorie:mav-links"
+              }
+            ]
+          }
+        },
+        {
+          "typ": "produktreihe",
+          "config": {
+            "ueberschrift": "Für den Schreibtisch",
+            "linkText": "Alle Praxishandbücher",
+            "link": "@link-kategorie:praxishandbuecher",
+            "produkte": [
+              "@artikel:TEST-PH-CHECKLISTEN",
+              "@artikel:TEST-PH-EINGRUPPIERUNG",
+              "@artikel:TEST-PH-ARBEITSZEIT",
+              "@artikel:TEST-PH-ZEUGNISSE",
+              "@artikel:TEST-PH-PRAXISWISSEN"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schluessel": "sortiment",
+      "name": "Sortiment (alle Kategorien)",
+      "kategorie": "sortiment",
+      "titel": "Sortiment",
+      "bloecke": [
+        {
+          "typ": "kategorien",
+          "config": {
+            "ueberschrift": "",
+            "linkText": "",
+            "link": null,
+            "eintraege": [
+              {
+                "kategorie": "@kategorie:avr",
+                "titel": "",
+                "untertitel": "Kompendium AVR Caritas",
+                "bilder": []
+              },
+              {
+                "kategorie": "@kategorie:zmv",
+                "titel": "",
+                "untertitel": "Print, Digital und Archiv",
+                "bilder": []
+              },
+              {
+                "kategorie": "@kategorie:eichstaetter",
+                "titel": "",
+                "untertitel": "Rahmen-MAVO und KAGO",
+                "bilder": []
+              },
+              {
+                "kategorie": "@kategorie:praxishandbuecher",
+                "titel": "",
+                "untertitel": "Eingruppierung, Arbeitszeit, Zeugnisse",
+                "bilder": []
+              },
+              {
+                "kategorie": "@kategorie:eichstaetter-schriften",
+                "titel": "",
+                "untertitel": "Reihe zum kirchlichen Arbeitsrecht",
+                "bilder": []
+              },
+              {
+                "kategorie": "@kategorie:kab",
+                "titel": "",
+                "untertitel": "Bücher, Magazine und Bedarf",
+                "bilder": []
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

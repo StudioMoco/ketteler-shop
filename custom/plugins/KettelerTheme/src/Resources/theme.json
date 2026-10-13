@@ -25,13 +25,13 @@
         "value": "#b7005c"
       },
       "sw-color-brand-secondary": {
-        "value": "#1b1b1d"
+        "value": "#4e4447"
       },
       "sw-border-color": {
-        "value": "#e6e6e9"
+        "value": "#e8e0d4"
       },
       "sw-background-color": {
-        "value": "#ffffff"
+        "value": "#fbf8f3"
       },
       "sw-color-success": {
         "value": "#0f766e"
@@ -46,13 +46,13 @@
         "value": "#b42318"
       },
       "sw-text-color": {
-        "value": "#1b1b1d"
+        "value": "#2a2326"
       },
       "sw-headline-color": {
-        "value": "#1b1b1d"
+        "value": "#2a2326"
       },
       "sw-color-price": {
-        "value": "#1b1b1d"
+        "value": "#2a2326"
       },
       "sw-color-buy-button": {
         "value": "#b7005c"
@@ -64,7 +64,7 @@
         "value": "'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
       },
       "sw-font-family-headline": {
-        "value": "'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
+        "value": "'IBM Plex Serif', Georgia, 'Times New Roman', serif"
       }
     }
   }

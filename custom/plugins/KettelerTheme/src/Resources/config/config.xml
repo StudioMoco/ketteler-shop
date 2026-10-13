@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/trunk/src/Core/System/SystemConfig/Schema/config.xsd">
+    <card>
+        <title>Contact and service (header and footer)</title>
+        <title lang="de-DE">Kontakt und Service (Kopf und Fuß)</title>
+        <input-field type="text">
+            <name>telefon</name>
+            <label>Phone (display)</label>
+            <label lang="de-DE">Telefon (Anzeige)</label>
+            <defaultValue>09972 9414-51</defaultValue>
+        </input-field>
+        <input-field type="text">
+            <name>telefonLink</name>
+            <label>Phone (for dialing, international)</label>
+            <label lang="de-DE">Telefon zum Wählen (international, ohne Leerzeichen)</label>
+            <defaultValue>+499972941451</defaultValue>
+        </input-field>
+        <input-field type="text">
+            <name>servicezeiten</name>
+            <label>Service hours</label>
+            <label lang="de-DE">Servicezeiten</label>
+            <defaultValue>Mo, Di, Do 8 bis 13 Uhr, Mi und Fr 8 bis 12 Uhr</defaultValue>
+        </input-field>
+        <input-field type="text">
+            <name>email</name>
+            <label>E-mail</label>
+            <label lang="de-DE">E-Mail-Adresse</label>
+            <defaultValue>kontakt@ketteler-verlag.de</defaultValue>
+        </input-field>
+        <input-field type="url">
+            <name>bibliothekUrl</name>
+            <label>Library link</label>
+            <label lang="de-DE">Link „Zur Bibliothek“</label>
+            <helpText lang="de-DE">Leer: Adresse der Bibliothek aus der Server-Einstellung KETTELER_BIBLIOTHEK_URL (dieselbe wie bei „Jetzt lesen“).</helpText>
+        </input-field>
+        <component name="sw-entity-single-select">
+            <name>kontaktKategorie</name>
+            <entity>category</entity>
+            <label>Contact page</label>
+            <label lang="de-DE">Seite „Kontakt“ (Kategorie)</label>
+        </component>
+        <input-field type="text">
+            <name>adresse</name>
+            <label>Address line (footer)</label>
+            <label lang="de-DE">Adresszeile (Fuß)</label>
+            <defaultValue>KETTELER-Verlag GmbH · Schloßhof 1 · 93449 Waldmünchen</defaultValue>
+        </input-field>
+        <input-field type="text">
+            <name>fussHinweis</name>
+            <label>Note (footer)</label>
+            <label lang="de-DE">Hinweis (Fuß, rechts)</label>
+            <defaultValue>Klimafreundlicher Versand mit GoGreen Plus · Alle Preise inkl. MwSt.</defaultValue>
+        </input-field>
+    </card>
+</config>

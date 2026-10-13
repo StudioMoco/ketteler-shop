@@ -149,7 +149,7 @@ def main():
     b.get(SHOP + "/")
     knopf = re.search(r'footer-revocation-button[^<]*<a[^>]*href="([^"]+)"', b.html)
     e.pruefe(knopf is not None, "Knopf „Vertrag widerrufen“ im Fuß")
-    seite = knopf.group(1) if knopf else SHOP + "/Rechtliches/Widerruf-erklaeren/"
+    seite = knopf.group(1) if knopf else SHOP + "/Bestellen/Widerruf-erklaeren/"
     b.get(seite)
     e.pruefe(b.formular("/form/revocation/request") is not None and 'data-kt="widerruf-hinweis-gast"' in b.html, "Formular für Gäste erreichbar")
 

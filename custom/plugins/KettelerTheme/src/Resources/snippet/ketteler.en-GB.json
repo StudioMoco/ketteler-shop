@@ -5,7 +5,8 @@
         },
         "fuss": {
             "kundenservice": "Schloßhof 1, 93449 Waldmünchen<br>Tel. 09972 94 14-51<br><a href=\"mailto:kontakt@ketteler-verlag.de\">kontakt@ketteler-verlag.de</a>",
-            "impressum": "KETTELER-Verlag GmbH, Bernhard-Letterhaus-Str. 26, 50670 Köln, Amtsgericht Köln HRB 34678"
+            "impressum": "KETTELER-Verlag GmbH, Bernhard-Letterhaus-Str. 26, 50670 Köln, Amtsgericht Köln HRB 34678",
+            "widerrufErklaeren": "<a href=\"%url%\">Declare withdrawal</a>"
         },
         "artikelart": {
             "print": "Print",
@@ -26,7 +27,8 @@
         "excludeVatText": "%star%Alle Preise exkl. gesetzl. Mehrwertsteuer zzgl. <a data-ajax-modal=\"true\" href=\"%url%\" data-url=\"%url%\">Versandkosten</a>, wenn nicht anders angegeben."
     },
     "header": {
-        "supportInfo": "<strong>Fragen zu Ihrer Bestellung?</strong><br /><strong><a href=\"tel:+499972941451\">09972 94 14-51</a></strong>"
+        "supportInfo": "<strong>Fragen zu Ihrer Bestellung?</strong><br /><strong><a href=\"tel:+499972941451\">09972 94 14-51</a></strong>",
+        "searchPlaceholder": "Search by title, author, keyword"
     },
     "checkout": {
         "lineItemDeliveryDate": "Lieferung: %earliest% bis %latest%"

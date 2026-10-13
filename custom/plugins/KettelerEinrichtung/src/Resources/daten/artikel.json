@@ -31,7 +31,7 @@
     },
     {
       "nummer": "TEST-O-AVR",
-      "name": "Kompendium AVR Online (Test)",
+      "name": "Die AVR von A bis Z, Online (Test)",
       "artikelart": "online",
       "produkt": "avr",
       "steuer": "online",
@@ -127,6 +127,95 @@
       ],
       "abo": "Jahresabonnement mit sofortigem Online-Zugang, verlängert sich jeweils um ein Jahr. Platzhalter: Laufzeit und Kündigungsfrist nach den AGB.",
       "beschreibung": "Platzhaltertext für AVR Digital als Abonnement. Der Zugang zur Bibliothek wird sofort freigeschaltet, den Vertrag legt die Verwaltung in weclapp an."
+    },
+    {
+      "nummer": "TEST-P-ZMV-2026-5",
+      "name": "ZMV Heft 5/2026 (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 9.8,
+      "gewicht": 0.15,
+      "kategorien": [
+        "zmv-print"
+      ],
+      "beschreibung": "Testartikel für die Startseite: Rechtsprechung, Gastkommentar und Leserfragen aus der MAV-Praxis.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-PH-CHECKLISTEN",
+      "name": "Checklisten MAVO (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 28.9,
+      "gewicht": 0.45,
+      "kategorien": [
+        "praxishandbuecher"
+      ],
+      "autor": "Oxenknecht-Witzsch (Hg.)",
+      "beschreibung": "Testartikel für die Startseite (Titel aus der Gestaltungsvorlage). Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-PH-EINGRUPPIERUNG",
+      "name": "AVR Eingruppierung (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 34.9,
+      "gewicht": 0.45,
+      "kategorien": [
+        "praxishandbuecher"
+      ],
+      "autor": "Simone Küster",
+      "beschreibung": "Testartikel für die Startseite (Titel aus der Gestaltungsvorlage). Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-PH-ARBEITSZEIT",
+      "name": "Arbeitszeit und Dienstplanung (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 34.9,
+      "gewicht": 0.45,
+      "kategorien": [
+        "praxishandbuecher"
+      ],
+      "autor": "Dr. Sebastian Weber",
+      "beschreibung": "Testartikel für die Startseite (Titel aus der Gestaltungsvorlage). Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-PH-ZEUGNISSE",
+      "name": "Arbeitszeugnisse (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 29.9,
+      "gewicht": 0.45,
+      "kategorien": [
+        "praxishandbuecher"
+      ],
+      "autor": "Ulrich Richartz",
+      "beschreibung": "Testartikel für die Startseite (Titel aus der Gestaltungsvorlage). Echte Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-PH-PRAXISWISSEN",
+      "name": "Praxiswissen Arbeitsrecht 2026 katholisch (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 12.9,
+      "gewicht": 0.45,
+      "kategorien": [
+        "praxishandbuecher"
+      ],
+      "autor": null,
+      "beschreibung": "Testartikel für die Startseite (Titel aus der Gestaltungsvorlage). Echte Daten kommen aus weclapp.",
+      "abo": null
     }
   ]
 }

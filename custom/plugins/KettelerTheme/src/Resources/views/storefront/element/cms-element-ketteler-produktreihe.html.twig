@@ -1,0 +1,46 @@
+{#
+    Produktreihe („Für den Schreibtisch“): Cover, Autor/Herausgeber (Zusatzfeld ketteler_autor), Titel, Preis und
+    „In den Warenkorb“. Das Formular ist das von Shopware (data-add-to-cart): legt ohne Seitenwechsel in den Warenkorb
+    und öffnet den Warenkorb seitlich als Rückmeldung; ohne JavaScript ein normales Absenden.
+#}
+{% set c = element.config %}
+{% set d = element.data %}
+<section class="kt-band--weiss" aria-labelledby="kt-reihe-{{ element.id }}">
+    <div class="kt-rahmen kt-produktreihe">
+        <div class="kt-kopfzeile">
+            <h2 id="kt-reihe-{{ element.id }}">{{ c.ueberschrift.value }}</h2>
+            {% if c.linkText.value and kt_link(c.link.value) %}<a class="kt-textlink kt-textlink--magenta" href="{{ kt_link(c.link.value) }}">{{ c.linkText.value }}</a>{% endif %}
+        </div>
+        <ul class="kt-produktreihe-liste">
+            {% for pid in c.produkte.value|default([]) %}
+                {% set produkt = d.produkte[pid] ?? null %}
+                {% if produkt %}
+                    {% set url = seoUrl('frontend.detail.page', { productId: produkt.id }) %}
+                    {% set autor = produkt.translated.customFields.ketteler_autor ?? null %}
+                    <li data-kt="buch">
+                        <a class="kt-buch-cover" href="{{ url }}" tabindex="-1" aria-hidden="true">
+                            {% sw_include '@KettelerTheme/storefront/component/ketteler/cover.html.twig' with { produkt: produkt, groesse: 'reihe', dekorativ: true } only %}
+                        </a>
+                        {% if autor %}<p class="kt-buch-autor">{{ autor }}</p>{% endif %}
+                        <a class="kt-buch-titel" href="{{ url }}">{{ produkt.translated.name }}</a>
+                        <div class="kt-buch-kauf">
+                            <span class="kt-preis">{{ produkt.calculatedPrice.unitPrice|currency }}</span>
+                            {% if produkt.available and produkt.calculatedMaxPurchase > 0 %}
+                                <form action="{{ path('frontend.checkout.line-item.add') }}" method="post" data-add-to-cart="true">
+                                    <input type="hidden" name="redirectTo" value="frontend.cart.offcanvas">
+                                    <input type="hidden" name="lineItems[{{ produkt.id }}][id]" value="{{ produkt.id }}">
+                                    <input type="hidden" name="lineItems[{{ produkt.id }}][type]" value="product">
+                                    <input type="hidden" name="lineItems[{{ produkt.id }}][referencedId]" value="{{ produkt.id }}">
+                                    <input type="hidden" name="lineItems[{{ produkt.id }}][stackable]" value="1">
+                                    <input type="hidden" name="lineItems[{{ produkt.id }}][removable]" value="1">
+                                    <input type="hidden" name="lineItems[{{ produkt.id }}][quantity]" value="1">
+                                    <button type="submit" class="kt-in-den-warenkorb" data-kt="in-den-warenkorb">In den Warenkorb<span class="visually-hidden">: {{ produkt.translated.name }}</span></button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+</section>

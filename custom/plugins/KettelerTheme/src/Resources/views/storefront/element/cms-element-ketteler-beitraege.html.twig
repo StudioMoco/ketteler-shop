@@ -1,0 +1,18 @@
+{# Drei Beiträge („Aus dem Verlag“) auf Sand: Überschrift, je Beitrag Dachzeile, Titel, Text und Link #}
+{% set c = element.config %}
+<section class="kt-band--sand" aria-labelledby="kt-beitraege-{{ element.id }}">
+    <div class="kt-rahmen kt-beitraege">
+        <h2 id="kt-beitraege-{{ element.id }}">{{ c.ueberschrift.value }}</h2>
+        <ul class="kt-beitraege-liste">
+            {% for e in c.eintraege.value|default([]) %}
+                <li>
+                    <a class="kt-beitrag" href="{{ kt_link(e.link) ?? '#' }}" data-kt="beitrag">
+                        {% if e.dachzeile %}<span class="kt-beitrag-dachzeile d-block">{{ e.dachzeile }}</span>{% endif %}
+                        <span class="kt-beitrag-titel d-block">{{ e.titel }}</span>
+                        {% if e.text %}<span class="kt-beitrag-text d-block">{{ e.text }}</span>{% endif %}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</section>

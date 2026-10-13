@@ -1,16 +1,56 @@
 // Wird vor dem Storefront-SCSS geladen: nur Variablen, kein CSS ausgeben.
-// Farben und Maße wie in der Bibliothek (Redaktionssystem, docs/gestaltung.md).
-$kt-ink: #1b1b1d;
-$kt-mute: #6b6b70;
-$kt-hair: #e6e6e9;
-$kt-frame: #f6f6f7;
-$kt-box: #f4f5f7;
-$kt-accent: #b7005c;
-$kt-accent-soft: #f7eaf0;
+// Gestaltung nach docs/design/startseite-entwurf.dc.html (freigegeben von Atilla, Oktober 2026).
 
+// Farben
+$kt-papier: #fbf8f3;        // Seitengrund
+$kt-sand: #f3ece2;          // Flächen Sand
+$kt-rose: #f3e4ea;          // Flächen Rosé
+$kt-weiss: #ffffff;
+$kt-magenta: #b7005c;       // Akzent, Kaufen
+$kt-text: #2a2326;
+$kt-text-gedaempft: #4e4447;
+$kt-hinweis: #6b5f63;
+$kt-linie: #e8e0d4;
+$kt-linie-hell: #ece4d8;
+$kt-linie-sand: #d9cdbd;
+$kt-auf-magenta-zart: #f7d4e4;   // Dachzeile und „ab“ auf Magenta
+$kt-auf-magenta-text: #fbe6ef;   // Fließtext auf Magenta
+
+// Ältere Namen (Mails, Konto, Kasse) auf die neuen Werte
+$kt-ink: $kt-text;
+$kt-mute: $kt-hinweis;
+$kt-hair: $kt-linie;
+$kt-frame: $kt-sand;
+$kt-box: $kt-sand;
+$kt-accent: $kt-magenta;
+$kt-accent-soft: $kt-rose;
+
+// Schrift
+$kt-serif: 'IBM Plex Serif', Georgia, 'Times New Roman', serif;
+$kt-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+$font-family-sans-serif: $kt-sans;
+$headings-font-family: $kt-serif;
+$headings-font-weight: 500;
+$headings-color: $kt-text;
+$font-size-base: 1rem;
+$line-height-base: 1.6;
+$body-color: $kt-text;
+$body-bg: $kt-papier;
+$link-color: $kt-text;
+$link-hover-color: $kt-magenta;
+$link-decoration: none;
+
+// Raster: Inhalt 1240 px breit mit 24 px Rand
+$container-max-widths: (sm: 540px, md: 720px, lg: 960px, xl: 1140px, xxl: 1240px);
+$container-padding-x: 48px;
+$grid-gutter-width: 32px;
+
+// Formen: Knöpfe als Pillen, Flächen mit 8 px Rundung
 $border-radius: 8px;
 $border-radius-sm: 6px;
-$border-radius-lg: 10px;
-$btn-border-radius: 8px;
+$border-radius-lg: 8px;
+$btn-border-radius: 25px;
+$btn-border-radius-sm: 25px;
+$btn-border-radius-lg: 25px;
 $input-border-radius: 8px;
-$headings-font-weight: 600;
+$border-color: $kt-linie;

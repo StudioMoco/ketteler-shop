@@ -1,0 +1,15 @@
+{# Nummerierte Liste mit Einleitung („Neu gewählt in die MAV?“): Überschrift, Text, bis zu acht Einträge mit Link #}
+{% set c = element.config %}
+<div class="kt-rahmen">
+    <section class="kt-liste" aria-labelledby="kt-liste-{{ element.id }}">
+        <div class="kt-liste-einleitung">
+            <h2 id="kt-liste-{{ element.id }}">{{ c.ueberschrift.value }}</h2>
+            {% if c.text.value %}<p>{{ c.text.value }}</p>{% endif %}
+        </div>
+        <ol class="kt-liste-eintraege">
+            {% for e in c.eintraege.value|default([]) %}
+                <li><a href="{{ kt_link(e.link) ?? '#' }}" data-kt="liste-eintrag">{{ e.text }}</a></li>
+            {% endfor %}
+        </ol>
+    </section>
+</div>

@@ -1,0 +1,47 @@
+{#
+    Kategorien mit Cover-Stapel („Im Sortiment“): bis zu sechs Kategorien, je Titel (Vorgabe: Name der Kategorie),
+    Untertitel und drei Cover. Ohne gewählte Bilder die ersten drei Produktbilder der Kategorie (bzw. Platzhalter).
+    Mobil als waagerecht scrollbare Reihe.
+#}
+{% set c = element.config %}
+{% set d = element.data %}
+<div class="kt-rahmen">
+    <section class="kt-kategorien"{% if c.ueberschrift.value %} aria-labelledby="kt-kat-{{ element.id }}"{% else %} aria-label="Kategorien"{% endif %}>
+        {% if c.ueberschrift.value or c.linkText.value %}
+            <div class="kt-kopfzeile">
+                {% if c.ueberschrift.value %}<h2 id="kt-kat-{{ element.id }}">{{ c.ueberschrift.value }}</h2>{% endif %}
+                {% if c.linkText.value and kt_link(c.link.value) %}<a class="kt-kopfzeile-link" href="{{ kt_link(c.link.value) }}">{{ c.linkText.value }}</a>{% endif %}
+            </div>
+        {% endif %}
+        <ul class="kt-kategorien-reihe">
+            {% for e in c.eintraege.value|default([]) %}
+                {% set kategorie = e.kategorie ? d.kategorien[e.kategorie] ?? null : null %}
+                {% if kategorie %}
+                    {% set titel = e.titel ?: kategorie.translated.name %}
+                    <li>
+                        <a class="kt-kategorie" href="{{ category_url(kategorie) }}" data-kt="kategorie">
+                            <span class="kt-kategorie-stapel" aria-hidden="true">
+                                {% set bilder = [] %}
+                                {% for mid in e.bilder|default([]) %}{% if d.medien[mid] is defined %}{% set bilder = bilder|merge([d.medien[mid]]) %}{% endif %}{% endfor %}
+                                {% if bilder is not empty %}
+                                    {% for b in bilder|slice(0, 3) %}
+                                        {% sw_include '@KettelerTheme/storefront/component/ketteler/cover.html.twig' with { medium: b, titel: titel, groesse: 'kategorie', dekorativ: true } only %}
+                                    {% endfor %}
+                                {% else %}
+                                    {% set produkte = d.kategorieProdukte[e.kategorie] ?? [] %}
+                                    {% for i in 0..2 %}
+                                        {% sw_include '@KettelerTheme/storefront/component/ketteler/cover.html.twig' with { produkt: produkte[i] ?? null, titel: produkte[i] is defined ? null : ' ', groesse: 'kategorie', dekorativ: true } only %}
+                                    {% endfor %}
+                                {% endif %}
+                            </span>
+                            <span>
+                                <span class="kt-kategorie-name d-block">{{ titel }}</span>
+                                {% if e.untertitel %}<span class="kt-kategorie-unter d-block">{{ e.untertitel }}</span>{% endif %}
+                            </span>
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </section>
+</div>

@@ -18,6 +18,7 @@ use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -38,8 +39,14 @@ class EinrichtenCommand extends Command
         private readonly DefinitionInstanceRegistry $registry,
         private readonly Connection $db,
         private readonly SystemConfigService $config,
+        private readonly Erlebniswelten $erlebniswelten,
     ) {
         parent::__construct();
+    }
+
+    protected function configure(): void
+    {
+        $this->addOption('erlebniswelten-neu', null, InputOption::VALUE_NONE, 'Startseite und Sortiment neu anlegen (überschreibt die Pflege in der Verwaltung)');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -62,6 +69,7 @@ class EinrichtenCommand extends Command
         $this->verkaufskanal($salesChannelId, $laender, $zahlarten, $versandPost, [$versandPost, $versandOnline], $wurzel, $fuss);
         $this->nummernkreise();
         $this->artikel($salesChannelId, $steuern, $lieferzeitPost, $lieferzeitSofort);
+        $this->erlebniswelten->anlegen($this->context, $this->io, (bool) $input->getOption('erlebniswelten-neu'));
         $this->einstellungen();
         $this->mails($salesChannelId);
 
@@ -216,10 +224,22 @@ class EinrichtenCommand extends Command
                         'customFieldPosition' => 3,
                     ],
                 ],
+                [
+                    'id' => $this->id('zusatzfeld.autor'),
+                    'name' => 'ketteler_autor',
+                    'type' => CustomFieldTypes::TEXT,
+                    'config' => [
+                        'label' => ['de-DE' => 'Autor/Herausgeber', 'en-GB' => 'Author/editor'],
+                        'helpText' => ['de-DE' => 'Wird in Produktreihen über dem Titel gezeigt, z. B. „Oxenknecht-Witzsch (Hg.)“. Vorläufig, bis feststeht, welches Feld weclapp liefert.'],
+                        'componentName' => 'sw-field',
+                        'customFieldType' => 'text',
+                        'customFieldPosition' => 4,
+                    ],
+                ],
             ],
         ]], $this->context);
         // allowCartExpose: Shopware gibt die Felder nur dann an Warenkorb und Bestellpositionen weiter
-        $this->io->writeln('Zusatzfelder ketteler_artikelart, ketteler_produkt und ketteler_abo angelegt.');
+        $this->io->writeln('Zusatzfelder ketteler_artikelart, ketteler_produkt, ketteler_abo und ketteler_autor angelegt.');
     }
 
     /** @return array{0: string, 1: string} */
@@ -478,7 +498,13 @@ class EinrichtenCommand extends Command
 
         // Eltern vor Kindern schreiben (afterCategoryId zeigt immer auf ein schon geschriebenes Geschwister)
         $this->repo('category')->upsert($zeilen, $this->context);
-        $this->io->writeln(\sprintf('%d Kategorien angelegt.', \count($zeilen)));
+        // Nicht mehr vorgesehene Kategorien (z. B. alte Fußspalte „Service“) entfernen, sofern leer
+        $weg = array_map(fn (string $k): array => ['id' => $this->id('kategorie.' . $k)], $daten['entfernt'] ?? []);
+        $vorhanden = $weg === [] ? [] : $this->repo('category')->searchIds(new Criteria(array_column($weg, 'id')), $this->context)->getIds();
+        if ($vorhanden !== []) {
+            $this->repo('category')->delete(array_map(static fn (string $id): array => ['id' => $id], $vorhanden), $this->context);
+        }
+        $this->io->writeln(\sprintf('%d Kategorien angelegt (%d alte entfernt).', \count($zeilen), \count($vorhanden)));
 
         return [$wurzel, $fuss];
     }
@@ -493,16 +519,25 @@ class EinrichtenCommand extends Command
         foreach ($kinder as $kind) {
             $id = $this->id('kategorie.' . $kind['schluessel']);
             $hatKinder = !empty($kind['kinder']);
-            $zeilen[] = [
+            $zeile = [
                 'id' => $id,
                 'parentId' => $elternId,
                 'afterCategoryId' => $vorher,
                 'name' => $kind['name'],
                 'type' => $fuss && $hatKinder ? 'folder' : 'page',
                 'active' => true,
-                'visible' => true,
-                'description' => $fuss && !$hatKinder ? '<p>Platzhalter. Der Text folgt.</p>' : null,
+                'visible' => empty($kind['versteckt']),
+                'description' => !empty($kind['platzhalter']) || ($fuss && !$hatKinder && empty($kind['link'])) ? '<p>Platzhalter. Der Text folgt.</p>' : null,
             ];
+            // Verweis statt eigener Seite: auf eine andere Kategorie oder eine Adresse (z. B. /mehrplatz-anfrage)
+            if (isset($kind['link']['kategorie'])) {
+                $zeile += ['linkType' => 'category', 'internalLink' => $this->id('kategorie.' . $kind['link']['kategorie']), 'linkNewTab' => false];
+                $zeile['type'] = 'link';
+            } elseif (isset($kind['link']['adresse'])) {
+                $zeile += ['linkType' => 'external', 'externalLink' => $kind['link']['adresse'], 'linkNewTab' => false];
+                $zeile['type'] = 'link';
+            }
+            $zeilen[] = $zeile;
             if ($hatKinder) {
                 $this->kategorieKinder($kind['kinder'], $id, $zeilen, $fuss);
             }
@@ -659,6 +694,7 @@ class EinrichtenCommand extends Command
             'shippingMethodId' => $versand,
             'navigationCategoryId' => $wurzel,
             'navigationCategoryDepth' => 3,
+            'homeEnabled' => false,
             'footerCategoryId' => $fuss,
             'countries' => array_map(static fn (string $l): array => ['id' => $l], array_values($laender)),
             'currencies' => [['id' => Defaults::CURRENCY]],
@@ -737,6 +773,7 @@ class EinrichtenCommand extends Command
                     'ketteler_artikelart' => $a['artikelart'],
                     'ketteler_produkt' => $a['produkt'],
                     'ketteler_abo' => $a['abo'] ?? null,
+                    'ketteler_autor' => $a['autor'] ?? null,
                 ],
                 'visibilities' => [[
                     'id' => $this->id('artikel.' . $a['nummer'] . '.sichtbar'),
@@ -805,8 +842,16 @@ class EinrichtenCommand extends Command
             'core.loginRegistration.showAccountTypeSelection' => true,
             'core.cart.showDeliveryTime' => true,
         ];
+        // Einrichtungsassistent von Shopware überspringen: den Grundaufbau macht dieser Befehl
+        if (!$this->config->get('core.frw.completedAt')) {
+            $werte['core.frw.completedAt'] = (new \DateTimeImmutable())->format(\DATE_ATOM);
+        }
         foreach ($werte as $schluessel => $wert) {
             $this->config->set($schluessel, $wert);
+        }
+        // Link „Kontakt“ in Kopf und Fuß: nur vorbelegen, nicht überschreiben (Pflege unter Erweiterungen > Ketteler Theme)
+        if (!$this->config->getString('KettelerTheme.config.kontaktKategorie')) {
+            $this->config->set('KettelerTheme.config.kontaktKategorie', $this->id('kategorie.fuss-kontakt'));
         }
         $this->io->writeln('Shop-Name und Grundeinstellungen gesetzt.');
     }

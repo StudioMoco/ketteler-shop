@@ -2,7 +2,7 @@
 
 {# Logo fest aus dem Theme (wie in der Bibliothek), nicht über die Medienverwaltung #}
 {% block layout_header_logo_image %}
-    <picture class="header-logo-picture d-block m-auto">
+    <picture class="header-logo-picture d-inline-block">
         <img src="{{ asset('bundles/kettelertheme/logo/ketteler-logo.png', 'asset') }}"
              alt="{{ 'header.logoLink'|trans|striptags }}"
              width="218" height="57"

@@ -1,0 +1,9 @@
+{# Block mit genau einem Element (ketteler-kategorien); Gestaltung im Element, docs/design/startseite-entwurf.dc.html #}
+{% block block_ketteler_kategorien %}
+    {% set element = block.slots.getSlot('inhalt') %}
+    {% if element %}
+        <div class="cms-element-ketteler" data-cms-element-id="{{ element.id }}">
+            {% sw_include '@Storefront/storefront/element/cms-element-ketteler-kategorien.html.twig' ignore missing with { element: element } %}
+        </div>
+    {% endif %}
+{% endblock %}

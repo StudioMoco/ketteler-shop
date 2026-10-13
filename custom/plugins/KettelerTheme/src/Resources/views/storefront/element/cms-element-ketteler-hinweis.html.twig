@@ -1,0 +1,14 @@
+{# Hinweis mit Zeichen („Ihr gutes Recht“): großes Zeichen, Haupttext mit *Kursiv*, Unterzeile, Text mit Link #}
+{% set c = element.config %}
+<div class="kt-rahmen">
+    <section class="kt-hinweis" aria-label="{{ c.unterzeile.value|default(c.haupttext.value)|striptags|replace({'*': ''}) }}">
+        <div class="kt-hinweis-zeichen" aria-hidden="true">{{ c.zeichen.value|default('§') }}</div>
+        <div class="kt-hinweis-inhalt">
+            <p class="kt-hinweis-haupt">{{ c.haupttext.value|kt_kursiv }}</p>
+            {% if c.unterzeile.value %}<p class="kt-hinweis-unter">{{ c.unterzeile.value }}</p>{% endif %}
+            {% if c.text.value or c.linkText.value %}
+                <p class="kt-hinweis-text">{{ c.text.value }}{% if c.linkText.value and kt_link(c.link.value) %} <a class="kt-textlink kt-textlink--magenta" href="{{ kt_link(c.link.value) }}" data-kt="hinweis-link">{{ c.linkText.value }}</a>{% endif %}</p>
+            {% endif %}
+        </div>
+    </section>
+</div>

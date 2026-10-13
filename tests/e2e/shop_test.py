@@ -82,7 +82,7 @@ def main():
     e.pruefe(laender == "29", "29 Lieferländer (EU, Schweiz, Großbritannien)", laender)
 
     print("Rechtstexte ohne interne Vermerke")
-    for pfad in ("/Rechtliches/Impressum/", "/Rechtliches/AGB/", "/Rechtliches/Widerrufsbelehrung/", "/Rechtliches/Datenschutzerklaerung/", "/Service/Versand-und-Lieferung/"):
+    for pfad in ("/Rechtliches/Impressum/", "/Rechtliches/AGB/", "/Rechtliches/Widerrufsbelehrung/", "/Rechtliches/Datenschutz/", "/Bestellen/Versand-und-Lieferung/"):
         seite = Browser().get(SHOP + pfad)
         e.pruefe(seite.status == 200 and not interne_vermerke(seite.html), "Seite %s ohne „von Ketteler zu prüfen“" % pfad, str(interne_vermerke(seite.html)))
 

@@ -1,0 +1,24 @@
+{#
+    Cover-Baustein (überall gleich): echtes Bild mit leichtem Schatten, kleinen Rundungen und Buchrücken-Kante. Ohne Bild
+    ein ruhiger Platzhalter mit dem Titel in Serif auf Sand, nie ein Fantasie-Cover.
+    Parameter: produkt (optional), medium (optional, geht vor), titel, groesse (gross, kachel, stapel, kategorie, werk,
+    reihe), drehung (Grad, optional), alt (optional), dekorativ (true: für Hilfsmittel ausgeblendet, weil der Titel daneben steht)
+#}
+{% set ktBild = medium ?? (produkt and produkt.cover ? produkt.cover.media : null) %}
+{% set ktTitel = titel ?? (produkt ? produkt.translated.name : '') %}
+{% set ktAlt = alt ?? (ktBild and ktBild.translated.alt ? ktBild.translated.alt : ktTitel) %}
+<span class="kt-cover kt-cover--{{ groesse|default('werk') }}"{% if drehung is defined and drehung %} style="--kt-drehung: {{ drehung }}deg"{% endif %}{% if dekorativ|default(false) %} aria-hidden="true"{% endif %}>
+    {% if ktBild %}
+        {% sw_thumbnails 'kt-cover-bild' with {
+            media: ktBild,
+            sizes: { 'default': '240px' },
+            attributes: { class: 'kt-cover-bild', alt: dekorativ|default(false) ? '' : ktAlt, loading: 'lazy' }
+        } %}
+    {% else %}
+        <span class="kt-cover-platzhalter" data-kt="cover-platzhalter">
+            <span class="kt-cover-titel">{{ ktTitel }}</span>
+            <span class="kt-cover-verlag">KETTELER-Verlag</span>
+        </span>
+        {% if not dekorativ|default(false) %}<span class="visually-hidden">{{ ktTitel }}</span>{% endif %}
+    {% endif %}
+</span>

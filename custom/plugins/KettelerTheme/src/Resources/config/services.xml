@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="Ketteler\Theme\Twig\ServiceDaten">
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+            <argument type="service" id="router"/>
+            <argument type="service" id="Shopware\Core\Content\Seo\SeoUrlPlaceholderHandlerInterface"/>
+            <tag name="twig.extension"/>
+        </service>
+        <service id="Ketteler\Theme\Cms\KettelerElementResolver.schaufenster" class="Ketteler\Theme\Cms\KettelerElementResolver">
+            <argument>ketteler-schaufenster</argument>
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+        <service id="Ketteler\Theme\Cms\KettelerElementResolver.kategorien" class="Ketteler\Theme\Cms\KettelerElementResolver">
+            <argument>ketteler-kategorien</argument>
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+        <service id="Ketteler\Theme\Cms\KettelerElementResolver.werke" class="Ketteler\Theme\Cms\KettelerElementResolver">
+            <argument>ketteler-werke</argument>
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+        <service id="Ketteler\Theme\Cms\KettelerElementResolver.hinweis" class="Ketteler\Theme\Cms\KettelerElementResolver">
+            <argument>ketteler-hinweis</argument>
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+        <service id="Ketteler\Theme\Cms\KettelerElementResolver.beitraege" class="Ketteler\Theme\Cms\KettelerElementResolver">
+            <argument>ketteler-beitraege</argument>
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+        <service id="Ketteler\Theme\Cms\KettelerElementResolver.liste" class="Ketteler\Theme\Cms\KettelerElementResolver">
+            <argument>ketteler-liste</argument>
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+        <service id="Ketteler\Theme\Cms\KettelerElementResolver.produktreihe" class="Ketteler\Theme\Cms\KettelerElementResolver">
+            <argument>ketteler-produktreihe</argument>
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+    </services>
+</container>

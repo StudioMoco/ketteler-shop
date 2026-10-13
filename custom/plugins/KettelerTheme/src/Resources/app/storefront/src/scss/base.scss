@@ -1,76 +1,381 @@
-// IBM Plex Sans, selbst gehostet (SIL Open Font License 1.1, siehe assets/fonts/OFL-IBM-Plex-Sans.txt).
-// Teilmengen latin und latin-ext, wie in der Bibliothek.
-@font-face { font-family: 'IBM Plex Sans'; font-style: normal; font-weight: 400; font-display: swap;
-  src: url('#{$app-css-relative-asset-path}/fonts/ibm-plex-sans-latin-ext-400-normal.woff2') format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
-@font-face { font-family: 'IBM Plex Sans'; font-style: italic; font-weight: 400; font-display: swap;
-  src: url('#{$app-css-relative-asset-path}/fonts/ibm-plex-sans-latin-ext-400-italic.woff2') format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
-@font-face { font-family: 'IBM Plex Sans'; font-style: normal; font-weight: 500; font-display: swap;
-  src: url('#{$app-css-relative-asset-path}/fonts/ibm-plex-sans-latin-ext-500-normal.woff2') format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
-@font-face { font-family: 'IBM Plex Sans'; font-style: italic; font-weight: 500; font-display: swap;
-  src: url('#{$app-css-relative-asset-path}/fonts/ibm-plex-sans-latin-ext-500-italic.woff2') format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
-@font-face { font-family: 'IBM Plex Sans'; font-style: normal; font-weight: 600; font-display: swap;
-  src: url('#{$app-css-relative-asset-path}/fonts/ibm-plex-sans-latin-ext-600-normal.woff2') format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
-@font-face { font-family: 'IBM Plex Sans'; font-style: italic; font-weight: 600; font-display: swap;
-  src: url('#{$app-css-relative-asset-path}/fonts/ibm-plex-sans-latin-ext-600-italic.woff2') format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
-@font-face { font-family: 'IBM Plex Sans'; font-style: normal; font-weight: 700; font-display: swap;
-  src: url('#{$app-css-relative-asset-path}/fonts/ibm-plex-sans-latin-ext-700-normal.woff2') format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
-@font-face { font-family: 'IBM Plex Sans'; font-style: italic; font-weight: 700; font-display: swap;
-  src: url('#{$app-css-relative-asset-path}/fonts/ibm-plex-sans-latin-ext-700-italic.woff2') format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
-@font-face { font-family: 'IBM Plex Sans'; font-style: normal; font-weight: 400; font-display: swap;
-  src: url('#{$app-css-relative-asset-path}/fonts/ibm-plex-sans-latin-400-normal.woff2') format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
-@font-face { font-family: 'IBM Plex Sans'; font-style: italic; font-weight: 400; font-display: swap;
-  src: url('#{$app-css-relative-asset-path}/fonts/ibm-plex-sans-latin-400-italic.woff2') format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
-@font-face { font-family: 'IBM Plex Sans'; font-style: normal; font-weight: 500; font-display: swap;
-  src: url('#{$app-css-relative-asset-path}/fonts/ibm-plex-sans-latin-500-normal.woff2') format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
-@font-face { font-family: 'IBM Plex Sans'; font-style: italic; font-weight: 500; font-display: swap;
-  src: url('#{$app-css-relative-asset-path}/fonts/ibm-plex-sans-latin-500-italic.woff2') format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
-@font-face { font-family: 'IBM Plex Sans'; font-style: normal; font-weight: 600; font-display: swap;
-  src: url('#{$app-css-relative-asset-path}/fonts/ibm-plex-sans-latin-600-normal.woff2') format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
-@font-face { font-family: 'IBM Plex Sans'; font-style: italic; font-weight: 600; font-display: swap;
-  src: url('#{$app-css-relative-asset-path}/fonts/ibm-plex-sans-latin-600-italic.woff2') format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
-@font-face { font-family: 'IBM Plex Sans'; font-style: normal; font-weight: 700; font-display: swap;
-  src: url('#{$app-css-relative-asset-path}/fonts/ibm-plex-sans-latin-700-normal.woff2') format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
-@font-face { font-family: 'IBM Plex Sans'; font-style: italic; font-weight: 700; font-display: swap;
-  src: url('#{$app-css-relative-asset-path}/fonts/ibm-plex-sans-latin-700-italic.woff2') format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+// KETTELER-Verlag: Gestaltung nach docs/design/startseite-entwurf.dc.html. Kopf und Fuß beschreibt
+// docs/design/kopf-fuss.md (auch für die Bibliothek). Grundsätze: Serif für Überschriften, Sans für Text, Magenta als
+// einziger Akzent; keine Versalien-Dachzeilen, keine dunklen Flächen, keine Icon-Reihen, keine Schmuck-Etiketten.
 
+// ---------------------------------------------------------------------------------------------------------------
+// Schriften, selbst ausgeliefert (SIL Open Font License 1.1, assets/fonts/OFL-IBM-Plex-*.txt). Teilmengen latin und
+// latin-ext, wie in der Bibliothek. Keine Anfrage an fremde Server.
+// ---------------------------------------------------------------------------------------------------------------
+$kt-latin: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+$kt-latin-ext: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+
+@mixin kt-schrift($familie, $datei, $gewicht, $stil) {
+    @font-face {
+        font-family: $familie; font-style: $stil; font-weight: $gewicht; font-display: swap;
+        src: url('#{$app-css-relative-asset-path}/fonts/#{$datei}-latin-ext-#{$gewicht}-#{$stil}.woff2') format('woff2');
+        unicode-range: $kt-latin-ext;
+    }
+    @font-face {
+        font-family: $familie; font-style: $stil; font-weight: $gewicht; font-display: swap;
+        src: url('#{$app-css-relative-asset-path}/fonts/#{$datei}-latin-#{$gewicht}-#{$stil}.woff2') format('woff2');
+        unicode-range: $kt-latin;
+    }
+}
+@each $gewicht in (400, 500, 600, 700) {
+    @include kt-schrift('IBM Plex Sans', 'ibm-plex-sans', $gewicht, normal);
+    @include kt-schrift('IBM Plex Sans', 'ibm-plex-sans', $gewicht, italic);
+}
+@each $gewicht in (400, 500) {
+    @include kt-schrift('IBM Plex Serif', 'ibm-plex-serif', $gewicht, normal);
+    @include kt-schrift('IBM Plex Serif', 'ibm-plex-serif', $gewicht, italic);
+}
+
+// Werte auch als CSS-Variablen (für die Bibliothek und für Blöcke)
+:root {
+    --kt-papier: #{$kt-papier}; --kt-sand: #{$kt-sand}; --kt-rose: #{$kt-rose}; --kt-magenta: #{$kt-magenta};
+    --kt-text: #{$kt-text}; --kt-text-gedaempft: #{$kt-text-gedaempft}; --kt-hinweis: #{$kt-hinweis};
+    --kt-linie: #{$kt-linie}; --kt-serif: #{$kt-serif}; --kt-sans: #{$kt-sans};
+}
+
+// ---------------------------------------------------------------------------------------------------------------
 // Grundlagen
-body { color: $kt-ink; }
-a { color: $kt-accent; }
-
-// Kopf: weiß mit Haarlinie, wie der Kopf der Bibliothek
-.header-main { background: #fff; border-bottom: 1px solid $kt-hair; }
-.header-logo-main-img { max-height: 30px; width: auto; }
-.header-search-input { border-radius: 999px; background: $kt-frame; border-color: #c9c9cf; }
-.header-actions-btn, .header-cart-btn { color: $kt-mute; }
-.kt-kopf-bibliothek {
-  display: inline-flex; align-items: center; height: 38px; padding: 0 10px; border-radius: 8px;
-  color: $kt-mute; font-size: 13.5px; font-weight: 500; text-decoration: none;
-  &:hover { background: $kt-frame; color: $kt-ink; text-decoration: none; }
+// ---------------------------------------------------------------------------------------------------------------
+body { background: $kt-papier; color: $kt-text; font-family: $kt-sans; font-size: 16px; line-height: 1.6; }
+html, body { overflow-x: clip; }
+a { color: $kt-text; text-decoration: none; }
+a:hover { color: $kt-magenta; }
+h1, h2, h3, h4, .h1, .h2, .h3, .h4 { font-family: $kt-serif; font-weight: 500; color: $kt-text; letter-spacing: normal; text-transform: none; }
+h1, .h1 { font-size: 44px; line-height: 1.12; letter-spacing: -0.01em; }
+h2, .h2 { font-size: 42px; line-height: 1.15; }
+h3, .h3 { font-size: 30px; line-height: 1.2; }
+@media (max-width: 767.98px) {
+    h1, .h1 { font-size: 34px; }
+    h2, .h2 { font-size: 32px; }
+    h3, .h3 { font-size: 25px; }
 }
 
-// Hauptnavigation
-.nav-main { border-bottom: 1px solid $kt-hair; background: #fff; }
-.main-navigation-link { color: $kt-ink; font-weight: 500; }
-.main-navigation-link.active, .main-navigation-link:hover { color: $kt-accent; }
+// Sichtbarer Fokus in Magenta, überall
+:focus-visible { outline: 2px solid $kt-magenta !important; outline-offset: 3px; box-shadow: none !important; }
+.kt-band--magenta :focus-visible, .kt-schaufenster-haupt :focus-visible { outline-color: #ffffff !important; }
 
-// Artikel
-.product-box { border-color: $kt-hair; }
-.product-name { color: $kt-ink; font-weight: 600; }
-.kt-artikelart {
-  display: inline-block; margin-bottom: 6px; padding: 2px 8px; border-radius: 999px;
-  background: $kt-accent-soft; color: $kt-accent; font-size: 12px; font-weight: 600;
+// Textlink als Aufforderung: unterstrichen mit 1,5 px in Textfarbe
+.kt-textlink { font-weight: 500; border-bottom: 1.5px solid currentColor; padding-bottom: 2px; }
+.kt-textlink--magenta { color: $kt-magenta; }
+
+// Knöpfe: Pillen, Magenta auf Weiß bzw. Weiß auf Magenta
+.btn { border-radius: 25px; font-weight: 500; }
+.btn-primary, .btn-buy { background: $kt-magenta; border-color: $kt-magenta; color: #ffffff; }
+.btn-primary:hover, .btn-buy:hover { background: darken($kt-magenta, 6%); border-color: darken($kt-magenta, 6%); color: #ffffff; }
+.btn-outline-primary { color: $kt-magenta; border-color: $kt-magenta; }
+.btn-secondary { background: #ffffff; border-color: $kt-linie-sand; color: $kt-text; }
+.kt-knopf {
+    display: inline-flex; align-items: center; gap: 10px; min-height: 50px; padding: 0 24px; border-radius: 25px;
+    border: 0; font: inherit; font-weight: 500; cursor: pointer; text-decoration: none;
+    svg { flex: 0 0 auto; }
+}
+.kt-knopf--weiss { background: #ffffff; color: $kt-magenta; padding-left: 18px; }
+.kt-knopf--weiss:hover { color: darken($kt-magenta, 8%); background: #fff7fb; }
+.kt-knopf--magenta { background: $kt-magenta; color: #ffffff; }
+
+// Kennzeichen (Artikelart, Abo): ruhige Textzeile statt Etiketten-Pillen
+.kt-kennzeichen { display: flex; flex-wrap: wrap; gap: 0; margin-bottom: 4px; font-size: 14px; color: $kt-hinweis; }
+.kt-kennzeichen .kt-artikelart + .kt-artikelart::before { content: '·'; margin: 0 6px; }
+.kt-artikelart { display: inline; margin: 0; padding: 0; border-radius: 0; background: none; color: $kt-hinweis; font-size: 14px; font-weight: 400; }
+.kt-abo { background: none; color: $kt-hinweis; }
+.kt-abo-hinweis { margin: 6px 0 0; padding: 8px 12px; border-left: 3px solid $kt-magenta; background: $kt-sand; font-size: 14px; color: $kt-text; }
+.kt-mehrplatz-hinweis { margin-top: 16px; padding: 12px 14px; border: 1px solid $kt-linie; border-radius: 8px; background: $kt-sand; font-size: 14px; }
+
+// Gemeinsamer Innenrahmen der Bänder (wie die Vorlage: 1240 px mit 24 px Rand)
+.kt-rahmen { max-width: 1240px; margin: 0 auto; padding-left: 24px; padding-right: 24px; }
+@media (max-width: 575.98px) { .kt-rahmen { padding-left: 16px; padding-right: 16px; } }
+
+// ---------------------------------------------------------------------------------------------------------------
+// Servicezeile und Kopf
+// ---------------------------------------------------------------------------------------------------------------
+.header-main { background: $kt-papier; border-bottom: 0; }
+.top-bar.kt-servicezeile { display: block !important; position: relative; padding: 9px 0; font-size: 13px; color: $kt-hinweis; }
+.kt-servicezeile::after { content: ''; position: absolute; left: 50%; bottom: 0; width: 100vw; height: 1px; background: $kt-linie; transform: translateX(-50%); }
+.kt-servicezeile-innen { display: flex; flex-wrap: wrap; gap: 6px 24px; justify-content: space-between; }
+.kt-servicezeile a { color: $kt-hinweis; }
+.kt-servicezeile a[href^='tel:'], .kt-fuss-kontakt a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.kt-servicezeile a:hover { color: $kt-magenta; }
+.kt-servicezeile-links { display: flex; gap: 22px; }
+.kt-servicezeile .kt-servicezeile-bibliothek { color: $kt-magenta; }
+@media (max-width: 575.98px) { .kt-servicezeile-zeiten { display: none; } }
+
+.header-row { padding: 26px 0 18px; row-gap: 18px; }
+.header-logo-main-img { width: 218px; height: auto; max-height: 57px; }
+.header-logo-col { margin: 0 !important; }
+.header-search-form .input-group { border-bottom: 1.5px solid $kt-text; flex-wrap: nowrap; }
+.header-search-input, .header-search-input:focus {
+    height: 44px; border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none;
+    font-size: 16px; color: $kt-text; padding-left: 0;
+}
+.header-search-input::placeholder { color: $kt-hinweis; }
+.header-search-btn, .header-search-btn:hover { border: 0 !important; background: transparent !important; color: $kt-text; width: 44px; height: 44px; }
+.header-actions-col { display: flex; align-items: center; }
+.header-actions-col > .row { align-items: center; gap: 0 26px; }
+.kt-kopf-link { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 15px; color: $kt-text; background: none; border: 0; padding: 0; }
+.kt-kopf-link:hover { color: $kt-magenta; }
+.header-cart-btn.kt-kopf-link { padding: 0; }
+.kt-warenkorb-zahl {
+    display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 6px;
+    border-radius: 11px; background: $kt-magenta; color: #ffffff; font-size: 12px; line-height: 1;
+}
+.account-menu-btn.kt-kopf-link::after { display: none; }
+.nav-main-toggle-btn, .search-toggle-btn { color: $kt-text; }
+
+// Hauptnavigation: Textlinks, Untermenü als schlichte Liste
+.nav-main { background: $kt-papier; border-bottom: 1px solid $kt-linie; }
+.main-navigation-menu { gap: 0 30px; flex-wrap: wrap; }
+.main-navigation-link, .main-navigation-link.nav-link { padding: 10px 0 16px; font-size: 16px; font-weight: 400; color: $kt-text; }
+.main-navigation-link-text { padding: 0; border-bottom: 0 !important; }
+.main-navigation-link.active, .main-navigation-link:hover, .main-navigation-link.is-open { color: $kt-magenta; }
+.navigation-flyouts { background: transparent; border: 0; box-shadow: none; }
+.navigation-flyout { background: transparent; border: 0; box-shadow: none; }
+.navigation-flyout .container { padding-top: 0; padding-bottom: 0; }
+.kt-flyout { position: relative; display: inline-block; min-width: 280px; margin-top: -1px; padding: 14px 0; background: #ffffff; border: 1px solid $kt-linie; border-radius: 0 0 8px 8px; box-shadow: 0 10px 24px rgba(60, 30, 40, 0.08); }
+.kt-flyout-liste { list-style: none; margin: 0; padding: 0; }
+.kt-flyout-liste a { display: block; padding: 7px 44px 7px 22px; font-size: 15px; color: $kt-text; }
+.kt-flyout-liste a:hover { color: $kt-magenta; background: $kt-papier; }
+.kt-flyout-liste .kt-flyout-alles a { color: $kt-magenta; font-weight: 500; }
+.kt-flyout-schliessen { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; border: 0; background: none; color: $kt-hinweis; font-size: 20px; line-height: 1; cursor: pointer; }
+
+// Menü-Schublade (mobil): Shopware-Offcanvas in derselben Ruhe
+.offcanvas.navigation-offcanvas, .offcanvas { background: $kt-papier; }
+.navigation-offcanvas-link { color: $kt-text; font-size: 17px; }
+.navigation-offcanvas-link.is-home-link, .navigation-offcanvas-headline { font-family: $kt-serif; }
+
+// ---------------------------------------------------------------------------------------------------------------
+// Fuß (Sand, kein dunkles Band)
+// ---------------------------------------------------------------------------------------------------------------
+.footer-main { background: $kt-sand; border-top: 0; color: $kt-text-gedaempft; font-size: 15px; }
+.kt-fuss-oben { display: flex; flex-wrap: wrap; gap: 40px 48px; padding: 72px 0 48px; }
+.kt-fuss-kontakt { flex: 1.6 1 320px; min-width: 0; }
+.kt-fuss-frage { font-family: $kt-serif; font-size: 26px; line-height: 1.3; color: $kt-text; margin: 0 0 16px; }
+.kt-fuss-kontakt p { line-height: 1.75; }
+.kt-fuss-kontakt a { color: $kt-magenta; }
+.kt-fuss-spalte { flex: 1 1 160px; min-width: 0; }
+.kt-fuss-titel { font-family: $kt-sans; font-size: 15px; font-weight: 600; line-height: 1.6; color: $kt-text; margin: 0 0 13px; }
+.kt-fuss-spalte ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+.kt-fuss-spalte a { color: $kt-text; }
+.kt-fuss-spalte a:hover { color: $kt-magenta; }
+.kt-fuss-spalte .footer-revocation-button { margin: 0 !important; display: inline; }
+.kt-fuss-unten { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; padding: 22px 0 32px; border-top: 1px solid $kt-linie-sand; font-size: 13px; color: $kt-hinweis; }
+.footer-bottom { display: none; }
+
+// ---------------------------------------------------------------------------------------------------------------
+// Cover: echtes Bild mit leichtem Schatten, kleinen Rundungen und Buchrücken-Kante; ohne Bild ein ruhiger Platzhalter
+// (Titel in Serif auf Sand), nie ein Fantasie-Cover.
+// ---------------------------------------------------------------------------------------------------------------
+.kt-cover {
+    position: relative; display: block; flex: 0 0 auto; width: var(--kt-cover-b, 120px); height: var(--kt-cover-h, 168px);
+    border-radius: 2px 4px 4px 2px; overflow: hidden; transform: rotate(var(--kt-drehung, 0deg));
+    box-shadow: 0 10px 22px rgba(60, 30, 40, 0.14);
+}
+.kt-cover::after { content: ''; position: absolute; inset: 0 auto 0 0; width: 5px; background: rgba(0, 0, 0, 0.08); pointer-events: none; }
+.kt-cover-bild { display: block; width: 100%; height: 100%; object-fit: cover; }
+.kt-cover-platzhalter {
+    display: flex; flex-direction: column; justify-content: space-between; width: 100%; height: 100%; padding: 14px 14px 12px 18px;
+    background: $kt-sand; border: 1px solid $kt-linie-sand; border-radius: inherit; color: $kt-text;
+}
+.kt-cover-titel { font-family: $kt-serif; font-weight: 500; font-size: var(--kt-cover-schrift, 16px); line-height: 1.15; overflow-wrap: break-word; hyphens: auto; }
+.kt-cover-verlag { font-size: 10px; color: $kt-hinweis; }
+.kt-cover--gross { --kt-cover-b: 170px; --kt-cover-h: 238px; --kt-cover-schrift: 23px; box-shadow: 0 20px 36px rgba(60, 10, 30, 0.35); }
+.kt-cover--kachel { --kt-cover-b: 92px; --kt-cover-h: 128px; --kt-cover-schrift: 14px; box-shadow: 0 10px 20px rgba(60, 30, 40, 0.18); }
+.kt-cover--stapel { --kt-cover-b: 64px; --kt-cover-h: 90px; --kt-cover-schrift: 9px; box-shadow: 0 6px 12px rgba(60, 30, 40, 0.18); }
+.kt-cover--kategorie { --kt-cover-b: 58px; --kt-cover-h: 84px; --kt-cover-schrift: 8px; box-shadow: 0 6px 12px rgba(60, 30, 40, 0.15); }
+.kt-cover--werk { --kt-cover-b: 120px; --kt-cover-h: 168px; --kt-cover-schrift: 16px; }
+.kt-cover--reihe { --kt-cover-b: 140px; --kt-cover-h: 196px; --kt-cover-schrift: 16px; box-shadow: 0 12px 24px rgba(60, 30, 40, 0.14); }
+.kt-cover--kategorie .kt-cover-platzhalter, .kt-cover--stapel .kt-cover-platzhalter { padding: 7px 6px 6px 9px; }
+.kt-cover--kategorie .kt-cover-verlag, .kt-cover--stapel .kt-cover-verlag { display: none; }
+// Kleine Cover (Stapel, Kategorien): ohne Text, nur ruhiger Umschlag, sonst wirkt es gedrängt
+.kt-cover--kategorie .kt-cover-titel, .kt-cover--stapel .kt-cover-titel { visibility: hidden; }
+
+// Stapel aus bis zu drei Covern (Nebenkachel, Kategorien)
+.kt-stapel { position: relative; flex: 0 0 104px; height: 128px; }
+.kt-stapel .kt-cover { position: absolute; }
+.kt-stapel .kt-cover:nth-child(1) { left: 0; top: 10px; --kt-drehung: -8deg; }
+.kt-stapel .kt-cover:nth-child(2) { left: 22px; top: 2px; --kt-drehung: 0deg; }
+.kt-stapel .kt-cover:nth-child(3) { left: 42px; top: 16px; --kt-drehung: 7deg; }
+.kt-stapel--eins .kt-cover:nth-child(1) { left: 6px; top: 0; --kt-drehung: -3deg; }
+
+// ---------------------------------------------------------------------------------------------------------------
+// Erlebniswelt-Blöcke
+// ---------------------------------------------------------------------------------------------------------------
+.cms-section-default.full-width, .cms-section .cms-section-default { padding: 0; }
+.cms-block-ketteler-schaufenster, .cms-block[class*='cms-block-ketteler-'] { margin: 0 !important; padding: 0 !important; }
+.cms-block[class*='cms-block-ketteler-'] > .cms-block-container { padding: 0 !important; max-width: none; }
+.cms-block[class*='cms-block-ketteler-'] .cms-block-container-row { margin: 0; }
+.cms-element-ketteler { width: 100%; padding: 0 !important; }  // ohne Rasterabstand: Bänder bis an den Rand
+.kt-band--weiss { background: #ffffff; border-top: 1px solid $kt-linie-hell; border-bottom: 1px solid $kt-linie-hell; }
+.kt-band--sand { background: $kt-sand; }
+.kt-dachzeile { margin: 0 0 8px; font-size: 15px; color: $kt-magenta; }
+
+// 1. Schaufenster
+.kt-schaufenster { display: flex; flex-wrap: wrap; gap: 20px; padding-top: 12px; padding-bottom: 40px; }
+.kt-schaufenster-haupt {
+    flex: 1.7 1 620px; min-width: 0; display: flex; flex-wrap: wrap; gap: 36px 48px; align-items: flex-end;
+    padding: 48px 48px 44px; border-radius: 8px; background: $kt-magenta; color: #ffffff;
+}
+.kt-schaufenster-haupt a { color: #ffffff; }
+.kt-schaufenster-text { flex: 1 1 340px; min-width: 0; }
+.kt-schaufenster-dachzeile { margin: 0 0 18px; font-size: 15px; color: $kt-auf-magenta-zart; }
+.kt-schaufenster-titel { color: #ffffff; margin: 0 0 20px; }
+.kt-schaufenster-beschreibung { margin: 0 0 30px; max-width: 470px; font-size: 17px; line-height: 1.6; color: $kt-auf-magenta-text; }
+.kt-schaufenster-aktionen { display: flex; flex-wrap: wrap; gap: 14px 26px; align-items: center; }
+.kt-schaufenster-haupt .kt-knopf--weiss { color: $kt-magenta; }
+.kt-schaufenster-produkt { flex: 0 0 200px; display: flex; flex-direction: column; gap: 14px; }
+.kt-schaufenster-produkt-name { font-size: 15px; line-height: 1.4; }
+.kt-schaufenster-produkt-praefix { color: $kt-auf-magenta-zart; }
+.kt-preis { font-weight: 600; white-space: nowrap; }
+.kt-schaufenster-neben { flex: 1 1 360px; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
+.kt-kachel { flex: 1 1 auto; display: flex; gap: 22px; align-items: flex-start; padding: 30px 30px 28px; border-radius: 8px; color: $kt-text; }
+.kt-kachel:hover { color: $kt-text; }
+.kt-kachel:hover .kt-textlink { color: $kt-magenta; }
+.kt-kachel--sand { background: $kt-sand; }
+.kt-kachel--rose { background: $kt-rose; }
+.kt-kachel-text { flex: 1 1 auto; min-width: 0; }
+.kt-kachel-titel { font-family: $kt-serif; font-size: 26px; line-height: 1.2; margin: 0 0 10px; }
+.kt-kachel-beschreibung { margin: 0 0 16px; font-size: 15px; color: $kt-text-gedaempft; }
+.kt-kachel .kt-textlink { font-size: 15px; }
+.kt-kachel > .kt-cover--kachel { --kt-drehung: -3deg; }
+@media (max-width: 767.98px) {
+    .kt-schaufenster-haupt { padding: 32px 24px 30px; gap: 28px; flex-basis: 100%; }
+    .kt-schaufenster-produkt { flex: 1 1 100%; flex-direction: row; align-items: center; gap: 20px; }
+    .kt-schaufenster-produkt .kt-cover--gross { --kt-cover-b: 112px; --kt-cover-h: 157px; --kt-cover-schrift: 16px; }
+    .kt-schaufenster-neben { flex-basis: 100%; }
+    .kt-kachel { padding: 24px 20px; }
 }
 
-// Fuß: Rahmenfarbe mit Haarlinie, wie der Fuß der Bibliothek
-.footer-main { background: $kt-frame; border-top: 1px solid $kt-hair; color: $kt-mute; }
-.footer-main a, .footer-link { color: $kt-mute; }
-.footer-main a:hover { color: $kt-accent; }
-.footer-column-headline { color: $kt-ink; font-weight: 600; }
-.kt-fuss-impressum { padding: 18px 0; border-top: 1px solid $kt-hair; font-size: 13px; color: $kt-mute; }
+// 2. Kategorien mit Cover-Stapel
+.kt-kategorien { padding-top: 24px; padding-bottom: 88px; }
+.kt-kopfzeile { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 22px; }
+.kt-kopfzeile h2 { margin: 0; }
+.kt-kategorien h2 { font-size: 26px; }
+.kt-kopfzeile-link { font-size: 15px; color: $kt-magenta; }
+.kt-kategorien-reihe { display: flex; flex-wrap: wrap; gap: 16px; list-style: none; margin: 0; padding: 0; }
+.kt-kategorien-reihe > li { flex: 1 1 200px; min-width: 0; display: flex; }
+.kt-kategorie {
+    flex: 1 1 auto; display: flex; flex-direction: column; gap: 16px; padding: 20px 20px 18px; background: #ffffff;
+    border: 1px solid $kt-linie-hell; border-radius: 8px; color: $kt-text;
+}
+.kt-kategorie:hover { border-color: $kt-linie-sand; color: $kt-text; }
+.kt-kategorie:hover .kt-kategorie-name { color: $kt-magenta; }
+.kt-kategorie-stapel { position: relative; height: 96px; }
+.kt-kategorie-stapel .kt-cover { position: absolute; bottom: 0; }
+.kt-kategorie-stapel .kt-cover:nth-child(1) { left: 0; }
+.kt-kategorie-stapel .kt-cover:nth-child(2) { left: 40px; height: 92px; }
+.kt-kategorie-stapel .kt-cover:nth-child(3) { left: 80px; height: 80px; }
+.kt-kategorie-name { font-size: 17px; font-weight: 500; line-height: 1.3; }
+.kt-kategorie-unter { font-size: 14px; color: $kt-hinweis; margin-top: 2px; }
+@media (max-width: 767.98px) {
+    .kt-kategorien { padding-bottom: 56px; }
+    .kt-kategorien-reihe { flex-wrap: nowrap; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px; margin-right: -16px; padding-right: 16px; }
+    .kt-kategorien-reihe > li { flex: 0 0 70%; scroll-snap-align: start; }
+}
 
-// Kennzeichen Artikelart und Abo
-.kt-kennzeichen { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
-.kt-kennzeichen .kt-artikelart { margin-bottom: 0; }
-.kt-abo { background: $kt-ink; color: #fff; }
-.kt-abo-hinweis { margin: 6px 0 0; padding: 8px 10px; border-left: 3px solid $kt-accent; background: $kt-box; font-size: 13.5px; color: $kt-ink; }
-.kt-mehrplatz-hinweis { margin-top: 16px; padding: 12px 14px; border: 1px solid $kt-hair; border-radius: 8px; background: $kt-frame; font-size: 14px; }
+// 3. Werke
+.kt-werke { padding-top: 88px; padding-bottom: 72px; }
+.kt-werke h2 { margin: 0 0 48px; }
+.kt-werke-liste { list-style: none; margin: 0; padding: 0; }
+.kt-werk { display: flex; flex-wrap: wrap; gap: 28px 56px; align-items: center; padding: 36px 0; border-top: 1px solid $kt-linie; }
+.kt-werk:last-child { border-bottom: 1px solid $kt-linie; }
+.kt-werk-text { flex: 1 1 420px; min-width: 0; }
+.kt-werk-text h3 { margin: 0 0 10px; }
+.kt-werk-beschreibung { margin: 0 0 12px; max-width: 620px; font-size: 17px; color: $kt-text-gedaempft; }
+.kt-werk-formate { margin: 0; font-size: 15px; color: $kt-hinweis; }
+.kt-werk-kauf { flex: 0 0 auto; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.kt-werk-preis { font-size: 15px; color: $kt-hinweis; }
+.kt-werk-preis .kt-preis { font-size: 22px; color: $kt-text; }
+@media (max-width: 767.98px) {
+    .kt-werke { padding-top: 56px; padding-bottom: 48px; }
+    .kt-werke h2 { margin-bottom: 28px; }
+    .kt-werk { gap: 20px; align-items: flex-start; }
+    .kt-werk .kt-cover--werk { --kt-cover-b: 96px; --kt-cover-h: 134px; }
+    .kt-werk-text { flex-basis: calc(100% - 120px); }
+    .kt-werk-kauf { flex-basis: 100%; flex-direction: row; align-items: baseline; gap: 20px; }
+}
+
+// 4. Hinweis mit Zeichen
+.kt-hinweis { display: flex; flex-wrap: wrap; gap: 32px 72px; align-items: flex-start; padding-top: 104px; padding-bottom: 96px; }
+.kt-hinweis-zeichen { flex: 0 0 auto; padding-top: 8px; font-family: $kt-serif; font-size: 160px; line-height: 0.75; color: $kt-magenta; }
+.kt-hinweis-inhalt { flex: 1 1 560px; min-width: 0; }
+.kt-hinweis-haupt { margin: 0 0 22px; max-width: 820px; font-family: $kt-serif; font-size: 34px; line-height: 1.35; font-weight: 400; }
+.kt-hinweis-unter { margin: 0 0 30px; font-size: 16px; color: $kt-hinweis; }
+.kt-hinweis-text { margin: 0; max-width: 640px; font-size: 17px; color: $kt-text-gedaempft; }
+@media (max-width: 767.98px) {
+    .kt-hinweis { padding-top: 64px; padding-bottom: 56px; gap: 16px; }
+    .kt-hinweis-zeichen { font-size: 96px; }
+    .kt-hinweis-haupt { font-size: 26px; }
+}
+
+// 5. Drei Beiträge
+.kt-beitraege { display: flex; flex-wrap: wrap; gap: 36px 48px; padding-top: 88px; padding-bottom: 88px; }
+.kt-beitraege h2 { flex: 1 1 100%; margin: 0; }
+.kt-beitraege-liste { flex: 1 1 100%; display: flex; flex-wrap: wrap; gap: 36px 48px; list-style: none; margin: 0; padding: 0; }
+.kt-beitraege-liste > li { flex: 1 1 300px; min-width: 0; display: flex; }
+.kt-beitrag { display: block; flex: 1 1 auto; padding-top: 22px; border-top: 2px solid $kt-magenta; color: $kt-text; }
+.kt-beitrag:hover { color: $kt-text; }
+.kt-beitrag:hover .kt-beitrag-titel { color: $kt-magenta; }
+.kt-beitrag-dachzeile { margin: 0 0 6px; font-size: 15px; color: $kt-magenta; }
+.kt-beitrag-titel { font-family: $kt-serif; font-size: 24px; line-height: 1.3; margin: 0 0 10px; }
+.kt-beitrag-text { margin: 0; color: $kt-text-gedaempft; }
+@media (max-width: 767.98px) { .kt-beitraege { padding-top: 56px; padding-bottom: 56px; } }
+
+// 6. Nummerierte Liste mit Einleitung
+.kt-liste { display: flex; flex-wrap: wrap; gap: 40px 80px; padding-top: 104px; padding-bottom: 88px; }
+.kt-liste-einleitung { flex: 1 1 360px; min-width: 0; }
+.kt-liste-einleitung h2 { margin: 0 0 18px; }
+.kt-liste-einleitung p { margin: 0; max-width: 420px; font-size: 18px; color: $kt-text-gedaempft; }
+.kt-liste-eintraege { flex: 1.3 1 520px; min-width: 0; list-style: none; margin: 0; padding: 0; counter-reset: kt-liste; }
+.kt-liste-eintraege li { border-top: 1px solid $kt-linie; counter-increment: kt-liste; }
+.kt-liste-eintraege li:last-child { border-bottom: 1px solid $kt-linie; }
+.kt-liste-eintraege a { display: flex; gap: 28px; align-items: baseline; padding: 20px 0; font-size: 20px; color: $kt-text; }
+.kt-liste-eintraege a::before { content: counter(kt-liste); flex: 0 0 28px; font-family: $kt-serif; font-style: italic; font-size: 20px; color: $kt-magenta; }
+.kt-liste-eintraege a:hover { color: $kt-magenta; }
+@media (max-width: 767.98px) {
+    .kt-liste { padding-top: 64px; padding-bottom: 56px; gap: 24px; }
+    .kt-liste-eintraege a { font-size: 18px; gap: 18px; padding: 16px 0; }
+}
+
+// 7. Produktreihe
+.kt-produktreihe { padding-top: 88px; padding-bottom: 96px; }
+.kt-produktreihe .kt-kopfzeile { margin-bottom: 40px; gap: 16px; }
+.kt-produktreihe-liste { display: flex; flex-wrap: wrap; gap: 40px 32px; list-style: none; margin: 0; padding: 0; }
+.kt-produktreihe-liste > li { flex: 1 1 190px; min-width: 0; }
+.kt-buch-cover { display: flex; align-items: flex-end; height: 230px; margin-bottom: 20px; }
+.kt-buch-autor { margin: 0 0 4px; font-size: 14px; color: $kt-hinweis; }
+.kt-buch-titel { display: block; margin-bottom: 10px; font-size: 17px; font-weight: 500; line-height: 1.35; color: $kt-text; }
+.kt-buch-kauf { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin: 0; font-size: 17px; }
+.kt-buch-kauf .kt-preis { font-weight: 400; }
+.kt-buch-kauf form { display: inline; margin: 0; }
+.kt-in-den-warenkorb { padding: 0; border: 0; background: none; font: inherit; font-size: 15px; color: $kt-magenta; cursor: pointer; }
+.kt-in-den-warenkorb:hover { text-decoration: underline; text-underline-offset: 4px; }
+@media (max-width: 767.98px) {
+    .kt-produktreihe { padding-top: 56px; padding-bottom: 64px; }
+    .kt-produktreihe-liste > li { flex: 1 1 140px; }
+    .kt-buch-cover { height: 200px; }
+    .kt-buch-cover .kt-cover--reihe { --kt-cover-b: 120px; --kt-cover-h: 168px; }
+}
+
+// Video im Dialog (selbst gehostet)
+.kt-video-dialog { width: min(960px, calc(100vw - 32px)); padding: 0; border: 0; border-radius: 8px; background: #ffffff; }
+.kt-video-dialog::backdrop { background: rgba(42, 35, 38, 0.72); }
+.kt-video-dialog video { display: block; width: 100%; height: auto; border-radius: 8px 8px 0 0; }
+.kt-video-dialog-leiste { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 14px; background: #ffffff; border-radius: 0 0 8px 8px; font-size: 15px; }
+
+// Mobil (bis 575 px): Logo links, darunter eine Zeile mit Menü, Suche, Anmelden und Warenkorb
+@media (max-width: 575.98px) {
+    .header-row { padding: 18px 0 12px; row-gap: 10px; }
+    .header-logo-col { text-align: left; }
+    .header-logo-main-img { width: 170px; }
+    .header-logo-picture { margin: 0 !important; }
+    .header-actions-col > .row { gap: 0 16px; flex-wrap: nowrap; }
+    .kt-kachel-titel { font-size: 22px; }
+    .kt-kachel { gap: 14px; }
+    .kt-kachel > .kt-stapel { flex-basis: 80px; height: 100px; transform: scale(0.78); transform-origin: top right; }
+    .kt-kachel > .kt-cover--kachel { --kt-cover-b: 76px; --kt-cover-h: 106px; --kt-cover-schrift: 11px; }
+    .kt-kachel > .kt-cover--kachel .kt-cover-verlag { display: none; }
+}
+.header-logo-main { text-align: left; }

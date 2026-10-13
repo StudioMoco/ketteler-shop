@@ -1,0 +1,10 @@
+{% sw_extends '@Storefront/storefront/layout/header/actions/cart-widget.html.twig' %}
+
+{# „Warenkorb“ mit Zähler in Magenta (Anzahl der Positionen, wie das Shopware-Kennzeichen) #}
+{% block layout_header_actions_cart_widget %}
+    {% set anzahl = page.cart.lineItems|length %}
+    <span aria-hidden="true">Warenkorb</span>
+    <span class="kt-warenkorb-zahl" aria-hidden="true" data-kt="warenkorb-zahl">{{ anzahl }}</span>
+    {# Vorgelesener Name beginnt mit dem sichtbaren Text („Warenkorb 2“), danach die Einzelheiten #}
+    <span class="visually-hidden" id="cart-widget-aria-label">Warenkorb {{ anzahl }} {{ anzahl == 1 ? 'Position' : 'Positionen' }}, Gesamtwert {{ page.cart.price.positionPrice|currency }}</span>
+{% endblock %}

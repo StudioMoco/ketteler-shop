@@ -7,7 +7,12 @@
             <argument type="service" id="Shopware\Core\Framework\DataAbstractionLayer\DefinitionInstanceRegistry"/>
             <argument type="service" id="Doctrine\DBAL\Connection"/>
             <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+            <argument type="service" id="Ketteler\Einrichtung\Command\Erlebniswelten"/>
             <tag name="console.command"/>
+        </service>
+        <service id="Ketteler\Einrichtung\Command\Erlebniswelten">
+            <argument type="service" id="Shopware\Core\Framework\DataAbstractionLayer\DefinitionInstanceRegistry"/>
+            <argument type="service" id="Shopware\Core\Content\Media\MediaService"/>
         </service>
     </services>
 </container>

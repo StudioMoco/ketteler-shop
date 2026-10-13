@@ -1,19 +1,48 @@
 {% sw_extends '@Storefront/storefront/layout/footer/footer.html.twig' %}
 
-{# Kundenservice wie in der Bibliothek (Verlagsangaben des Redaktionssystems) #}
-{% block layout_footer_navigation_hotline_content %}
-    <div class="footer-column-content collapse" id="collapseFooterHotline" aria-labelledby="collapseFooterHotlineTitle">
-        <div class="footer-column-content-inner">
-            <p class="footer-contact-hotline">{{ 'ketteler.fuss.kundenservice'|trans|sw_sanitize }}</p>
+{#
+    Fuß nach docs/design/kopf-fuss.md: links Kontakt (Werte aus Erweiterungen > Ketteler Theme), dann die Spalten aus der
+    Fuß-Kategorie (Verlag, Bestellen, Rechtliches), darunter Adresse und Hinweis. Die Seite der EU-Widerrufsfunktion
+    erscheint als Widerrufsknopf von Shopware (footer-revocation-button) an ihrer Stelle in der Spalte.
+#}
+{% block layout_footer_inner_container %}
+    {% set service = kt_service(context.salesChannel.id) %}
+    {% set widerrufSeite = config('core.basicInformation.revocationRequestPage') %}
+    <div class="container">
+        <div class="kt-fuss-oben">
+            <div class="kt-fuss-kontakt">
+                <p class="kt-fuss-frage">Fragen zu einer Bestellung oder zu Ihrem Abo?</p>
+                <p>Rufen Sie uns an: <a href="tel:{{ service.telefonLink }}">{{ service.telefon }}</a><br>
+                    {{ service.servicezeiten }}<br>
+                    oder schreiben Sie an <a href="mailto:{{ service.email }}">{{ service.email }}</a></p>
+            </div>
+            {% for spalte in footer.navigation.tree %}
+                <nav class="kt-fuss-spalte" aria-labelledby="kt-fuss-{{ spalte.category.id }}">
+                    <h2 class="kt-fuss-titel" id="kt-fuss-{{ spalte.category.id }}">{{ spalte.category.translated.name }}</h2>
+                    <ul>
+                        {% for eintrag in spalte.children %}
+                            <li>
+                                {% if widerrufSeite and eintrag.category.cmsPageId == widerrufSeite and config('core.basicInformation.showRevocationButton') %}
+                                    {% sw_include '@Storefront/storefront/component/footer/revocation-button.html.twig' with {
+                                        cmsPath: 'frontend.cms.page.full',
+                                        revocationRequestSnippetKey: 'ketteler.fuss.widerrufErklaeren',
+                                        revocationRequestCmsPageId: widerrufSeite,
+                                        showRevocationButton: true
+                                    } %}
+                                {% else %}
+                                    <a href="{{ category_url(eintrag.category) }}"{% if category_linknewtab(eintrag.category) %} target="_blank" rel="noopener"{% endif %}>{{ eintrag.category.translated.name }}</a>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </nav>
+            {% endfor %}
         </div>
-        {# Knopf der EU-Widerrufsfunktion aus der Shopware-Vorlage (steht dort in diesem Block) #}
-        {{ block('layout_footer_navigation_revocation_button') }}
+        <div class="kt-fuss-unten">
+            <span>{{ service.adresse }}</span>
+            <span>{{ service.fussHinweis }}</span>
+        </div>
     </div>
 {% endblock %}
 
-{% block layout_footer_bottom %}
-    {{ parent() }}
-    <div class="container">
-        <div class="kt-fuss-impressum">{{ 'ketteler.fuss.impressum'|trans|sw_sanitize }}</div>
-    </div>
-{% endblock %}
+{% block layout_footer_bottom %}{% endblock %}

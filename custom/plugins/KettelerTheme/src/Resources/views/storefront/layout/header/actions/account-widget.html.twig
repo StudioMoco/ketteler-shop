@@ -1,0 +1,12 @@
+{% sw_extends '@Storefront/storefront/layout/header/actions/account-widget.html.twig' %}
+
+{# Angemeldet: Text „Mein Konto“ statt Symbol; das Menü bleibt das von Shopware #}
+{% block layout_header_actions_account_widget_dropdown_button %}
+    <button class="btn account-menu-btn header-actions-btn kt-kopf-link"
+            type="button"
+            id="accountWidget"
+            data-account-menu="true"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            data-kt="mein-konto">Mein Konto</button>
+{% endblock %}

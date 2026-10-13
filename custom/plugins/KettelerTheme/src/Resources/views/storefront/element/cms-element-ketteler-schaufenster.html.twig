@@ -1,0 +1,103 @@
+{#
+    Schaufenster: Hauptkachel in Magenta (Dachzeile, Überschrift h1, Text, Hauptknopf mit Video oder Link, Nebenlink,
+    Produkt mit Cover und „ab“-Preis) und bis zu zwei Nebenkacheln (Sand oder Rosé, Bild oder bis zu drei Produktcover).
+    Video: selbst gehostetes MP4 im Dialog (Fokus, Escape, Untertitel); ohne JavaScript öffnet der Knopf die Videodatei.
+#}
+{% set c = element.config %}
+{% set d = element.data %}
+{% set produkt = c.produkt.value ? d.produkte[c.produkt.value] ?? null : null %}
+{% set video = c.video.value ? d.medien[c.video.value] ?? null : null %}
+{% set poster = c.videoPoster.value ? d.medien[c.videoPoster.value] ?? null : null %}
+{% set untertitel = c.videoUntertitel.value ? d.medien[c.videoUntertitel.value] ?? null : null %}
+{% set dialogId = 'kt-video-' ~ element.id %}
+<div class="kt-rahmen">
+    <section class="kt-schaufenster" aria-label="{{ c.titel.value|striptags }}">
+        <div class="kt-schaufenster-haupt">
+            <div class="kt-schaufenster-text">
+                {% if c.dachzeile.value %}<p class="kt-schaufenster-dachzeile">{{ c.dachzeile.value }}</p>{% endif %}
+                <h1 class="kt-schaufenster-titel">{{ c.titel.value }}</h1>
+                {% if c.text.value %}<p class="kt-schaufenster-beschreibung">{{ c.text.value }}</p>{% endif %}
+                <div class="kt-schaufenster-aktionen">
+                    {% if c.knopfText.value and video %}
+                        <a class="kt-knopf kt-knopf--weiss" href="{{ video.url }}" data-kt-video-oeffnen="{{ dialogId }}" aria-haspopup="dialog" data-kt="video-knopf">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>{{ c.knopfText.value }}</a>
+                    {% elseif c.knopfText.value and kt_link(c.knopfLink.value) %}
+                        <a class="kt-knopf kt-knopf--weiss" href="{{ kt_link(c.knopfLink.value) }}">{{ c.knopfText.value }}</a>
+                    {% endif %}
+                    {% if c.nebenLinkText.value and kt_link(c.nebenLink.value) %}
+                        <a class="kt-textlink" href="{{ kt_link(c.nebenLink.value) }}">{{ c.nebenLinkText.value }}</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% if produkt %}
+                {% set preis = produkt.calculatedCheapestPrice.unitPrice ?? produkt.calculatedPrice.unitPrice %}
+                <a class="kt-schaufenster-produkt" href="{{ seoUrl('frontend.detail.page', { productId: produkt.id }) }}" data-kt="schaufenster-produkt">
+                    {% sw_include '@KettelerTheme/storefront/component/ketteler/cover.html.twig' with { produkt: produkt, groesse: 'gross', drehung: 3, dekorativ: true } only %}
+                    <span class="kt-schaufenster-produkt-name">{{ produkt.translated.name }}<br>
+                        <span class="kt-schaufenster-produkt-praefix">{{ c.preisPraefix.value|default('ab') }}</span> <span class="kt-preis">{{ preis|currency }}</span></span>
+                </a>
+            {% endif %}
+        </div>
+
+        {% if c.kacheln.value is not empty %}
+            <div class="kt-schaufenster-neben">
+                {% for k in c.kacheln.value %}
+                    {% set ziel = kt_link(k.link) %}
+                    {% set bild = k.bild ? d.medien[k.bild] ?? null : null %}
+                    {% set produkte = [] %}
+                    {% for pid in k.produkte|default([]) %}{% if d.produkte[pid] is defined %}{% set produkte = produkte|merge([d.produkte[pid]]) %}{% endif %}{% endfor %}
+                    <a class="kt-kachel kt-kachel--{{ k.flaeche|default('sand') }}" href="{{ ziel ?? '#' }}" data-kt="kachel">
+                        <span class="kt-kachel-text">
+                            {% if k.dachzeile %}<span class="kt-dachzeile d-block">{{ k.dachzeile }}</span>{% endif %}
+                            <span class="kt-kachel-titel d-block">{{ k.titel }}</span>
+                            {% if k.text %}<span class="kt-kachel-beschreibung d-block">{{ k.text }}</span>{% endif %}
+                            {% if k.linkText %}<span class="kt-textlink">{{ k.linkText }}</span>{% endif %}
+                        </span>
+                        {% if bild %}
+                            {% sw_include '@KettelerTheme/storefront/component/ketteler/cover.html.twig' with { medium: bild, titel: k.titel, groesse: 'kachel', dekorativ: true } only %}
+                        {% elseif produkte|length == 1 %}
+                            {% sw_include '@KettelerTheme/storefront/component/ketteler/cover.html.twig' with { produkt: produkte|first, groesse: 'kachel', dekorativ: true } only %}
+                        {% elseif produkte|length > 1 %}
+                            <span class="kt-stapel" aria-hidden="true">
+                                {% for p in produkte|slice(0, 3) %}
+                                    {% sw_include '@KettelerTheme/storefront/component/ketteler/cover.html.twig' with { produkt: p, groesse: 'stapel', dekorativ: true } only %}
+                                {% endfor %}
+                            </span>
+                        {% endif %}
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </section>
+</div>
+
+{% if video %}
+    <dialog class="kt-video-dialog" id="{{ dialogId }}" aria-label="{{ c.knopfText.value }}" data-kt="video-dialog">
+        <video controls preload="none" playsinline{% if poster %} poster="{{ poster.url }}"{% endif %}>
+            <source src="{{ video.url }}" type="{{ video.mimeType|default('video/mp4') }}">
+            {% if untertitel %}<track kind="subtitles" srclang="de" label="Deutsch" src="{{ untertitel.url }}" default>{% endif %}
+        </video>
+        <div class="kt-video-dialog-leiste">
+            <span>{{ c.dachzeile.value }}</span>
+            <button type="button" class="kt-knopf kt-knopf--magenta" data-kt-video-schliessen>Schließen</button>
+        </div>
+    </dialog>
+    <script>
+        (function () {
+            // Video im nativen Dialog: Fokus wandert in den Dialog, Escape und „Schließen“ beenden ihn, der Fokus kehrt
+            // zum Knopf zurück, das Video hält an.
+            var knopf = document.querySelector('[data-kt-video-oeffnen="{{ dialogId }}"]');
+            var dialog = document.getElementById('{{ dialogId }}');
+            if (!knopf || !dialog || typeof dialog.showModal !== 'function') { return; }
+            var video = dialog.querySelector('video');
+            knopf.addEventListener('click', function (e) {
+                e.preventDefault();
+                dialog.showModal();
+                dialog.querySelector('[data-kt-video-schliessen]').focus();
+            });
+            dialog.querySelector('[data-kt-video-schliessen]').addEventListener('click', function () { dialog.close(); });
+            dialog.addEventListener('click', function (e) { if (e.target === dialog) { dialog.close(); } });
+            dialog.addEventListener('close', function () { video.pause(); knopf.focus(); });
+        })();
+    </script>
+{% endif %}
