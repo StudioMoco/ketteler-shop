@@ -9,8 +9,29 @@ einen Test-Käufer bei PayPal ist ein Schritt im Browser und wird von Hand gepr�
 import os
 import sys
 
-from hilfen import ENV, SHOP, Ergebnis, json_anfrage, sql
+from hilfen import ENV, SHOP, AdminApi, Ergebnis, json_anfrage, kontext_token, sql
 from lizenz_test import artikel_id
+
+
+def testkunde(api, schluessel, email="paypal-test@ketteler.test", passwort="Kt-PayPal-Test-1!"):
+    for (kid,) in sql("SELECT LOWER(HEX(id)) FROM customer WHERE email='%s'" % email):
+        api("DELETE", "/customer/" + kid)
+    kanal = sql("SELECT LOWER(HEX(id)) FROM sales_channel WHERE access_key='%s'" % schluessel)[0][0]
+    anrede = sql("SELECT LOWER(HEX(id)) FROM salutation WHERE salutation_key='not_specified'")[0][0]
+    gruppe = sql("SELECT LOWER(HEX(customer_group_id)) FROM sales_channel WHERE id=UNHEX('%s')" % kanal)[0][0]
+    zahlart = sql("SELECT LOWER(HEX(id)) FROM payment_method WHERE technical_name='payment_invoicepayment'")[0][0]
+    land = sql("SELECT LOWER(HEX(id)) FROM country WHERE iso='DE'")[0][0]
+    kid, adresse = os.urandom(16).hex(), os.urandom(16).hex()
+    status, antwort = api("POST", "/customer", {
+        "id": kid, "email": email, "firstName": "Test", "lastName": "PayPal", "salutationId": anrede, "customerNumber": "PP-" + kid[:6],
+        "groupId": gruppe, "salesChannelId": kanal, "defaultPaymentMethodId": zahlart, "defaultBillingAddressId": adresse,
+        "defaultShippingAddressId": adresse, "password": passwort, "accountType": "private",
+        "addresses": [{"id": adresse, "firstName": "Test", "lastName": "PayPal", "salutationId": anrede, "street": "Teststraße 1",
+                       "zipcode": "50670", "city": "Köln", "countryId": land}]})
+    assert status in (200, 204), "Testkunde nicht angelegt: %s %s" % (status, antwort)
+    token = kontext_token("POST", SHOP + "/store-api/account/login", {"username": email, "password": passwort}, {"sw-access-key": schluessel})
+    assert token, "Anmeldung des Testkunden fehlgeschlagen"
+    return token
 
 
 def main():
@@ -23,7 +44,8 @@ def main():
     sandbox = sql("SELECT configuration_value FROM system_config WHERE configuration_key='SwagPayPal.settings.sandbox'")
     e.pruefe(sandbox and "true" in sandbox[0][0], "PayPal im Testmodus (Sandbox), nie Live")
     schluessel = sql("SELECT access_key FROM sales_channel WHERE type_id=UNHEX('8A243080F92E4C719546314B577CF82B')")[0][0]
-    token = "kt-paypal-" + os.urandom(6).hex()
+    # PayPal legt Zahlungen nur für angemeldete Kunden an: eigener Testkunde, Anmeldung über die Store-API
+    token = testkunde(AdminApi(), schluessel)
     kopf = {"sw-access-key": schluessel, "sw-context-token": token}
     json_anfrage("POST", SHOP + "/store-api/checkout/cart/line-item",
                  {"items": [{"type": "product", "referencedId": artikel_id("TEST-P-001"), "quantity": 1}]}, kopf)
