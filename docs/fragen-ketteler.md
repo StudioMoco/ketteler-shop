@@ -53,3 +53,17 @@ Erklärung geht per E-Mail an Sie und steht an der Bestellung. Dazu brauchen wir
     nächsten Kauf erneut. Ist DE 122 792 915 richtig?
 14. **ZMV digital:** Was bekommt ein Käufer beim digitalen Teil der ZMV (Digital, Kombi, Zusatz-Abo), und wo liest er?
     Soll die ZMV später auch in die neue Bibliothek?
+
+## Zur neuen Startseite
+
+15. **Video „AVR 2027 nachgefragt“:** Bitte die Folgen als MP4 liefern, dazu Untertitel (WebVTT) und ein Vorschaubild.
+    Bis dahin zeigt der Shop einen klar gekennzeichneten Platzhalter. Wohin soll „Alle Folgen“ führen?
+16. **Seiten mit Platzhaltertext:** Grundwissen und Basisausstattung, Praktische Arbeitshilfen, Literatur nach Themen,
+    Aktuelles und Vorlagen, Hilfreiche Adressen im Netz, Über uns, ZMV-Fachtagung, Im Gespräch, Verlagsprogramm 2026,
+    Kontakt, Zahlung auf Rechnung. Wir übernehmen die Texte aus dem heutigen Shop, sobald Sie sie freigeben.
+17. **Beschreibung für Suchmaschinen:** Ein Satz, der in Suchergebnissen unter „KETTELER-Verlag“ stehen soll (bis zu
+    155 Zeichen).
+18. **Fuß:** Dort steht „Widerruf erklären“ (führt zur Widerrufsfunktion) und „Verträge hier kündigen“ (diese Beschriftung
+    schreibt das Gesetz für den Kündigungsknopf vor). Bitte die Beschriftung „Widerruf erklären“ mit Ihrer Rechtsberatung
+    prüfen; Shopware verwendet dafür „Vertrag widerrufen“.
+

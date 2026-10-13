@@ -76,9 +76,16 @@ shop_aktualisieren() {
   konsole ketteler:einrichten >/dev/null
   konsole ketteler:steuern:anwenden >/dev/null
   konsole assets:install >/dev/null
-  konsole theme:compile >/dev/null
+  theme_setzen
   konsole cache:clear >/dev/null
   dc restart worker >/dev/null
+}
+
+# KettelerTheme am Verkaufskanal festlegen und übersetzen. Nach einem Update des Theme-Plugins stand der Kanal einmal
+# wieder auf dem Standard-Theme (13.10.2026); darum bei jeder Auslieferung und Rücknahme ausdrücklich setzen.
+theme_setzen() {
+  konsole theme:refresh >/dev/null
+  konsole theme:change --all KettelerTheme >/dev/null
 }
 
 # Sicherung sofort; mit dem Sicherungsskript dieses Standes (nicht der im laufenden Stand eingebundenen Kopie)

@@ -410,7 +410,15 @@ Beim Anbinden die Liste erzeugen und an Ketteler geben.
 5. Test mit Ketteler (Bestellen, Rechnung, Lizenz, Lesen, Storno).
 6. Live-Server auf CPX42, Shop live unter vorläufiger Adresse prüfen, dann DNS von NCE auf den neuen Shop umstellen.
 
-## 5. Startseite, Werkseiten und Storytelling-Seiten (Empfehlung, noch nicht gebaut)
+## 5. Startseite, Werkseiten und Storytelling-Seiten
+
+**Startseite: gebaut (13.10.2026)** nach der freigegebenen Vorlage `docs/design/startseite-entwurf.dc.html`. Theme
+(Farben, IBM Plex Sans und Serif selbst ausgeliefert), Kopf und Fuß (`docs/design/kopf-fuss.md`), sieben eigene
+Erlebniswelt-Blöcke (`docs/design/erlebniswelten.md`), Startseite und Seite „Sortiment“ legt `ketteler:einrichten` einmal
+an; danach pflegt Ketteler in der Verwaltung. Werkseiten folgen mit denselben Blöcken (vor allem „Werke“, „Schaufenster“,
+„Produktreihe“). Bildschirmfotos neben der Vorlage: `docs/design/bildschirmfotos/`.
+
+### Ursprüngliche Empfehlung
 
 Grundlage für das Design: Bestandsaufnahme der heutigen Inhalte in `content/` (Übersicht `content/README.md`).
 

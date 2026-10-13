@@ -37,7 +37,7 @@ auf_stand_schalten "$TAG"
 dc up -d --remove-orphans --force-recreate front web worker lizenz-attrappe sicherung-shop sicherung-zitadel
 dc up -d datenbank mailer zitadel-db zitadel
 warte_web
-konsole theme:compile >/dev/null
+theme_setzen
 konsole cache:clear >/dev/null
 konsole sales-channel:maintenance:disable --all >/dev/null || true
 caddy_datei
