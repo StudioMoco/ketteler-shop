@@ -1,19 +1,21 @@
 {% sw_extends '@Storefront/storefront/base.html.twig' %}
 
 {% block base_content %}
-    <div class="row justify-content-md-center my-4">
-        <div class="col-md-10 col-lg-7">
-            <h1 class="h3">{{ 'ketteler.mehrplatz.titel'|trans|sw_sanitize }}</h1>
+    <div class="kt-rahmen kt-formularseite">
+        <div>
+            {% sw_include '@KettelerTheme/storefront/component/ketteler/brotkrumen.html.twig' ignore missing %}
+            <h1>{{ 'ketteler.mehrplatz.titel'|trans|sw_sanitize }}</h1>
             {% if gesendet %}
-                <div class="alert alert-success" role="status" data-kt="mehrplatz-gesendet">
-                    {{ 'ketteler.mehrplatz.danke'|trans|sw_sanitize }}
+                <div class="kt-formular-bestaetigung" role="status" data-kt="mehrplatz-gesendet">
+                    <p>{{ 'ketteler.mehrplatz.danke'|trans|sw_sanitize }}</p>
+                    <p class="kt-formular-hinweis">{{ 'ketteler.mehrplatz.bestaetigungMail'|trans|sw_sanitize }}</p>
                 </div>
             {% else %}
-                <p>{{ 'ketteler.mehrplatz.einleitung'|trans|sw_sanitize }}</p>
+                <p class="kt-formular-einleitung">{{ 'ketteler.mehrplatz.einleitung'|trans|sw_sanitize }}</p>
                 {% if fehler is not empty %}
                     <div class="alert alert-danger" role="alert" data-kt="mehrplatz-fehler">{{ 'ketteler.mehrplatz.fehler.allgemein'|trans|sw_sanitize }}</div>
                 {% endif %}
-                <form method="post" action="{{ path('frontend.ketteler.mehrplatz.senden') }}" data-kt="mehrplatz">
+                <form method="post" action="{{ path('frontend.ketteler.mehrplatz.senden') }}" data-kt="mehrplatz" class="kt-formular">
                     {% sw_include '@Storefront/storefront/component/captcha/base.html.twig' with { additionalClass: 'col-md-12', formId: 'ketteler-mehrplatz' } %}
                     <input type="hidden" name="artikel" value="{{ daten.artikel|default('') }}">
                     {# Werk sichtbar und änderbar; von den Werkseiten vorausgefüllt (?werk=avr|zmv|eichstaetter) #}
@@ -45,7 +47,7 @@
                         <textarea class="form-control" id="kt-mp-nachricht" name="nachricht" rows="5">{{ daten.nachricht|default('') }}</textarea>
                     </div>
                     <p class="small text-muted">{{ 'ketteler.mehrplatz.hinweis'|trans|sw_sanitize }}</p>
-                    <button class="btn btn-primary" type="submit">{{ 'ketteler.mehrplatz.senden'|trans|sw_sanitize }}</button>
+                    <button class="kt-knopf kt-knopf--magenta" type="submit">{{ 'ketteler.mehrplatz.senden'|trans|sw_sanitize }}</button>
                 </form>
             {% endif %}
         </div>

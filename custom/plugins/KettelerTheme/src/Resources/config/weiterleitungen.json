@@ -1,5 +1,5 @@
 {
-  "_hinweis": "Alte Adressen des bisherigen Shops, 301 auf die neuen Seiten. ziel: Kategorie-Schlüssel aus ketteler:einrichten (kategorien.json), optional mit #Sprungmarke. Pfade mit Groß-/Kleinschreibung wie im alten Shop (klein), damit neue Adressen wie /Verlag/ nicht getroffen werden. Liste auch in docs/plan.md.",
+  "_hinweis": "Alte Adressen des bisherigen Shops, 301 auf die neuen Seiten. ziel: Kategorie-Schlüssel aus ketteler:einrichten (kategorien.json), optional mit #Sprungmarke, oder ein Pfad im Shop (beginnt mit /). Pfade mit Groß-/Kleinschreibung wie im alten Shop (klein), damit neue Adressen wie /Verlag/ nicht getroffen werden. Liste auch in docs/plan.md.",
   "weiterleitungen": [
     { "alt": "/digibib/?digisubscribe", "ziel": "zmv" },
     { "alt": "/digibib", "ziel": "zmv" },
@@ -31,6 +31,6 @@
     { "alt": "/revocation", "ziel": "fuss-widerruf" },
     { "alt": "/shipping", "ziel": "fuss-versand" },
     { "alt": "/stob2", "ziel": "fuss-agb-anzeigen" },
-    { "alt": "/cancelform", "ziel": "fuss-kuendigen" }
+    { "alt": "/cancelform", "ziel": "/vertraege-kuendigen" }
   ]
 }

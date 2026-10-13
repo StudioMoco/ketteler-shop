@@ -28,8 +28,9 @@ def in_den_warenkorb(b, nummer):
 
 
 def kunden_aufraeumen(api):
-    """Kunden aus früheren Läufen entfernen (nur Testadressen @ketteler.test)."""
-    for (kid,) in sql("SELECT LOWER(HEX(id)) FROM customer WHERE email LIKE '%@ketteler.test'"):
+    """Kunden aus früheren Läufen entfernen (nur Testadressen @ketteler.test, nicht die Testkonten für die Abnahme)."""
+    for (kid,) in sql("SELECT LOWER(HEX(id)) FROM customer WHERE email LIKE '%@ketteler.test' AND email NOT IN "
+                      "('privat-de@ketteler.test', 'privat-at@ketteler.test', 'firma-de@ketteler.test', 'einrichtung-at@ketteler.test')"):
         api("DELETE", "/customer/" + kid)
 
 

@@ -1,0 +1,13 @@
+{% set d = daten %}Guten Tag {{ d.ansprechperson }},
+
+vielen Dank für Ihre Anfrage. Wir haben sie erhalten und melden uns mit einem Angebot für Ihre Einrichtung.
+
+Einrichtung: {{ d.einrichtung }}
+{% if d.werk %}Werk: {{ {'avr': 'Die AVR von A bis Z', 'zmv': 'ZMV Die Mitarbeitervertretung', 'eichstaetter': 'Eichstätter Kommentar MAVO und KAGO'}[d.werk] ?? d.werk }}
+{% endif %}Anzahl der Lizenzen: {{ d.anzahl }}
+{% if d.nachricht %}Ihre Nachricht: {{ d.nachricht }}
+{% endif %}
+Mit dieser Anfrage ist noch keine Bestellung entstanden.
+
+Freundliche Grüße
+Ihr KETTELER-Verlag

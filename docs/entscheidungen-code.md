@@ -89,3 +89,32 @@ Entscheidungen, die der Auftrag offen ließ und die ich ohne Rückfrage getroffe
 32. **Auf Staging einmal `--erlebniswelten-neu`** (mit der Auslieferung von Abschnitt C), damit Startseite, Werkseiten und
     die neuen Seiten genau dem Stand der Daten entsprechen (u. a. Foto-Platzhalter auf der AVR-Seite). Auf Staging pflegt
     noch niemand Inhalte.
+
+## Shop testbereit (Abschnitt D)
+
+33. **PayPal nur aus dem Verkaufskanal genommen.** Zahlart und Plugin bleiben aktiv und im Testmodus eingerichtet; zum
+    Wiedereinschalten genügt die Zuordnung im Verkaufskanal. `paypal_test.py` überspringt sich, solange PayPal nicht im
+    Kanal ist.
+34. **Absender aller Mails `kontakt@ketteler-verlag.de`** (Impressum). Auf Staging landen alle Mails in Mailpit.
+35. **Logo in den Mails als eingebettetes Bild.** Hinter dem Passwortschutz von Staging lädt ein verlinktes Bild nicht.
+    Vor Live prüfen: Gmail zeigt eingebettete Bilder nicht; dann auf die Adresse des Logos im Shop umstellen.
+36. **„Verträge hier kündigen“ als eigenes Formular** (Plugin KettelerMehrplatz, das schon die Mehrplatz-Anfrage
+    trägt): Felder aus `content/rechtstexte/vertraege-kuendigen.md` ohne Anrede, Titel und Land (für die Zuordnung nicht
+    nötig) und ohne Bild-Captcha (Shopware-Schutz gegen Bots wie bei der Mehrplatz-Anfrage). Bestätigungsseite zum
+    Speichern oder Drucken, Eingangsbestätigung per Mail mit Datum und Uhrzeit, Mail an den Kundenservice.
+37. **Eingangsbestätigungen über Mailvorlagen von Shopware** (neue Mailarten „Mehrplatz-Anfrage: Eingangsbestätigung“
+    und „Kündigung: Eingangsbestätigung“), damit Kopf, Fuß und Pflege wie bei allen anderen Mails sind.
+38. **Testkonten:** Firma DE mit der öffentlichen USt-IdNr. des KETTELER-Verlags (Inland, VIES bestätigt sie), Einrichtung
+    AT mit der öffentlichen OMV-UID aus der .env-Notiz. Alle vier mit dem Passwort der automatischen Testkunden
+    (`KETTELER_TESTKUNDE_PASSWORT`), es entsteht kein neuer Schlüssel. Die automatischen Tests räumen sie nicht weg.
+39. **Cookie-Hinweis nur „Technisch erforderlich“.** Der Shop setzt keine anderen Cookies; die Gruppen „Komfort“ und
+    „Statistik“ von Shopware entfallen. Folge: Gäste können die Merkliste nicht im Browser speichern, angemeldete
+    Kundinnen schon.
+40. **Suche mit Verlagsnummer.** Solange die Testartikel TEST-Nummern tragen, steht die alte Bestell-Nr. (05029-D usw.)
+    als Herstellernummer am Artikel; die Suche durchsucht Titel, Bestell-Nr., Herstellernummer und Autor/Herausgeber.
+41. **Kontaktformular: Telefon freiwillig**, wie bei der Mehrplatz-Anfrage.
+42. **ZITADEL im Stil des Verlags** über die API: Farben, Logo, deutsche Mailtexte in Sie-Form (E-Mail bestätigen,
+    Passwort vergessen, Passwort geändert, Konto einrichten). Schrift: Standard von ZITADEL (eigene Schrift wäre ein
+    Upload in ZITADEL, Frage an Atilla bei Bedarf).
+43. **Firmendaten auf den Belegen** aus dem Impressum; Bankverbindung und Steuernummer fehlen (Frage 32). Rechnungen
+    schreibt später weclapp.

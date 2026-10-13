@@ -109,5 +109,8 @@
             <argument type="service" id="Doctrine\DBAL\Connection"/>
             <tag name="kernel.event_subscriber"/>
         </service>
+        <service id="Ketteler\Theme\Cookie\NurNotwendige" decorates="Shopware\Storefront\Framework\Cookie\CookieProviderInterface">
+            <argument type="service" id="Ketteler\Theme\Cookie\NurNotwendige.inner"/>
+        </service>
     </services>
 </container>

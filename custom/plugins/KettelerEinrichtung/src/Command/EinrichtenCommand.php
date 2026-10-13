@@ -78,6 +78,7 @@ class EinrichtenCommand extends Command
         $this->widerrufsfunktion();
         $this->verkaufskanal($salesChannelId, $laender, $zahlarten, $versandPost, [$versandPost, $versandOnline], $wurzel, $fuss);
         $this->nummernkreise();
+        $this->suche();
         $this->artikel($salesChannelId, $steuern, $lieferzeitPost, $lieferzeitSofort);
         $this->erlebniswelten->anlegen($this->context, $this->io, (bool) $input->getOption('erlebniswelten-neu'));
         $this->einstellungen();
@@ -563,9 +564,11 @@ class EinrichtenCommand extends Command
             }
         }
         $this->aendern('payment_method', $updates);
-        $this->io->writeln($paypal !== null ? 'Zahlarten „Rechnung“ und „PayPal“ (Testmodus) aktiv, andere aus.' : 'Zahlart „Rechnung“ aktiv (PayPal-Plugin fehlt).');
+        // Im Verkaufskanal nur Rechnung (Gesamtauftrag D, 13.10.2026). PayPal bleibt installiert, eingerichtet und aktiv,
+        // ist aber keinem Verkaufskanal zugeordnet; zum Wiedereinschalten in der Verwaltung dem Kanal zuordnen.
+        $this->io->writeln($paypal !== null ? 'Zahlart „Rechnung“ im Verkaufskanal, PayPal eingerichtet (Testmodus), aber nicht im Kanal; andere aus.' : 'Zahlart „Rechnung“ aktiv (PayPal-Plugin fehlt).');
 
-        return array_values(array_filter([$rechnung, $paypal]));
+        return [$rechnung];
     }
 
     /** @return array{0: string, 1: string} IDs von Navigationswurzel und Fußzeile */
@@ -815,7 +818,7 @@ class EinrichtenCommand extends Command
             'DELETE FROM sales_channel_shipping_method WHERE sales_channel_id = ? AND shipping_method_id NOT IN (?, ?)',
             [$kanal, Uuid::fromHexToBytes($versandarten[0]), Uuid::fromHexToBytes($versandarten[1])],
         );
-        $this->io->writeln(\sprintf('Verkaufskanal: Deutsch, Euro, %d Lieferländer, Rechnung und PayPal, Versand per Post.', \count($laender)));
+        $this->io->writeln(\sprintf('Verkaufskanal: Deutsch, Euro, %d Lieferländer, nur Rechnung, Versand per Post.', \count($laender)));
     }
 
     private function nummernkreise(): void
@@ -864,6 +867,7 @@ class EinrichtenCommand extends Command
                 'maxPurchase' => $online ? 1 : null,
                 'shippingFree' => $online,
                 'weight' => (float) $a['gewicht'],
+                'manufacturerNumber' => $a['verlagsnummer'] ?? null,
                 'deliveryTimeId' => $online ? $lieferzeitSofort : $lieferzeitPost,
                 'customFields' => [
                     'ketteler_artikelart' => $a['artikelart'],
@@ -904,13 +908,103 @@ class EinrichtenCommand extends Command
     }
 
     /**
+     * Suche findet Titel, Bestell-Nr. (auch Teile wie „05029“ aus „05029-D“) und Autor/Herausgeber: Felder der
+     * Suchkonfiguration von Shopware (Einstellungen > Suche). Wirkt beim nächsten Schreiben der Artikel bzw. nach
+     * dal:refresh:index (Suchbegriffe).
+     */
+    private function suche(): void
+    {
+        foreach ($this->repo('product_search_config')->searchIds(new Criteria(), $this->context)->getIds() as $konfig) {
+            $felder = [
+                'name' => [true, true, 700],
+                'productNumber' => [true, true, 1000],
+                'manufacturerNumber' => [true, true, 900],
+                'customFields.ketteler_autor' => [true, true, 600],
+            ];
+            $zeilen = [];
+            foreach ($felder as $feld => [$suchbar, $zerlegen, $gewicht]) {
+                $vorhanden = $this->ersteId('product_search_config_field', (new Criteria())
+                    ->addFilter(new EqualsFilter('searchConfigId', $konfig), new EqualsFilter('field', $feld)));
+                if ($vorhanden !== null && !$this->ueberschreiben) {
+                    continue; // nur anlegen: von Ketteler gepflegte Gewichtung bleibt
+                }
+                $zeilen[] = ['id' => $vorhanden ?? $this->id('suche.' . $konfig . '.' . $feld), 'searchConfigId' => $konfig, 'field' => $feld,
+                    'searchable' => $suchbar, 'tokenize' => $zerlegen, 'ranking' => $gewicht];
+            }
+            if ($zeilen !== []) {
+                $this->repo('product_search_config_field')->upsert($zeilen, $this->context);
+            }
+        }
+        $this->io->writeln('Suche: Titel, Bestell-Nr., Verlagsnummer und Autor/Herausgeber durchsuchbar.');
+    }
+
+    /** SEO-Pfad einer Kategorie im Verkaufskanal (z. B. „Rechtliches-Informationen/AGB/“), sonst navigation/<ID> */
+    private function seoPfad(string $schluessel, string $salesChannelId): string
+    {
+        $id = $this->id('kategorie.' . $schluessel);
+        $pfad = $this->db->fetchOne(
+            'SELECT seo_path_info FROM seo_url WHERE foreign_key = ? AND route_name = ? AND sales_channel_id = ? AND is_canonical = 1 AND is_deleted = 0 LIMIT 1',
+            [Uuid::fromHexToBytes($id), 'frontend.navigation.page', Uuid::fromHexToBytes($salesChannelId)],
+        );
+
+        return \is_string($pfad) && $pfad !== '' ? ltrim($pfad, '/') : 'navigation/' . $id;
+    }
+
+    /** Firmendaten für Belege (Rechnung, Lieferschein, Gutschrift, Storno) aus dem Impressum; Bankdaten fehlen noch */
+    private function firmendaten(): void
+    {
+        $firma = [
+            'companyName' => 'KETTELER-Verlag GmbH',
+            'companyStreet' => 'Schloßhof 1',
+            'companyZipcode' => '93449',
+            'companyCity' => 'Waldmünchen',
+            'companyCountryId' => $this->ersteId('country', (new Criteria())->addFilter(new EqualsFilter('iso', 'DE'))),
+            'companyEmail' => 'kontakt@ketteler-verlag.de',
+            'companyPhone' => '09972 94 14-51',
+            'companyUrl' => 'www.ketteler-verlag.de',
+            'executiveDirector' => 'Josef Singer',
+            'placeOfJurisdiction' => 'Köln',
+            'placeOfFulfillment' => 'Waldmünchen',
+            'vatId' => 'DE 122 792 915',
+            'taxOffice' => '',
+            'taxNumber' => '',
+            'companyAddress' => 'KETTELER-Verlag GmbH, Schloßhof 1, 93449 Waldmünchen',
+        ];
+        $zeilen = [];
+        foreach ($this->repo('document_base_config')->search(new Criteria(), $this->context) as $beleg) {
+            $zeilen[] = ['id' => $beleg->getId(), 'config' => array_merge($beleg->getConfig() ?? [], $firma)];
+        }
+        $this->aendern('document_base_config', $zeilen);
+    }
+
+    /**
      * Mailtexte aus daten/mails/<technischer Name>/ (Betreff, HTML, Text) und Kopf und Fuß aus daten/mails/_kopf_fuss/.
      * Geschrieben wird die Standardsprache (Deutsch).
      */
     private function mails(string $salesChannelId): void
     {
         $ordner = self::DATEN . 'mails/';
-        $lesen = static fn (string $datei): string => (string) file_get_contents($ordner . $datei);
+        // Platzhalter: {{LOGO}} = Logo als eingebettetes Bild (erscheint auch hinter dem Passwortschutz von Staging),
+        // {{SEO:<Kategorie>}} = SEO-Pfad der Kategorie (Adresse ohne ID)
+        $logo = 'data:image/png;base64,' . base64_encode((string) file_get_contents($ordner . '_kopf_fuss/logo-mail.png'));
+        $lesen = fn (string $datei): string => (string) preg_replace_callback(
+            '/\{\{SEO:([a-z0-9-]+)\}\}/',
+            fn (array $t): string => $this->seoPfad($t[1], $salesChannelId),
+            str_replace('{{LOGO}}', $logo, (string) file_get_contents($ordner . $datei)),
+        );
+        // Eigene Mailarten (Mehrplatz, Kündigung): Art und Vorlage anlegen, wenn es sie noch nicht gibt
+        foreach (['ketteler_mehrplatz_bestaetigung' => 'Mehrplatz-Anfrage: Eingangsbestätigung', 'ketteler_kuendigung_bestaetigung' => 'Kündigung: Eingangsbestätigung'] as $technisch => $name) {
+            $this->schreiben('mail_template_type', [['id' => $this->id('mailart.' . $technisch), 'technicalName' => $technisch, 'name' => $name, 'availableEntities' => []]]);
+            $this->schreiben('mail_template', [[
+                'id' => $this->id('mailvorlage.' . $technisch),
+                'mailTemplateTypeId' => $this->id('mailart.' . $technisch),
+                'systemDefault' => true,
+                'senderName' => 'KETTELER-Verlag',
+                'subject' => trim($lesen($technisch . '/betreff.txt')),
+                'contentHtml' => $lesen($technisch . '/inhalt.html.twig'),
+                'contentPlain' => $lesen($technisch . '/inhalt.txt.twig'),
+            ]]);
+        }
         $anzahl = 0;
         foreach (glob($ordner . '*', \GLOB_ONLYDIR) ?: [] as $pfad) {
             $typ = basename($pfad);
@@ -947,16 +1041,19 @@ class EinrichtenCommand extends Command
             'footerPlain' => $lesen('_kopf_fuss/fuss.txt.twig'),
         ]]);
         $this->aendern('sales_channel', [['id' => $salesChannelId, 'mailHeaderFooterId' => $kopfFuss]]);
-        $this->io->writeln(\sprintf('%d Mailtexte und Kopf und Fuß der Mails eingespielt.', $anzahl));
+        $this->io->writeln(\sprintf('%d Mailtexte (davon 2 eigene Mailarten) und Kopf und Fuß der Mails eingespielt.', $anzahl));
     }
 
     private function einstellungen(): void
     {
         $werte = [
             'core.basicInformation.shopName' => 'KETTELER-Verlag',
-            'core.basicInformation.email' => 'shop@ketteler-verlag.test',
+            // Absender aller Mails wie im Impressum (content/rechtstexte/impressum.md); auf Staging landet alles in Mailpit
+            'core.basicInformation.email' => 'kontakt@ketteler-verlag.de',
             'core.loginRegistration.showAccountTypeSelection' => true,
             'core.cart.showDeliveryTime' => true,
+            // Kontaktformular: Telefon freiwillig (wie in der Mehrplatz-Anfrage)
+            'core.basicInformation.phoneNumberFieldRequired' => false,
             // Merkliste (Kopf: „Merkliste“ laut Vorlage)
             'core.cart.wishlistEnabled' => true,
         ];
@@ -971,6 +1068,7 @@ class EinrichtenCommand extends Command
         if (!$this->config->getString('KettelerTheme.config.kontaktKategorie')) {
             $this->config->set('KettelerTheme.config.kontaktKategorie', $this->id('kategorie.fuss-kontakt'));
         }
-        $this->io->writeln('Shop-Name und Grundeinstellungen gesetzt.');
+        $this->firmendaten();
+        $this->io->writeln('Shop-Name, Absender, Firmendaten und Grundeinstellungen gesetzt.');
     }
 }

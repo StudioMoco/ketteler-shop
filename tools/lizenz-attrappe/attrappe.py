@@ -38,7 +38,7 @@ DATUM = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 sperre = threading.Lock()
 
 # Testnummern, die die VIES-Nachbildung als gültig meldet (keine echten Unternehmen)
-VIES_GUELTIG = {("AT", "U12345675"): "Testeinrichtung Wien", ("IT", "12345678903"): "Ente di prova Roma",
+VIES_GUELTIG = {("AT", "U12345675"): "Testeinrichtung Wien", ("AT", "U14189108"): "OMV Aktiengesellschaft (öffentlich, Testkonto Einrichtung AT)", ("IT", "12345678903"): "Ente di prova Roma",
                 ("DE", "123456788"): "Testverlag Köln"}
 
 

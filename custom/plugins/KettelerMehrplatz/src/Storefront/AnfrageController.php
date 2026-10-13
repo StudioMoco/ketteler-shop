@@ -3,6 +3,7 @@
 namespace Ketteler\Mehrplatz\Storefront;
 
 use Ketteler\Mehrplatz\Anfrage\Pruefung;
+use Ketteler\Mehrplatz\Mail\VorlagenMail;
 use Psr\Log\LoggerInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\Uuid\Uuid;
@@ -16,12 +17,13 @@ use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 
-/** „Mehrere Lizenzen anfragen“: Formular, Speichern, Mail an den Kundenservice. */
+/** „Mehrere Lizenzen anfragen“: Formular, Speichern, Mail an den Kundenservice und Eingangsbestätigung an die Kundin. */
 #[Route(defaults: ['_routeScope' => ['storefront']])]
 class AnfrageController extends StorefrontController
 {
     public function __construct(
         private readonly EntityRepository $anfragen,
+        private readonly VorlagenMail $vorlagenMail,
         private readonly MailerInterface $mailer,
         private readonly SystemConfigService $config,
         private readonly LoggerInterface $logger,
@@ -51,6 +53,8 @@ class AnfrageController extends StorefrontController
         $id = Uuid::randomHex();
         $this->anfragen->create([$daten + ['id' => $id, 'salesChannelId' => $context->getSalesChannelId()]], $context->getContext());
         $this->mailSenden($daten);
+        // Eingangsbestätigung an die anfragende Person (Mailvorlage ketteler_mehrplatz_bestaetigung)
+        $this->vorlagenMail->senden('ketteler_mehrplatz_bestaetigung', (string) $daten['email'], (string) $daten['ansprechperson'], $daten, $context);
         $this->logger->info('Ketteler-Mehrplatz: Anfrage gespeichert.', ['anfrage' => $id]);
 
         return $this->renderStorefront('@KettelerMehrplatz/storefront/page/ketteler/mehrplatz.html.twig', ['gesendet' => true, 'daten' => $daten]);

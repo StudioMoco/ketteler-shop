@@ -813,3 +813,39 @@ a.kt-artikel:hover .kt-artikel-titel { color: $kt-magenta; }
     .kt-interview { gap: 18px; padding: 28px 0; }
     .kt-interview-foto { flex-basis: 96px; height: 96px; }
 }
+
+// ---------------------------------------------------------------------------------------------------------------
+// Formulare (Mehrplatz-Anfrage, Verträge kündigen, Kontakt, Widerruf) und Bestätigungen im Stil der Vorlagen
+// ---------------------------------------------------------------------------------------------------------------
+.kt-formularseite { padding-top: 28px; padding-bottom: 88px; }
+.kt-formularseite > div, .kt-formularseite { max-width: 1240px; }
+.kt-formularseite h1 { margin: 0 0 18px; font-size: 48px; line-height: 1.12; letter-spacing: -0.01em; }
+.kt-formular-einleitung { margin: 0 0 32px; max-width: 680px; font-size: 18px; color: $kt-text-gedaempft; }
+.kt-formular { max-width: 760px; }
+.kt-formular fieldset { display: flex; flex-wrap: wrap; gap: 0 24px; margin: 0 0 28px; padding: 24px 0 0; border-top: 1px solid $kt-linie; }
+.kt-formular legend { float: none; width: 100%; margin: 0 0 14px; font-family: $kt-serif; font-size: 24px; }
+.kt-formular-feld { flex: 1 1 260px; min-width: 0; margin-bottom: 18px; }
+.kt-formular-feld--breit { flex-basis: 100%; }
+.kt-formular .mb-3 { margin-bottom: 18px !important; }
+.kt-formular .form-label, .cms-element-form .form-label { font-weight: 500; }
+.kt-formular .form-control, .kt-formular .form-select, .cms-element-form .form-control, .cms-element-form .form-select {
+    min-height: 48px; border: 1px solid $kt-linie-sand; border-radius: 8px; background-color: #ffffff;
+}
+.kt-formular .form-control:focus, .cms-element-form .form-control:focus { border-color: $kt-magenta; box-shadow: 0 0 0 3px rgba(183, 0, 92, 0.15); }
+.kt-formular .form-check-input:checked { background-color: $kt-magenta; border-color: $kt-magenta; }
+.kt-formular-hinweis { margin: 0 0 22px; max-width: 680px; font-size: 14px; color: $kt-hinweis; }
+.kt-formular-bestaetigung { max-width: 760px; padding: 28px 30px; border-radius: 10px; background: $kt-rose; }
+.kt-formular-bestaetigung > p:first-child { font-size: 18px; }
+.kt-formular-zusammenfassung { margin: 18px 0 20px; }
+.kt-formular-zusammenfassung div { display: flex; flex-wrap: wrap; gap: 2px 20px; padding: 10px 0; border-top: 1px solid $kt-linie-rose; }
+.kt-formular-zusammenfassung dt { flex: 0 0 240px; font-weight: 400; color: $kt-hinweis; }
+.kt-formular-zusammenfassung dd { flex: 1 1 260px; margin: 0; }
+// Rückmeldungen von Shopware (z. B. Kontaktformular gesendet) in derselben Ruhe
+.alert-success, .confirm-message { border: 0; border-radius: 10px; background: $kt-rose; color: $kt-text; }
+.alert-danger { border: 0; border-left: 3px solid $kt-magenta; border-radius: 8px; background: #fbeef3; color: $kt-text; }
+.cms-element-form .btn-primary { min-height: 52px; padding: 0 28px; border-radius: 26px; }
+@media print { .header-main, .nav-main, .footer-main, .top-bar, .kt-formularseite button { display: none !important; } }
+@media (max-width: 767.98px) {
+    .kt-formularseite h1 { font-size: 32px; }
+    .kt-formular-zusammenfassung dt { flex-basis: 100%; }
+}

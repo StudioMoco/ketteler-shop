@@ -28,6 +28,50 @@
                 "avr": "Die AVR von A bis Z",
                 "zmv": "ZMV Die Mitarbeitervertretung",
                 "eichstaetter": "Eichstätter Kommentar MAVO und KAGO"
+            },
+            "bestaetigungMail": "Eine Eingangsbestätigung haben wir Ihnen per E-Mail geschickt."
+        },
+        "kuendigung": {
+            "titel": "Verträge kündigen",
+            "einleitung": "Hier können Sie Ihre Verträge kündigen.",
+            "vertrag": "Angaben zum Vertrag",
+            "kuendigung": "Angaben zur Kündigung",
+            "feld": {
+                "vertrag": "Abo-Nummer oder letzte Rechnungsnummer",
+                "vorname": "Vorname",
+                "nachname": "Nachname",
+                "firma": "Firma",
+                "strasse": "Straße",
+                "plz": "PLZ",
+                "ort": "Ort",
+                "email": "E-Mail",
+                "email2": "E-Mail wiederholen",
+                "art": "Kündigungsart",
+                "grund": "Kündigungsgrund",
+                "termin": "Termin",
+                "datum": "Kündigungstermin"
+            },
+            "art": {
+                "ordentlich": "Ordentliche Kündigung",
+                "ausserordentlich": "Außerordentliche Kündigung"
+            },
+            "termin": {
+                "naechstmoeglich": "Zum nächstmöglichen Zeitpunkt kündigen",
+                "wunschtermin": "Zum Wunschtermin kündigen"
+            },
+            "hinweis": "Nach dem Absenden sehen Sie eine Bestätigung zum Speichern oder Drucken, und wir schicken Ihnen eine Eingangsbestätigung per E-Mail. Ihre Angaben verwenden wir nur, um die Kündigung zu bearbeiten.",
+            "senden": "Jetzt kündigen",
+            "bestaetigungTitel": "Ihre Kündigung ist bei uns eingegangen",
+            "bestaetigungText": "Vielen Dank. Ihre Kündigung ist am %eingang% bei uns eingegangen. Eine Eingangsbestätigung haben wir Ihnen per E-Mail geschickt. Wir bestätigen Ihnen die Kündigung mit dem Datum, an dem der Vertrag endet.",
+            "eingang": "Eingegangen am",
+            "speichern": "Bitte speichern oder drucken Sie diese Seite für Ihre Unterlagen.",
+            "drucken": "Seite drucken",
+            "fehler": {
+                "allgemein": "Bitte prüfen Sie die markierten Felder.",
+                "pflicht": "Bitte füllen Sie dieses Feld aus.",
+                "email": "Bitte geben Sie eine gültige E-Mail-Adresse an.",
+                "email2": "Die beiden E-Mail-Adressen stimmen nicht überein.",
+                "datum": "Bitte wählen Sie einen Termin ab heute."
             }
         }
     }

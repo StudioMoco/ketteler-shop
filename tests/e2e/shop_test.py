@@ -98,9 +98,12 @@ def main():
     print("Zahlarten")
     zahlarten = sql("SELECT pm.technical_name FROM sales_channel_payment_method sp JOIN payment_method pm ON pm.id=sp.payment_method_id "
                     "JOIN sales_channel s ON s.id=sp.sales_channel_id WHERE s.type_id=UNHEX('8A243080F92E4C719546314B577CF82B') AND pm.active=1 ORDER BY 1")
-    e.pruefe([z[0] for z in zahlarten] == ["payment_invoicepayment", "swag_paypal_paypal"], "Rechnung und PayPal", str(zahlarten))
+    e.pruefe([z[0] for z in zahlarten] == ["payment_invoicepayment"], "im Verkaufskanal nur Rechnung", str(zahlarten))
+    standard = sql("SELECT pm.technical_name FROM sales_channel s JOIN payment_method pm ON pm.id=s.payment_method_id WHERE s.type_id=UNHEX('8A243080F92E4C719546314B577CF82B')")
+    e.pruefe(standard and standard[0][0] == "payment_invoicepayment", "Rechnung ist Standard")
+    paypal = sql("SELECT active FROM payment_method WHERE technical_name='swag_paypal_paypal'")
     sandbox = sql("SELECT configuration_value FROM system_config WHERE configuration_key='SwagPayPal.settings.sandbox'")
-    e.pruefe(sandbox and "true" in sandbox[0][0], "PayPal im Testmodus (Sandbox)")
+    e.pruefe(paypal and sandbox and "true" in sandbox[0][0], "PayPal-Plugin bleibt eingerichtet (Testmodus), nur nicht im Verkaufskanal")
 
     print("Abo-Kennzeichnung")
     b = Browser()

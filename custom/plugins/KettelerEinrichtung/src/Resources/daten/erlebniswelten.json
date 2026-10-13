@@ -700,6 +700,30 @@
           "html": "<p>Kirchliches Arbeitsrecht, ZMV - Fachzeitschrift: <a href=\"https://www.zmv-online.de/\">www.zmv-online.de</a><br>Katholische Arbeitnehmer-Bewegung Deutschlands e.V. (KAB):<br><a href=\"https://www.kab.de/\">www.kab.de</a><br>Jugendbildungsstätte Waldmünchen:<br><a href=\"https://www.jugendbildungsstaette.org/\">www.jugendbildungsstaette.org</a><br>kifas, KAB-Institut für Fortbildung &amp; angewandte Sozialethik:<br><a href=\"https://www.kifas.org/\">www.kifas.org</a><br>Ethik und Gesellschaft:<br><a href=\"http://www.ethik-und-gesellschaft.de/\">www.ethik-und-gesellschaft.de</a><br>Stiftung Zukunft der Arbeit und sozialen Sicherung (ZASS):<br><a href=\"http://www.stiftung-zass.de/\">www.stiftung-zass.de</a><br>Christliche Arbeiterjugend Deutschland e.V (CAJ).:<br><a href=\"http://www.caj.de/\">www.caj.de</a></p><p><strong>Haftungsausschluss für Inhalte und Verlinkung</strong><br>Auf den Internetseiten der KETTELER-Verlag GmbH befinden sich Querverweise (\"Links\") zu anderen Internetangeboten bzw. Internetseiten. Für die durch diese Zugänge vermittelten fremden Inhalte ist die KETTELER-Verlag GmbH nicht verantwortlich.<br>Die KETTELER-Verlag GmbH kann auch nicht garantieren, dass die Links zum Zeitpunkt des Besuchs noch zum Ziel führen. Wir betonen ausdrücklich, dass wir keinerlei Einfluss auf die Gestaltung und die Inhalte der gelinkten Seiten haben. Diese Erklärung gilt für alle auf unserer Homepage ausgebrachten Links und für alle Inhalte der Seiten, zu denen Links oder Banner führen. Links zu externen Anbietern stellen keine Wertung oder Empfehlung der KETTELER-Verlag GmbH dar.</p>"
         }
       ]
+    },
+    {
+      "schluessel": "kontakt",
+      "name": "Kontakt",
+      "kategorie": "fuss-kontakt",
+      "bloecke": [
+        {
+          "typ": "seitenkopf",
+          "config": {
+            "brotkrumen": false,
+            "titel": "Kontakt",
+            "unterzeile": ""
+          }
+        },
+        {
+          "typ": "html",
+          "html": "<p><strong>KETTELER-Verlag GmbH</strong><br>Niederlassung<br>Schloßhof 1<br>93449 Waldmünchen</p><p>Telefon: 09972-9414-51<br>Telefax: 09972-9414-55<br>E-Mail: <a href=\"mailto:kontakt@ketteler-verlag.de\">kontakt@ketteler-verlag.de</a></p><p>Servicezeiten: Montag, Dienstag, Donnerstag von 8.00 bis 13.00 Uhr, Mittwoch und Freitag von 8.00 bis 12.00 Uhr</p>"
+        },
+        {
+          "typ": "kontaktformular",
+          "titel": "",
+          "bestaetigung": "Vielen Dank für Ihre Nachricht. Wir melden uns bei Ihnen."
+        }
+      ]
     }
   ],
   "layouts": [

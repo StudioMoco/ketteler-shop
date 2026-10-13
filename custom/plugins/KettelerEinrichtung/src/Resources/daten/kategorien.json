@@ -197,8 +197,7 @@
         },
         {
           "schluessel": "fuss-kontakt",
-          "name": "Kontakt",
-          "platzhalter": true
+          "name": "Kontakt"
         }
       ]
     }
@@ -268,7 +267,10 @@
           },
           {
             "schluessel": "fuss-kuendigen",
-            "name": "Verträge hier kündigen"
+            "name": "Verträge hier kündigen",
+            "link": {
+              "adresse": "/vertraege-kuendigen"
+            }
           },
           {
             "schluessel": "fuss-widerruf-erklaeren",

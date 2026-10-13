@@ -40,6 +40,13 @@ def main():
     if not ENV.get("PAYPAL_SANDBOX_CLIENT_ID") or not ENV.get("PAYPAL_SANDBOX_CLIENT_SECRET"):
         e.ueberspringe(name, "keine Sandbox-Zugangsdaten in der .env, siehe docs/paypal-sandbox.md")
         return e.ende()
+    im_kanal = sql("SELECT COUNT(*) FROM sales_channel_payment_method sp JOIN payment_method pm ON pm.id=sp.payment_method_id "
+                   "JOIN sales_channel s ON s.id=sp.sales_channel_id WHERE s.type_id=UNHEX('8A243080F92E4C719546314B577CF82B') AND pm.technical_name='swag_paypal_paypal'")[0][0]
+    if int(im_kanal) == 0:
+        sandbox = sql("SELECT configuration_value FROM system_config WHERE configuration_key='SwagPayPal.settings.sandbox'")
+        e.pruefe(sandbox and "true" in sandbox[0][0], "PayPal bleibt im Testmodus eingerichtet")
+        e.ueberspringe(name, "PayPal ist im Verkaufskanal ausgeschaltet (Gesamtauftrag D); zum Testen dem Kanal zuordnen")
+        return e.ende()
 
     sandbox = sql("SELECT configuration_value FROM system_config WHERE configuration_key='SwagPayPal.settings.sandbox'")
     e.pruefe(sandbox and "true" in sandbox[0][0], "PayPal im Testmodus (Sandbox), nie Live")

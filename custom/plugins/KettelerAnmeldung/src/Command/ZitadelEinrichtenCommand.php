@@ -2,7 +2,14 @@
 
 namespace Ketteler\Anmeldung\Command;
 
+use Ketteler\Anmeldung\Konto\KundenSpeicher;
 use Ketteler\Anmeldung\Oidc\Konfiguration;
+use Shopware\Core\Defaults;
+use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\DataAbstractionLayer\DefinitionInstanceRegistry;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
+use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -10,6 +17,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Mime\Part\DataPart;
+use Symfony\Component\Mime\Part\Multipart\FormDataPart;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
@@ -32,6 +41,19 @@ class ZitadelEinrichtenCommand extends Command
         'unbestaetigt@ketteler.test' => ['Uwe', 'Unbestätigt', false],
     ];
 
+    /**
+     * Testkonten für die Abnahme (Gesamtauftrag D): ZITADEL-Konto und fertiges Kundenkonto im Shop mit Anschrift, damit
+     * nach der Anmeldung sofort bestellt werden kann. E-Mail => [Vorname, Nachname, Firma oder null, USt-IdNr. oder null,
+     * Straße, PLZ, Ort, Land]. Die USt-IdNr. sind öffentlich (Impressum KETTELER-Verlag bzw. OMV, siehe .env-Notiz zum
+     * VIES-Test); der Shop prüft sie beim Speichern bei VIES. Passwort: KETTELER_TESTKUNDE_PASSWORT (nur .env).
+     */
+    public const TESTKONTEN = [
+        'privat-de@ketteler.test' => ['Paula', 'Privat', null, null, 'Musterstraße 1', '93449', 'Waldmünchen', 'DE'],
+        'privat-at@ketteler.test' => ['Anton', 'Alpen', null, null, 'Testgasse 2', '1010', 'Wien', 'AT'],
+        'firma-de@ketteler.test' => ['Franz', 'Firma', 'Testfirma GmbH (Test)', 'DE122792915', 'Firmenweg 3', '50670', 'Köln', 'DE'],
+        'einrichtung-at@ketteler.test' => ['Eva', 'Einrichtung', 'Testeinrichtung Wien (Test)', 'ATU14189108', 'Einrichtungsplatz 4', '1020', 'Wien', 'AT'],
+    ];
+
     private SymfonyStyle $io;
 
     private string $pat = '';
@@ -39,6 +61,8 @@ class ZitadelEinrichtenCommand extends Command
     public function __construct(
         private readonly HttpClientInterface $http,
         private readonly SystemConfigService $config,
+        private readonly ?DefinitionInstanceRegistry $registry = null,
+        private readonly ?KundenSpeicher $kundenSpeicher = null,
     ) {
         parent::__construct();
     }
@@ -46,6 +70,7 @@ class ZitadelEinrichtenCommand extends Command
     protected function configure(): void
     {
         $this->addOption('admin-passwort', null, InputOption::VALUE_NONE, 'Passwort des ZITADEL-Admins (zitadel-admin@ketteler.test) auf ZITADEL_ADMIN_PASSWORT aus der .env setzen');
+        $this->addOption('testkonten', null, InputOption::VALUE_NONE, 'Testkonten Privat DE, Privat AT, Firma DE, Einrichtung AT in ZITADEL und im Shop anlegen (Passwort: KETTELER_TESTKUNDE_PASSWORT)');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -66,8 +91,17 @@ class ZitadelEinrichtenCommand extends Command
         $projektId = $this->projekt();
         $clientId = $this->anwendung($projektId, $shop);
         $this->mailversand();
+        $this->gestaltung($orgId);
         foreach (self::TESTKUNDEN as $email => [$vorname, $nachname, $bestaetigt]) {
             $this->testkunde($orgId, $email, $vorname, $nachname, $bestaetigt, $testPasswort);
+        }
+        if ($input->getOption('testkonten')) {
+            foreach (self::TESTKONTEN as $email => $konto) {
+                $sub = $this->testkunde($orgId, $email, $konto[0], $konto[1], true, $testPasswort);
+                if ($sub !== null) {
+                    $this->shopkonto($email, $sub, $konto);
+                }
+            }
         }
         if ($input->getOption('admin-passwort')) {
             // Erneuern (z. B. nachdem ein Wert offen lag): neuer Wert nur in der .env, hier ohne Ausgabe übernommen
@@ -195,19 +229,76 @@ class ZitadelEinrichtenCommand extends Command
         $this->io->writeln('Mailversand von ZITADEL an Mailpit eingerichtet.');
     }
 
-    private function testkunde(string $orgId, string $email, string $vorname, string $nachname, bool $bestaetigt, string $passwort): void
+    /** @return string|null ZITADEL-Benutzer-ID (sub) */
+    /**
+     * Mails und Anmeldeseiten von ZITADEL im Stil des Verlags: Farben, Logo (falls lesbar), deutsche Texte in Sie-Form
+     * ohne Gedankenstriche für Bestätigung der E-Mail-Adresse, Passwort vergessen, Passwort geändert, Konto einrichten.
+     */
+    private function gestaltung(string $orgId): void
+    {
+        $farben = [
+            'primaryColor' => '#b7005c', 'backgroundColor' => '#fbf8f3', 'warnColor' => '#b7005c', 'fontColor' => '#2a2326',
+            'primaryColorDark' => '#f7d4e4', 'backgroundColorDark' => '#2a2326', 'warnColorDark' => '#f7d4e4', 'fontColorDark' => '#fbf8f3',
+            'hideLoginNameSuffix' => true, 'disableWatermark' => true,
+        ];
+        if ($this->api('POST', '/management/v1/policies/label', $farben, $orgId, [409]) === []) {
+            $this->api('PUT', '/management/v1/policies/label', $farben, $orgId, [400]);
+        }
+        $logo = \dirname(__DIR__, 3) . '/KettelerTheme/src/Resources/public/logo/ketteler-logo-fachverlag.png';
+        if (is_readable($logo)) {
+            $this->datei('/assets/v1/org/policy/label/logo', $logo, $orgId);
+        }
+        $this->api('POST', '/management/v1/policies/label/_activate', [], $orgId, [400]);
+
+        $fuss = 'KETTELER-Verlag GmbH · Kundenservice 09972 94 14-51 · kontakt@ketteler-verlag.de';
+        $texte = [
+            'verifyemail' => ['Bitte bestätigen Sie Ihre E-Mail-Adresse', 'E-Mail-Adresse bestätigen',
+                'bitte bestätigen Sie Ihre E-Mail-Adresse für Ihr Kundenkonto beim KETTELER-Verlag. Ihr Code lautet {{.Code}}.', 'E-Mail-Adresse bestätigen'],
+            'passwordreset' => ['Neues Passwort für Ihr Kundenkonto', 'Passwort zurücksetzen',
+                'Sie haben ein neues Passwort für Ihr Kundenkonto beim KETTELER-Verlag angefordert. Ihr Code lautet {{.Code}}. Haben Sie das nicht veranlasst, können Sie diese E-Mail ignorieren.', 'Neues Passwort festlegen'],
+            'password_change' => ['Ihr Passwort wurde geändert', 'Passwort geändert',
+                'das Passwort für Ihr Kundenkonto beim KETTELER-Verlag wurde geändert. Waren Sie das nicht, melden Sie sich bitte bei unserem Kundenservice.', 'Zur Anmeldung'],
+            'init' => ['Ihr Kundenkonto beim KETTELER-Verlag', 'Kundenkonto einrichten',
+                'für Sie wurde ein Kundenkonto beim KETTELER-Verlag angelegt. Bitte legen Sie Ihr Passwort fest. Ihr Code lautet {{.Code}}.', 'Passwort festlegen'],
+        ];
+        foreach ($texte as $art => [$betreff, $titel, $text, $knopf]) {
+            $this->api('PUT', '/management/v1/text/message/' . $art . '/de', [
+                'title' => $titel, 'preHeader' => $titel, 'subject' => $betreff, 'greeting' => 'Guten Tag {{.DisplayName}},',
+                'text' => $text, 'buttonText' => $knopf, 'footerText' => $fuss,
+            ], $orgId, [400]);
+        }
+        $this->io->writeln('ZITADEL: Farben, Logo und deutsche Mailtexte (Sie-Form) gesetzt.');
+    }
+
+    /** Datei hochladen (Assets-API von ZITADEL, multipart) */
+    private function datei(string $pfad, string $datei, string $orgId): void
+    {
+        $oeffentlich = parse_url(rtrim(Konfiguration::env('KETTELER_ZITADEL_URL'), '/'));
+        $basis = rtrim(Konfiguration::env('KETTELER_ZITADEL_INTERN') ?: Konfiguration::env('KETTELER_ZITADEL_URL'), '/');
+        $formular = new FormDataPart(['file' => DataPart::fromPath($datei, 'logo.png', 'image/png')]);
+        $kopf = $formular->getPreparedHeaders()->toArray();
+        $kopf[] = 'Authorization: Bearer ' . $this->pat;
+        $kopf[] = 'Host: ' . ($oeffentlich['host'] ?? 'localhost') . (isset($oeffentlich['port']) ? ':' . $oeffentlich['port'] : '');
+        $kopf[] = 'x-zitadel-orgid: ' . $orgId;
+        $antwort = $this->http->request('POST', $basis . $pfad, ['headers' => $kopf, 'body' => $formular->bodyToIterable(), 'timeout' => 20]);
+        if ($antwort->getStatusCode() >= 400) {
+            $this->io->warning('ZITADEL: Logo nicht hochgeladen (' . $antwort->getStatusCode() . ').');
+        }
+    }
+
+    private function testkunde(string $orgId, string $email, string $vorname, string $nachname, bool $bestaetigt, string $passwort): ?string
     {
         if ($passwort === '') {
-            return;
+            return null;
         }
         $treffer = $this->api('POST', '/v2/users', ['queries' => [['emailQuery' => ['emailAddress' => $email, 'method' => 'TEXT_QUERY_METHOD_EQUALS']]]]);
         $id = $treffer['result'][0]['userId'] ?? null;
         if (\is_string($id)) {
             $this->api('POST', '/v2/users/' . $id . '/password', ['newPassword' => ['password' => $passwort, 'changeRequired' => false]]);
 
-            return;
+            return $id;
         }
-        $this->api('POST', '/v2/users/human', [
+        $neu = $this->api('POST', '/v2/users/human', [
             'organization' => ['orgId' => $orgId],
             'username' => $email,
             'profile' => ['givenName' => $vorname, 'familyName' => $nachname, 'preferredLanguage' => 'de'],
@@ -215,6 +306,56 @@ class ZitadelEinrichtenCommand extends Command
             'password' => ['password' => $passwort, 'changeRequired' => false],
         ]);
         $this->io->writeln('Testkunde ' . $email . ' angelegt' . ($bestaetigt ? '.' : ' (E-Mail unbestätigt).'));
+
+        return \is_string($neu['userId'] ?? null) ? $neu['userId'] : null;
+    }
+
+    /**
+     * Kundenkonto im Shop zum ZITADEL-Konto: anlegen, wenn es die E-Mail noch nicht gibt, sonst Anschrift und USt-IdNr.
+     * auf den Stand der Liste bringen; danach mit dem ZITADEL-Konto verknüpfen (wie bei der ersten Anmeldung).
+     *
+     * @param array{0: string, 1: string, 2: ?string, 3: ?string, 4: string, 5: string, 6: string, 7: string} $konto
+     */
+    private function shopkonto(string $email, string $sub, array $konto): void
+    {
+        if ($this->registry === null || $this->kundenSpeicher === null) {
+            return;
+        }
+        $context = Context::createCLIContext();
+        [$vorname, $nachname, $firma, $ustid, $strasse, $plz, $ort, $iso] = $konto;
+        // Österreichische Test-UID aus der .env (Notiz zur Quelle dort), sonst die öffentliche aus der Liste
+        if ($iso === 'AT' && $ustid !== null && Konfiguration::env('KETTELER_TEST_USTID_AT') !== '') {
+            $ustid = Konfiguration::env('KETTELER_TEST_USTID_AT');
+        }
+        $kanal = $this->registry->getRepository('sales_channel')->search(
+            (new Criteria())->addFilter(new EqualsFilter('typeId', Defaults::SALES_CHANNEL_TYPE_STOREFRONT))->setLimit(1),
+            $context,
+        )->first();
+        $erste = fn (string $entity, string $feld, string $wert): ?string => $this->registry->getRepository($entity)
+            ->searchIds((new Criteria())->addFilter(new EqualsFilter($feld, $wert))->setLimit(1), $context)->firstId();
+        $id = Uuid::fromStringToHex('ketteler.testkonto.' . $email);
+        $adresse = Uuid::fromStringToHex('ketteler.testkonto.' . $email . '.adresse');
+        $vorhanden = $erste('customer', 'email', $email);
+        if ($vorhanden !== null && $vorhanden !== $id) {
+            $id = $vorhanden;
+            $adresse = $this->registry->getRepository('customer')->search(new Criteria([$id]), $context)->first()?->getDefaultBillingAddressId() ?? $adresse;
+        }
+        $anschrift = ['id' => $adresse, 'customerId' => $id, 'firstName' => $vorname, 'lastName' => $nachname, 'salutationId' => $erste('salutation', 'salutationKey', 'not_specified'),
+            'street' => $strasse, 'zipcode' => $plz, 'city' => $ort, 'countryId' => $erste('country', 'iso', $iso), 'company' => $firma];
+        $daten = [
+            'id' => $id, 'email' => $email, 'firstName' => $vorname, 'lastName' => $nachname, 'salutationId' => $anschrift['salutationId'],
+            'accountType' => $firma !== null ? 'business' : 'private', 'company' => $firma, 'vatIds' => $ustid !== null ? [$ustid] : null,
+            'defaultBillingAddressId' => $adresse, 'defaultShippingAddressId' => $adresse, 'addresses' => [$anschrift],
+        ];
+        if ($vorhanden === null) {
+            $daten += [
+                'customerNumber' => 'TK-' . strtoupper(substr($id, 0, 6)), 'salesChannelId' => $kanal?->getId(), 'groupId' => $kanal?->getCustomerGroupId(),
+                'defaultPaymentMethodId' => $kanal?->getPaymentMethodId(), 'password' => bin2hex(random_bytes(24)), 'active' => true,
+            ];
+        }
+        $this->registry->getRepository('customer')->upsert([$daten], $context);
+        $this->kundenSpeicher->subSetzen($id, $sub, $context);
+        $this->io->writeln('Testkonto ' . $email . ($vorhanden === null ? ' im Shop angelegt.' : ' im Shop aktualisiert.'));
     }
 
     /**

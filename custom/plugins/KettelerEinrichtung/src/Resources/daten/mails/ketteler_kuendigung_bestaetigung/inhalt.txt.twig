@@ -1,0 +1,15 @@
+{% set d = daten %}Guten Tag {{ d.vorname }} {{ d.nachname }},
+
+Ihre Kündigung ist am {{ d.eingang }} bei uns eingegangen. Mit dieser E-Mail bestätigen wir Ihnen den Eingang.
+
+Abo-Nummer oder letzte Rechnungsnummer: {{ d.vertrag }}
+Name: {{ d.vorname }} {{ d.nachname }}{% if d.firma %}, {{ d.firma }}{% endif %}
+
+Kündigungsart: {{ d.art == 'ausserordentlich' ? 'Außerordentliche Kündigung' : 'Ordentliche Kündigung' }}
+Termin: {{ d.termin == 'wunschtermin' ? 'zum Wunschtermin ' ~ (d.datum|format_date('long', locale='de-DE')) : 'zum nächstmöglichen Zeitpunkt' }}
+{% if d.grund %}Kündigungsgrund: {{ d.grund }}
+{% endif %}
+Wir bearbeiten Ihre Kündigung und bestätigen Ihnen das Datum, an dem der Vertrag endet.
+
+Freundliche Grüße
+Ihr KETTELER-Verlag

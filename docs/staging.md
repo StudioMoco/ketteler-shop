@@ -336,3 +336,11 @@ vollständige Liste der 451 Artikel. Von den genannten Nummern verstößt **„Z
    nicht an, damit keine echten Personendaten auf Staging landen.
 8. Synchronisierungsrichtung in weclapp: bitte beim Einrichten „weclapp führend“ wählen und „Kunden beim Auftragsimport
    updaten“ aus lassen; automatische Funktionen zuerst aus.
+
+
+## Testzugänge für die Abnahme (13.10.2026)
+
+`bash /opt/ketteler-shop/repo/ops/staging/testzugaenge.sh` legt die Testkonten Privat DE, Privat AT, Firma DE und
+Einrichtung AT in ZITADEL und im Shop an und schreibt alle Zugänge (Passwortschutz, Verwaltung, ZITADEL, Testkonten) in
+`/opt/ketteler-shop/testzugaenge.md` (600, nur für `deploy`). Anzeigen: `ssh ketteler 'cat /opt/ketteler-shop/testzugaenge.md'`.
+Die Werte stehen nur in der `.env` und in dieser Datei, nie im Repository oder in Ausgaben.

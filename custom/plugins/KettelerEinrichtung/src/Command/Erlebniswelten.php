@@ -211,6 +211,34 @@ class Erlebniswelten
                 ];
                 continue;
             }
+            if ($block['typ'] === 'kontaktformular') {
+                // Kontaktformular von Shopware; Empfänger aus KETTELER_KONTAKT_EMAIL (auf Staging: Mailpit)
+                $an = trim((string) ($_SERVER['KETTELER_KONTAKT_EMAIL'] ?? getenv('KETTELER_KONTAKT_EMAIL') ?: 'kontakt@ketteler-verlag.de'));
+                $bloecke[] = [
+                    'id' => self::id('cms.' . $seite['schluessel'] . '.block.' . $i),
+                    'type' => 'form',
+                    'position' => $position++,
+                    'sectionPosition' => 'main',
+                    'cssClass' => 'kt-kontaktformular',
+                    'marginTop' => '0',
+                    'marginBottom' => '96px',
+                    'marginLeft' => '0',
+                    'marginRight' => '0',
+                    'slots' => [[
+                        'id' => self::id('cms.' . $seite['schluessel'] . '.block.' . $i . '.formular'),
+                        'type' => 'form',
+                        'slot' => 'content',
+                        'config' => [
+                            'type' => ['source' => 'static', 'value' => 'contact'],
+                            'title' => ['source' => 'static', 'value' => $block['titel'] ?? ''],
+                            'mailReceiver' => ['source' => 'static', 'value' => [$an]],
+                            'defaultMailReceiver' => ['source' => 'static', 'value' => false],
+                            'confirmationText' => ['source' => 'static', 'value' => $block['bestaetigung'] ?? ''],
+                        ],
+                    ]],
+                ];
+                continue;
+            }
             $typ = 'ketteler-' . $block['typ'];
             $konfig = [];
             foreach ($block['config'] as $feld => $wert) {

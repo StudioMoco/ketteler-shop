@@ -90,6 +90,8 @@
         <service id="Ketteler\Anmeldung\Command\ZitadelEinrichtenCommand">
             <argument type="service" id="http_client"/>
             <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+            <argument type="service" id="Shopware\Core\Framework\DataAbstractionLayer\DefinitionInstanceRegistry"/>
+            <argument type="service" id="Ketteler\Anmeldung\Konto\DalKundenSpeicher"/>
             <tag name="console.command"/>
         </service>
     </services>

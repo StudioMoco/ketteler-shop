@@ -144,7 +144,7 @@ class ServiceDaten extends AbstractExtension
         $werte['logoBreite'] = $neu ? '240' : '218';
         $werte['logoHoehe'] = $neu ? '47' : '57';
         $werte['kontaktUrl'] = $werte['kontaktKategorie'] !== ''
-            ? $this->router->generate('frontend.navigation.page', ['navigationId' => $werte['kontaktKategorie']])
+            ? $this->seoUrls->generate('frontend.navigation.page', ['navigationId' => $werte['kontaktKategorie']])
             : 'mailto:' . $werte['email'];
 
         return $werte;

@@ -1,0 +1,82 @@
+{% sw_extends '@Storefront/storefront/base.html.twig' %}
+
+{# „Verträge hier kündigen“ (§ 312k BGB): Formular und Bestätigungsseite zum Speichern oder Drucken #}
+{% block base_content %}
+    {% set f = fehler|default({}) %}
+    <div class="kt-rahmen kt-formularseite" data-kt="kuendigung">
+        {% sw_include '@KettelerTheme/storefront/component/ketteler/brotkrumen.html.twig' ignore missing %}
+        {% if eingang %}
+            <h1>{{ 'ketteler.kuendigung.bestaetigungTitel'|trans|sw_sanitize }}</h1>
+            <div class="kt-formular-bestaetigung" role="status" data-kt="kuendigung-gesendet">
+                <p>{{ 'ketteler.kuendigung.bestaetigungText'|trans({ '%eingang%': eingang })|sw_sanitize }}</p>
+                <dl class="kt-formular-zusammenfassung">
+                    <div><dt>{{ 'ketteler.kuendigung.feld.vertrag'|trans|sw_sanitize }}</dt><dd>{{ daten.vertrag }}</dd></div>
+                    <div><dt>Name</dt><dd>{{ daten.vorname }} {{ daten.nachname }}{% if daten.firma %}, {{ daten.firma }}{% endif %}</dd></div>
+                    <div><dt>{{ 'ketteler.kuendigung.feld.email'|trans|sw_sanitize }}</dt><dd>{{ daten.email }}</dd></div>
+                    <div><dt>{{ 'ketteler.kuendigung.feld.art'|trans|sw_sanitize }}</dt><dd>{{ ('ketteler.kuendigung.art.' ~ daten.art)|trans|sw_sanitize }}</dd></div>
+                    <div><dt>{{ 'ketteler.kuendigung.feld.termin'|trans|sw_sanitize }}</dt><dd>{% if daten.termin == 'wunschtermin' %}{{ 'ketteler.kuendigung.termin.wunschtermin'|trans|sw_sanitize }}: {{ daten.datum|format_date('long', locale='de-DE') }}{% else %}{{ 'ketteler.kuendigung.termin.naechstmoeglich'|trans|sw_sanitize }}{% endif %}</dd></div>
+                    {% if daten.grund %}<div><dt>{{ 'ketteler.kuendigung.feld.grund'|trans|sw_sanitize }}</dt><dd>{{ daten.grund }}</dd></div>{% endif %}
+                    <div><dt>{{ 'ketteler.kuendigung.eingang'|trans|sw_sanitize }}</dt><dd>{{ eingang }}</dd></div>
+                </dl>
+                <p class="kt-formular-hinweis">{{ 'ketteler.kuendigung.speichern'|trans|sw_sanitize }}</p>
+                <button type="button" class="kt-knopf kt-knopf--rand" onclick="window.print()">{{ 'ketteler.kuendigung.drucken'|trans|sw_sanitize }}</button>
+            </div>
+        {% else %}
+            <h1>{{ 'ketteler.kuendigung.titel'|trans|sw_sanitize }}</h1>
+            <p class="kt-formular-einleitung">{{ 'ketteler.kuendigung.einleitung'|trans|sw_sanitize }}</p>
+            {% if f is not empty %}<div class="alert alert-danger" role="alert" data-kt="kuendigung-fehler">{{ 'ketteler.kuendigung.fehler.allgemein'|trans|sw_sanitize }}</div>{% endif %}
+            <form method="post" action="{{ path('frontend.ketteler.kuendigen.senden') }}" class="kt-formular" novalidate>
+                {% sw_include '@Storefront/storefront/component/captcha/base.html.twig' with { additionalClass: 'col-md-12', formId: 'ketteler-kuendigung' } %}
+                <fieldset>
+                    <legend>{{ 'ketteler.kuendigung.vertrag'|trans|sw_sanitize }}</legend>
+                    {% for feld in [
+                        { name: 'vertrag', typ: 'text', auto: 'off', pflicht: true, breit: true },
+                        { name: 'vorname', typ: 'text', auto: 'given-name', pflicht: true },
+                        { name: 'nachname', typ: 'text', auto: 'family-name', pflicht: true },
+                        { name: 'firma', typ: 'text', auto: 'organization', pflicht: false, breit: true },
+                        { name: 'strasse', typ: 'text', auto: 'street-address', pflicht: false, breit: true },
+                        { name: 'plz', typ: 'text', auto: 'postal-code', pflicht: false },
+                        { name: 'ort', typ: 'text', auto: 'address-level2', pflicht: false },
+                        { name: 'email', typ: 'email', auto: 'email', pflicht: true },
+                        { name: 'email2', typ: 'email', auto: 'email', pflicht: true }
+                    ] %}
+                        <div class="kt-formular-feld{% if feld.breit|default(false) %} kt-formular-feld--breit{% endif %}">
+                            <label class="form-label" for="kt-kd-{{ feld.name }}">{{ ('ketteler.kuendigung.feld.' ~ feld.name)|trans|sw_sanitize }}{% if feld.pflicht %}*{% endif %}</label>
+                            <input class="form-control{% if f[feld.name] is defined %} is-invalid{% endif %}" id="kt-kd-{{ feld.name }}" type="{{ feld.typ }}" name="{{ feld.name }}"
+                                   value="{{ daten[feld.name]|default('') }}" autocomplete="{{ feld.auto }}"{% if feld.pflicht %} required aria-required="true"{% endif %}{% if f[feld.name] is defined %} aria-describedby="kt-kd-{{ feld.name }}-fehler"{% endif %}>
+                            {% if f[feld.name] is defined %}<div class="invalid-feedback" id="kt-kd-{{ feld.name }}-fehler">{{ f[feld.name]|trans|sw_sanitize }}</div>{% endif %}
+                        </div>
+                    {% endfor %}
+                </fieldset>
+                <fieldset>
+                    <legend>{{ 'ketteler.kuendigung.kuendigung'|trans|sw_sanitize }}</legend>
+                    <div class="kt-formular-feld kt-formular-feld--breit">
+                        <span class="form-label">{{ 'ketteler.kuendigung.feld.art'|trans|sw_sanitize }}*</span>
+                        {% for art in ['ordentlich', 'ausserordentlich'] %}
+                            <div class="form-check"><input class="form-check-input" type="radio" name="art" id="kt-kd-art-{{ art }}" value="{{ art }}"{% if daten.art|default('ordentlich') == art %} checked{% endif %}>
+                                <label class="form-check-label" for="kt-kd-art-{{ art }}">{{ ('ketteler.kuendigung.art.' ~ art)|trans|sw_sanitize }}</label></div>
+                        {% endfor %}
+                    </div>
+                    <div class="kt-formular-feld kt-formular-feld--breit">
+                        <label class="form-label" for="kt-kd-grund">{{ 'ketteler.kuendigung.feld.grund'|trans|sw_sanitize }}</label>
+                        <textarea class="form-control" id="kt-kd-grund" name="grund" rows="3">{{ daten.grund|default('') }}</textarea>
+                    </div>
+                    <div class="kt-formular-feld kt-formular-feld--breit">
+                        <span class="form-label">{{ 'ketteler.kuendigung.feld.termin'|trans|sw_sanitize }}*</span>
+                        {% for termin in ['naechstmoeglich', 'wunschtermin'] %}
+                            <div class="form-check"><input class="form-check-input" type="radio" name="termin" id="kt-kd-termin-{{ termin }}" value="{{ termin }}"{% if daten.termin|default('naechstmoeglich') == termin %} checked{% endif %}>
+                                <label class="form-check-label" for="kt-kd-termin-{{ termin }}">{{ ('ketteler.kuendigung.termin.' ~ termin)|trans|sw_sanitize }}</label></div>
+                        {% endfor %}
+                    </div>
+                    <div class="kt-formular-feld">
+                        <label class="form-label" for="kt-kd-datum">{{ 'ketteler.kuendigung.feld.datum'|trans|sw_sanitize }}</label>
+                        <input class="form-control{% if f.datum is defined %} is-invalid{% endif %}" id="kt-kd-datum" type="date" name="datum" value="{{ daten.datum|default('') }}">
+                        {% if f.datum is defined %}<div class="invalid-feedback">{{ f.datum|trans|sw_sanitize }}</div>{% endif %}
+                    </div>
+                </fieldset>
+                <p class="kt-formular-hinweis">{{ 'ketteler.kuendigung.hinweis'|trans|sw_sanitize }}</p>
+                <button class="kt-knopf kt-knopf--magenta" type="submit" data-kt="jetzt-kuendigen">{{ 'ketteler.kuendigung.senden'|trans|sw_sanitize }}</button>
+            </form>
+        {% endif %}
+    </div>
+{% endblock %}

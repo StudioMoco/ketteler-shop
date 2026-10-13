@@ -52,7 +52,7 @@ class AlteAdressen implements EventSubscriberInterface
             return;
         }
         [$schluessel, $marke] = array_pad(explode('#', $treffer, 2), 2, null);
-        $pfad = $this->seoPfad(Uuid::fromStringToHex('ketteler.kategorie.' . $schluessel), $request);
+        $pfad = str_starts_with($schluessel, '/') ? $schluessel : $this->seoPfad(Uuid::fromStringToHex('ketteler.kategorie.' . $schluessel), $request);
         if ($pfad === null) {
             return;
         }

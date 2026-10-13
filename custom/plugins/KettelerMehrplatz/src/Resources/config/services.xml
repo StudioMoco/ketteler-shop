@@ -7,8 +7,28 @@
             <tag name="shopware.entity.definition" entity="ketteler_mehrplatz_anfrage"/>
         </service>
 
+        <service id="Ketteler\Mehrplatz\Mail\VorlagenMail">
+            <argument type="service" id="Shopware\Core\Content\Mail\Service\MailService"/>
+            <argument type="service" id="mail_template.repository"/>
+            <argument type="service" id="logger"/>
+        </service>
+
+        <service id="Ketteler\Mehrplatz\Kuendigung\KuendigungController" public="true">
+            <argument type="service" id="Ketteler\Mehrplatz\Mail\VorlagenMail"/>
+            <argument type="service" id="mailer"/>
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+            <argument type="service" id="logger"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+            <call method="setTwig">
+                <argument type="service" id="twig"/>
+            </call>
+        </service>
+
         <service id="Ketteler\Mehrplatz\Storefront\AnfrageController" public="true">
             <argument type="service" id="ketteler_mehrplatz_anfrage.repository"/>
+            <argument type="service" id="Ketteler\Mehrplatz\Mail\VorlagenMail"/>
             <argument type="service" id="mailer"/>
             <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
             <argument type="service" id="logger"/>

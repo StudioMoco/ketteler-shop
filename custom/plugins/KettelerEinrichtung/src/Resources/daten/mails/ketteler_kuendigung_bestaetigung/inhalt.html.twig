@@ -1,0 +1,12 @@
+{% set d = daten %}
+<p>Guten Tag {{ d.vorname }} {{ d.nachname }},</p>
+<p>Ihre Kündigung ist am {{ d.eingang }} bei uns eingegangen. Mit dieser E-Mail bestätigen wir Ihnen den Eingang.</p>
+<table style="font-size: 14px; border-collapse: collapse;">
+    <tr><td style="padding: 4px 16px 4px 0; color: #6b5f63;">Abo-Nummer oder letzte Rechnungsnummer</td><td>{{ d.vertrag }}</td></tr>
+    <tr><td style="padding: 4px 16px 4px 0; color: #6b5f63;">Name</td><td>{{ d.vorname }} {{ d.nachname }}{% if d.firma %}, {{ d.firma }}{% endif %}</td></tr>
+    <tr><td style="padding: 4px 16px 4px 0; color: #6b5f63;">Kündigungsart</td><td>{{ d.art == 'ausserordentlich' ? 'Außerordentliche Kündigung' : 'Ordentliche Kündigung' }}</td></tr>
+    <tr><td style="padding: 4px 16px 4px 0; color: #6b5f63;">Termin</td><td>{{ d.termin == 'wunschtermin' ? 'zum Wunschtermin ' ~ (d.datum|format_date('long', locale='de-DE')) : 'zum nächstmöglichen Zeitpunkt' }}</td></tr>
+    {% if d.grund %}<tr><td style="padding: 4px 16px 4px 0; color: #6b5f63; vertical-align: top;">Kündigungsgrund</td><td>{{ d.grund|nl2br }}</td></tr>{% endif %}
+</table>
+<p>Wir bearbeiten Ihre Kündigung und bestätigen Ihnen das Datum, an dem der Vertrag endet.</p>
+<p>Freundliche Grüße<br>Ihr KETTELER-Verlag</p>

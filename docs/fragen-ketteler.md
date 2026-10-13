@@ -104,3 +104,11 @@ Erklärung geht per E-Mail an Sie und steht an der Bestellung. Dazu brauchen wir
     wörtlich stehen; neue Texte des Shops schreiben wir ohne. Einverstanden?
 31. **„Weitere Links zu ZMV Artikeln für den MAV-Einstieg“:** Die Artikel liegen heute in der Digibib. Bis zur Antwort auf
     Frage 14 führt der Link in die KETTELER-Bibliothek.
+
+## Zum Testbetrieb
+
+32. **Bankverbindung und Steuernummer** für die Belege des Shops (Rechnung, Lieferschein): Bitte nennen, falls der Shop
+    selbst Belege erzeugen soll. Heute schreibt weclapp die Rechnungen.
+33. **„Verträge hier kündigen“:** Das neue Formular fragt Abo- oder Rechnungsnummer, Name, E-Mail und optional Firma und
+    Anschrift ab; Anrede, Titel und Land wie im alten Formular haben wir weggelassen. Bitte bestätigen, an wen die
+    Kündigungen gehen sollen (heute dieselbe Adresse wie die Mehrplatz-Anfragen).

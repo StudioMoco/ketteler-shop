@@ -1,5 +1,5 @@
 {
-  "_hinweis": "Testartikel mit Platzhaltertexten. Keine echten Daten. Artikelnummern beginnen mit TEST, damit sie nie mit weclapp kollidieren. Preise sind Bruttopreise in Euro. Später kommen Artikel, Preise und Bestände aus weclapp. steuer: print7, print19 oder online (siehe steuern.json). abo: null oder Hinweistext für die Abo-Kennzeichnung. bestand: optional (Vorgabe 1000). abverkauf: true = nur solange Bestand (bei 0 nicht bestellbar). autor: Zeile über dem Titel auf der Produktkarte.",
+  "_hinweis": "Testartikel mit Platzhaltertexten. Keine echten Daten. Artikelnummern beginnen mit TEST, damit sie nie mit weclapp kollidieren. Preise sind Bruttopreise in Euro. Später kommen Artikel, Preise und Bestände aus weclapp. steuer: print7, print19 oder online (siehe steuern.json). abo: null oder Hinweistext für die Abo-Kennzeichnung. bestand: optional (Vorgabe 1000). abverkauf: true = nur solange Bestand (bei 0 nicht bestellbar). autor: Zeile über dem Titel auf der Produktkarte. verlagsnummer: Bestell-Nr. des alten Shops (Herstellernummer, für die Suche), solange die Testartikel TEST-Nummern tragen.",
   "artikel": [
     {
       "nummer": "TEST-P-001",
@@ -43,7 +43,8 @@
       ],
       "beschreibung": "Platzhaltertext für „Die AVR von A bis Z - Digital“ (05029-D) als Abonnement. Der Zugang zur Bibliothek wird sofort freigeschaltet. Mehrere Lizenzen nur über die Mehrplatz-Anfrage.",
       "abo": "Jahresabonnement mit sofortigem Online-Zugang, verlängert sich jeweils um ein Jahr. Platzhalter: Laufzeit und Kündigungsfrist nach den AGB.",
-      "autor": "Marvin Milleschewski (Schriftleiter)"
+      "autor": "Marvin Milleschewski (Schriftleiter)",
+      "verlagsnummer": "05029-D"
     },
     {
       "nummer": "TEST-O-EK",
@@ -59,7 +60,8 @@
       "beschreibung": "Platzhaltertext für den Online-Zugang zum Eichstätter Kommentar. Kein Versand. Wird ohne Bestandsprüfung verkauft (wie 608082 in weclapp, dort als Lagerartikel geführt).",
       "abo": null,
       "bestand": 0,
-      "autor": "Oxenknecht-Witzsch/Eder/Stöcke-Muhlack/Schmitz/Richartz (Hg)"
+      "autor": "Oxenknecht-Witzsch/Eder/Stöcke-Muhlack/Schmitz/Richartz (Hg)",
+      "verlagsnummer": "608082"
     },
     {
       "nummer": "TEST-B-EK",
@@ -86,7 +88,8 @@
       ],
       "abo": "Jahresabonnement, verlängert sich jeweils um ein Jahr. Platzhalter: Laufzeit und Kündigungsfrist nach den AGB.",
       "beschreibung": "Platzhaltertext für das gedruckte ZMV-Abonnement. Die Bestellung geht nach weclapp, den Vertrag legt die Verwaltung dort an.",
-      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)"
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "verlagsnummer": "030-P"
     },
     {
       "nummer": "TEST-ABO-ZMV-D",
@@ -116,7 +119,8 @@
       ],
       "beschreibung": "Testartikel für die Startseite. Echte Daten kommen aus weclapp.",
       "abo": null,
-      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)"
+      "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
+      "verlagsnummer": "Z5-2026"
     },
     {
       "nummer": "TEST-PH-CHECKLISTEN",
@@ -131,7 +135,8 @@
       ],
       "autor": "Oxenknecht-Witzsch (Hg)",
       "beschreibung": "Testartikel für die Startseite (Titel aus der Gestaltungsvorlage). Echte Daten kommen aus weclapp.",
-      "abo": null
+      "abo": null,
+      "verlagsnummer": "C2022"
     },
     {
       "nummer": "TEST-PH-EINGRUPPIERUNG",
@@ -146,7 +151,8 @@
       ],
       "autor": "Simone Küster (Autorin)",
       "beschreibung": "Testartikel für die Startseite (Titel aus der Gestaltungsvorlage). Echte Daten kommen aus weclapp.",
-      "abo": null
+      "abo": null,
+      "verlagsnummer": "608080"
     },
     {
       "nummer": "TEST-PH-ARBEITSZEIT",
@@ -161,7 +167,8 @@
       ],
       "autor": "Dr. Sebastian Weber (Autor)",
       "beschreibung": "Testartikel für die Startseite (Titel aus der Gestaltungsvorlage). Echte Daten kommen aus weclapp.",
-      "abo": null
+      "abo": null,
+      "verlagsnummer": "608060"
     },
     {
       "nummer": "TEST-PH-ZEUGNISSE",
@@ -176,7 +183,8 @@
       ],
       "autor": "Ulrich Richartz (Autor)",
       "beschreibung": "Testartikel für die Startseite (Titel aus der Gestaltungsvorlage). Echte Daten kommen aus weclapp.",
-      "abo": null
+      "abo": null,
+      "verlagsnummer": "608065"
     },
     {
       "nummer": "TEST-PH-DATENSCHUTZ",
@@ -191,7 +199,8 @@
       ],
       "autor": "Matthias Ullrich (Autor)",
       "beschreibung": "Testartikel für die Startseite (Titel aus der Gestaltungsvorlage). Echte Daten kommen aus weclapp.",
-      "abo": null
+      "abo": null,
+      "verlagsnummer": "608070"
     },
     {
       "nummer": "TEST-P-AVR",
@@ -208,7 +217,8 @@
       "beschreibung": "Platzhaltertext für die Printausgabe (05029). Nur solange der Vorrat reicht: Abverkauf, bei Bestand 0 nicht bestellbar.",
       "abo": null,
       "bestand": 3,
-      "abverkauf": true
+      "abverkauf": true,
+      "verlagsnummer": "05029"
     },
     {
       "nummer": "TEST-P-AVR-0",
@@ -271,7 +281,8 @@
       ],
       "autor": "Prof. Dr. Jacob Joussen / Detlev Fey (Hrsg.)",
       "beschreibung": "Platzhaltertext für das kostenlose Probeheft (Print, ohne Abonnement).",
-      "abo": null
+      "abo": null,
+      "verlagsnummer": "031"
     },
     {
       "nummer": "TEST-P-ZMV-2026-4",
@@ -838,7 +849,8 @@
         "praxishandbuecher"
       ],
       "beschreibung": "Testartikel (PW25-K). Preis und Daten kommen aus weclapp.",
-      "abo": null
+      "abo": null,
+      "verlagsnummer": "PW25-K"
     },
     {
       "nummer": "TEST-PH-PW-E",
@@ -852,7 +864,8 @@
         "praxishandbuecher"
       ],
       "beschreibung": "Testartikel (PW25-E). Preis und Daten kommen aus weclapp.",
-      "abo": null
+      "abo": null,
+      "verlagsnummer": "PW25-E"
     },
     {
       "nummer": "TEST-PH-KAVO",

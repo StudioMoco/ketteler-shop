@@ -37,6 +37,7 @@ test-e2e: ## Ende-zu-Ende-Tests gegen die laufende Umgebung (Anmeldung, Lizenzen
 	@python3 tests/e2e/steuern_test.py
 	@python3 tests/e2e/paypal_test.py
 	@python3 tests/e2e/werkseiten_test.py
+	@python3 tests/e2e/testbereit_test.py
 
 test-browser: ## Startseite, Werkseiten, Storytelling, Unterstreichen und Verwaltung im echten Browser (eigenes Headless-Chrome; BILDER=<ordner> für Bildschirmfotos)
 	@node tests/browser/startseite.mjs $(if $(BILDER),--bilder $(BILDER),)
@@ -46,7 +47,7 @@ test-browser: ## Startseite, Werkseiten, Storytelling, Unterstreichen und Verwal
 	@node tests/browser/verwaltung.mjs
 
 test-staging: ## Dieselben Ende-zu-Ende-Tests gegen Staging (SSH-Zugang ketteler nötig; Zugangsdaten nur zur Laufzeit)
-	@rc=0; for t in anmeldung lizenz shop widerruf steuern paypal werkseiten; do echo "== $$t"; KETTELER_ZIEL=staging python3 tests/e2e/$${t}_test.py || rc=1; done; \
+	@rc=0; for t in anmeldung lizenz shop widerruf steuern paypal werkseiten testbereit; do echo "== $$t"; KETTELER_ZIEL=staging python3 tests/e2e/$${t}_test.py || rc=1; done; \
 	 echo "== startseite (Browser)"; node tests/browser/startseite.mjs --staging $(if $(BILDER),--bilder $(BILDER),) || rc=1; \
 	 echo "== werkseiten (Browser)"; node tests/browser/werkseiten.mjs --staging $(if $(BILDER),--bilder $(BILDER),) || rc=1; \
 	 echo "== storytelling (Browser)"; node tests/browser/storytelling.mjs --staging $(if $(BILDER),--bilder $(BILDER),) || rc=1; \
