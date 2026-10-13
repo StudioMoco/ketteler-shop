@@ -4,15 +4,24 @@ Aufruf: make test-e2e (läuft gegen die lokale Umgebung).
 """
 
 import json
+import os
 import re
 import sys
 import time
 import urllib.parse
 
-from hilfen import ENV, SHOP, AdminApi, Browser, Ergebnis, interne_vermerke, json_anfrage, sql
+from hilfen import ENV, SHOP, WURZEL, AdminApi, Browser, Ergebnis, interne_vermerke, json_anfrage, sql
 from lizenz_test import MAILPIT, angemeldeter_kunde, artikel_id, attrappe, bestellen, lizenz_zu, stand, warte
 
 GEDANKENSTRICH = re.compile("[–—]| - ")
+# Artikelnamen sind Katalogdaten (später aus weclapp) und dürfen „ - “ enthalten; geprüft werden nur unsere Texte
+ARTIKELNAMEN = sorted((a["name"] for a in json.load(open(os.path.join(WURZEL, "custom/plugins/KettelerEinrichtung/src/Resources/daten/artikel.json")))["artikel"]), key=len, reverse=True)
+
+
+def ohne_artikelnamen(text):
+    for n in ARTIKELNAMEN:
+        text = text.replace(n, "")
+    return text
 
 
 def store_api(token, pfad, daten=None, methode="POST"):
@@ -52,7 +61,7 @@ def pruefe_mail(e, name, suche):
     text, html = mail_text(gefunden[0])
     e.pruefe("Guten Tag" in text and "Sie " in text and " du " not in text.lower(), name + ": Sie-Form")
     e.pruefe("09972 94 14-51" in text and "kontakt@ketteler-verlag.de" in text, name + ": Kundenservice im Fuß")
-    e.pruefe(not GEDANKENSTRICH.search(text + " " + gefunden[0].get("Subject", "")), name + ": ohne Gedankenstrich")
+    e.pruefe(not GEDANKENSTRICH.search(ohne_artikelnamen(text + " " + gefunden[0].get("Subject", ""))), name + ": ohne Gedankenstrich")
     e.pruefe(not interne_vermerke(text + html + gefunden[0].get("Subject", "")), name + ": keine internen Vermerke", str(interne_vermerke(text + html)))
     return text, html
 
@@ -82,7 +91,7 @@ def main():
     e.pruefe(laender == "29", "29 Lieferländer (EU, Schweiz, Großbritannien)", laender)
 
     print("Rechtstexte ohne interne Vermerke")
-    for pfad in ("/Rechtliches/Impressum/", "/Rechtliches/AGB/", "/Rechtliches/Widerrufsbelehrung/", "/Rechtliches/Datenschutz/", "/Bestellen/Versand-und-Lieferung/"):
+    for pfad in ("/Rechtliches-Informationen/Impressum/", "/Rechtliches-Informationen/AGB/", "/Rechtliches-Informationen/Widerrufsbelehrung/", "/Rechtliches-Informationen/Datenschutzerklaerung/", "/Rechtliches-Informationen/Versand-Lieferung/", "/Rechtliches-Informationen/Preise-ZMV/", "/Rechtliches-Informationen/AGB-fuer-Anzeigen-Beilagen/"):
         seite = Browser().get(SHOP + pfad)
         e.pruefe(seite.status == 200 and not interne_vermerke(seite.html), "Seite %s ohne „von Ketteler zu prüfen“" % pfad, str(interne_vermerke(seite.html)))
 
