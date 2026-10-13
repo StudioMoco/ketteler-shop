@@ -111,6 +111,24 @@ def ustid_stand(kid):
     return json.loads(zeile[0][0]) if zeile else None
 
 
+def vies_ueberlastet(stand):
+    """Offizielle VIES-Schnittstelle meldet eine vorübergehende Überlastung eines Mitgliedstaats (MS_MAX_CONCURRENT_REQ,
+    MS_UNAVAILABLE). Der Shop behandelt das richtig als „nicht prüfbar“; der Test versucht es dann später noch einmal."""
+    return STAGING and (stand or {}).get("status") == "nicht_pruefbar" and "MS_" in ((stand or {}).get("fehler") or "")
+
+
+def mit_wiederholung(schritt, kid, versuche=4, pause=15):
+    """schritt() ausführen; bei VIES-Überlastung (nur Staging) nach einer Pause wiederholen. Gibt den letzten Stand zurück."""
+    for versuch in range(versuche):
+        ergebnis = schritt()
+        stand = ustid_stand(kid)
+        if not vies_ueberlastet(stand):
+            return ergebnis, stand
+        print("  (VIES überlastet: %s, neuer Versuch in %d s)" % (stand.get("fehler"), pause), flush=True)
+        time.sleep(pause)
+    return ergebnis, stand
+
+
 def als_kunde(api, kid):
     """Storefront-Sitzung als dieser Kunde über die Funktion „Als Kunde anmelden“ der Verwaltung (kein Passwort)."""
     status, antwort = api("POST", "/_proxy/generate-imitate-customer-token", {"customerId": kid, "salesChannelId": KANAL})
@@ -137,6 +155,8 @@ def main():
     if gueltige_at:
         firma_at, token_at = kunde_anlegen(api, "steuer-at-firma@ketteler.test", "AT", gueltige_at)
         stand = warte(lambda: ustid_stand(firma_at), 10)
+        if vies_ueberlastet(stand):
+            _, stand = mit_wiederholung(lambda: api("PATCH", "/customer/" + firma_at, {"vatIds": [gueltige_at.replace(" ", "")]}), firma_at)
         e.pruefe(stand and stand["status"] == "gueltig" and stand["ustid"] == gueltige_at.replace(" ", "") and stand["land"] == "AT", "gültige Nummer aus AT: bestätigt", str(stand))
         e.pruefe(stand and stand.get("geprueft") and len(stand.get("verlauf", [])) == 1, "Nachweis: Prüfzeit und Verlauf am Kunden")
     else:
@@ -177,8 +197,8 @@ def main():
     if STAGING:
         # Offizielle VIES-Schnittstelle mit Kettelers USt-IdNr. als Anfragender (Vorgabe aus dem Impressum)
         if anfragende and gueltige_at:
-            api("PATCH", "/customer/" + firma_at, {"vatIds": [gueltige_at.replace(" ", "")]})
-            stand = ustid_stand(firma_at) or {}
+            _, stand = mit_wiederholung(lambda: api("PATCH", "/customer/" + firma_at, {"vatIds": [gueltige_at.replace(" ", "")]}), firma_at)
+            stand = stand or {}
             e.pruefe(stand.get("status") == "gueltig" and bool(stand.get("anfrageNummer")) and stand.get("anfragende") == anfragende.replace(" ", ""),
                      "VIES (offiziell) mit eigener USt-IdNr. als Anfragender: Abfragenummer gespeichert", str(stand.get("anfrageNummer")))
         else:
@@ -196,12 +216,17 @@ def main():
             alt = dict(ustid_stand(firma_at))
             alt["geprueft"] = "2024-01-15T10:00:00+00:00"
             api("PATCH", "/customer/" + firma_at, {"customFields": {"ketteler_ustid": alt}})
-        altern()
+        def erneut_beim_kauf():
+            altern()
+            store(token_at, "checkout/cart", methode="DELETE")
+            return korb_fuer(token_at, ["TEST-P-001"])
         anzahl = len(ustid_stand(firma_at).get("verlauf", []))
-        store(token_at, "checkout/cart", methode="DELETE")
-        korb = korb_fuer(token_at, ["TEST-P-001"])
-        stand = ustid_stand(firma_at) or {}
-        e.pruefe(korb["price"]["taxStatus"] == "tax-free" and stand.get("geprueft", "").startswith(time.strftime("%Y-")) and len(stand.get("verlauf", [])) == anzahl + 1,
+        korb, stand = mit_wiederholung(erneut_beim_kauf, firma_at)
+        stand = stand or {}
+        verlauf = stand.get("verlauf", [])
+        # Verlauf gewachsen (bei VIES-Überlastung auch um mehr als einen Eintrag), neuester Eintrag gültig
+        e.pruefe(korb["price"]["taxStatus"] == "tax-free" and stand.get("geprueft", "").startswith(time.strftime("%Y-"))
+                 and len(verlauf) > anzahl and verlauf[0].get("status") == "gueltig",
                  "Bestätigung älter als ein Jahr: beim Kauf neu geprüft, weiter steuerfrei", str(stand.get("geprueft")))
         if STAGING:
             e.ueberspringe("erneute Prüfung scheitert: keine Befreiung", "Ausfall der offiziellen Schnittstelle lässt sich nicht herbeiführen (lokal geprüft)")
