@@ -582,7 +582,7 @@ a.kt-leseprobe:hover { color: $kt-magenta; }
 .kt-hefte-kopf { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px 40px; margin-bottom: 28px; }
 .kt-hefte-kopf h2 { margin: 0 0 10px; }
 .kt-hefte-text { margin: 0; max-width: 620px; font-size: 18px; color: $kt-text-gedaempft; }
-.kt-hefte-reiter { display: flex; flex-wrap: wrap; gap: 6px 22px; font-size: 16px; }
+.kt-hefte-reiter, .kt-hefte-reiter-liste { display: flex; flex-wrap: wrap; gap: 6px 22px; font-size: 16px; }
 .kt-hefte-reiter button, .kt-hefte-archivlink { padding: 0 0 3px; border: 0; border-bottom: 2px solid transparent; background: none; font: inherit; color: $kt-text; cursor: pointer; }
 .kt-hefte-reiter button:hover, .kt-hefte-archivlink:hover { color: $kt-magenta; }
 .kt-hefte-reiter button[aria-selected='true'] { color: $kt-magenta; font-weight: 500; border-bottom-color: $kt-magenta; }
@@ -848,4 +848,11 @@ a.kt-artikel:hover .kt-artikel-titel { color: $kt-magenta; }
 @media (max-width: 767.98px) {
     .kt-formularseite h1 { font-size: 32px; }
     .kt-formular-zusammenfassung dt { flex-basis: 100%; }
+}
+
+// Warenkorb und Kasse: Überschrift der Zusammenfassung in Kastengröße; Kopf bei sehr schmalen Bildschirmen enger
+.checkout-aside-summary-header { font-size: 26px; line-height: 1.2; overflow-wrap: anywhere; }
+@media (max-width: 419.98px) {
+    .header-actions-col > .row { gap: 0 12px; }
+    .kt-kopf-link { font-size: 14px; gap: 6px; }
 }

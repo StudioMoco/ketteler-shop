@@ -20,6 +20,7 @@ const AUTH = STAGING ? { benutzer: ENV.STG_BASICAUTH_BENUTZER, passwort: ENV.STG
 const b = await starten(AUTH);
 let geprueft = 0;
 const fehler = [];
+const dropdowns = [];
 async function seite(name, url) {
     await b.laden(url);
     await b.cdp('Network.setCookie', { name: 'cookie-preference', value: '1', url: SHOP + '/' });
@@ -46,6 +47,28 @@ async function seite(name, url) {
         }
     }
     console.log(`  ${name}: ${anzahl} Links und Knöpfe überfahren, ${fehlerSeite} beim Überfahren unterstrichen`);
+    // Dropdown der Hauptnavigation auf jedem Seitentyp: Maus öffnet jedes Dropdown (aria-expanded), Escape schließt
+    await b.cdp('Input.dispatchMouseEvent', { type: 'mouseMoved', x: 1, y: 1 });
+    await b.werte('window.scrollTo(0, 0)');
+    const punkte = await b.werte(`document.querySelectorAll('.kt-hat-dropdown').length`);
+    let offen = 0;
+    for (let i = 0; i < punkte; i += 1) {
+        const r = await b.werte(`(() => { const q = document.querySelectorAll('.kt-hat-dropdown')[${i}].querySelector('.kt-hauptnav-link').getBoundingClientRect(); return { x: q.x + q.width / 2, y: q.y + q.height / 2 }; })()`);
+        await b.cdp('Input.dispatchMouseEvent', { type: 'mouseMoved', x: r.x, y: r.y - 4 });
+        await b.cdp('Input.dispatchMouseEvent', { type: 'mouseMoved', x: r.x, y: r.y });
+        let auf = false;
+        for (let t = 0; t < 10 && !auf; t += 1) {
+            await b.warte(100);
+            auf = await b.werte(`(() => { const p = document.querySelectorAll('.kt-hat-dropdown')[${i}]; return !p.querySelector('.kt-dropdown').hidden && p.querySelector('.kt-hauptnav-link').getAttribute('aria-expanded') === 'true'; })()`);
+        }
+        offen += auf ? 1 : 0;
+    }
+    await b.taste('Escape', 'Escape', 27);
+    await b.cdp('Input.dispatchMouseEvent', { type: 'mouseMoved', x: 1, y: 700 });
+    await b.warte(400);
+    const zu = await b.werte(`[...document.querySelectorAll('.kt-dropdown')].every((d) => d.hidden)`);
+    dropdowns.push({ name, punkte, offen, zu });
+    console.log(`    Dropdown: ${offen} von ${punkte} öffnen mit der Maus, danach ${zu ? 'alle geschlossen' : 'NICHT geschlossen'}`);
 }
 
 try {
@@ -68,4 +91,7 @@ try {
 }
 console.log(`\n${geprueft - fehler.length} von ${geprueft} Links und Knöpfen ohne Unterstrich beim Überfahren (dauerhafte Textlinks ausgenommen)`);
 fehler.slice(0, 30).forEach((f) => console.log('  - ' + f));
-process.exit(fehler.length ? 1 : 0);
+const dropdownFehler = dropdowns.filter((d) => d.punkte === 0 || d.offen !== d.punkte || !d.zu);
+console.log(`${dropdowns.length - dropdownFehler.length} von ${dropdowns.length} Seitentypen: Dropdowns öffnen mit der Maus und schließen wieder`);
+dropdownFehler.forEach((d) => console.log('  - ' + JSON.stringify(d)));
+process.exit(fehler.length || dropdownFehler.length ? 1 : 0);

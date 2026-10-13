@@ -37,6 +37,14 @@ const werkseite = await (await fetch(SHOP + '/api/search/cms-page', {
     body: JSON.stringify({ filter: [{ type: 'equals', field: 'name', value: 'Werkseite' }], limit: 1 }),
 })).json();
 const werkseitenId = werkseite.data?.[0]?.id;
+// Neueste Bestellung mit einem Online-Zugang (AVR Digital), für die Karte „Online-Zugänge (Lizenzen)“
+const { createHash } = await import('node:crypto');
+const bestellung = await (await fetch(SHOP + '/api/search/order', {
+    method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token.access_token },
+    body: JSON.stringify({ filter: [{ type: 'equals', field: 'lineItems.productId', value: createHash('md5').update('ketteler.artikel.TEST-O-AVR').digest('hex') }],
+        sort: [{ field: 'createdAt', order: 'DESC' }], limit: 1 }),
+})).json();
+const bestellungId = bestellung.data?.[0]?.id;
 
 const b = await starten(AUTH);
 const fehler = [];
@@ -92,6 +100,15 @@ try {
         plaetze = await b.werte(`document.querySelector('.sw-cms-detail') && document.body.innerText.includes('Werkseite') ? document.querySelectorAll('.ketteler-cms-el').length : 0`);
     }
     pruefe(plaetze === 10, 'Layout „Werkseite“ im Editor mit zehn Plätzen', String(plaetze));
+    if (bestellungId) {
+        await b.werte(`Shopware.Application.view.router.push({ name: 'sw.order.detail', params: { id: '${bestellungId}' } }).then(() => true)`);
+        let karte = '';
+        for (let i = 0; i < 40 && !karte; i += 1) {
+            await b.warte(1000);
+            karte = await b.werte(`(document.querySelector('[data-kt="lizenzen-bestellung"]') || {}).innerText || ''`);
+        }
+        pruefe(/TEST-O-AVR/.test(karte) && /Lizenz angelegt|wartet|Fehler|beendet/.test(karte), 'Bestellung: Karte „Online-Zugänge (Lizenzen)“ mit Stand je Position', karte.slice(0, 200));
+    }
     if (bildIndex > 0) {
         await b.ganzeSeite(resolve(process.argv[bildIndex + 1]));
     }

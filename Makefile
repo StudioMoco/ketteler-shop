@@ -4,7 +4,7 @@
 export PATH := $(PATH):/usr/local/bin:$(HOME)/.docker/bin:/Applications/Docker.app/Contents/Resources/bin
 # Docker Desktop legt "docker" je nach Einstellung an verschiedene Stellen
 DOCKER := $(firstword $(wildcard $(addsuffix /docker,$(subst :, ,$(PATH)))) docker)
-.PHONY: hilfe setup start stop status einrichten konsole logs neu test test-e2e test-browser test-staging
+.PHONY: hilfe setup start stop status einrichten konsole logs neu test test-e2e test-browser test-staging abnahme-staging
 
 hilfe: ## Diese Übersicht
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  make %-12s %s\n", $$1, $$2}'
@@ -38,6 +38,7 @@ test-e2e: ## Ende-zu-Ende-Tests gegen die laufende Umgebung (Anmeldung, Lizenzen
 	@python3 tests/e2e/paypal_test.py
 	@python3 tests/e2e/werkseiten_test.py
 	@python3 tests/e2e/testbereit_test.py
+	@python3 tests/e2e/linkpruefung_test.py
 
 test-browser: ## Startseite, Werkseiten, Storytelling, Unterstreichen und Verwaltung im echten Browser (eigenes Headless-Chrome; BILDER=<ordner> für Bildschirmfotos)
 	@node tests/browser/startseite.mjs $(if $(BILDER),--bilder $(BILDER),)
@@ -47,7 +48,7 @@ test-browser: ## Startseite, Werkseiten, Storytelling, Unterstreichen und Verwal
 	@node tests/browser/verwaltung.mjs
 
 test-staging: ## Dieselben Ende-zu-Ende-Tests gegen Staging (SSH-Zugang ketteler nötig; Zugangsdaten nur zur Laufzeit)
-	@rc=0; for t in anmeldung lizenz shop widerruf steuern paypal werkseiten testbereit; do echo "== $$t"; KETTELER_ZIEL=staging python3 tests/e2e/$${t}_test.py || rc=1; done; \
+	@rc=0; for t in anmeldung lizenz shop widerruf steuern paypal werkseiten testbereit linkpruefung; do echo "== $$t"; KETTELER_ZIEL=staging python3 tests/e2e/$${t}_test.py || rc=1; done; \
 	 echo "== startseite (Browser)"; node tests/browser/startseite.mjs --staging $(if $(BILDER),--bilder $(BILDER),) || rc=1; \
 	 echo "== werkseiten (Browser)"; node tests/browser/werkseiten.mjs --staging $(if $(BILDER),--bilder $(BILDER),) || rc=1; \
 	 echo "== storytelling (Browser)"; node tests/browser/storytelling.mjs --staging $(if $(BILDER),--bilder $(BILDER),) || rc=1; \
@@ -65,3 +66,8 @@ neu: ## Datenbank verwerfen und alles frisch aufbauen
 	@$(DOCKER) compose down -v
 	@rm -rf files public/media public/thumbnail public/theme var/cache install.lock
 	@./scripts/setup.sh
+
+abnahme-staging: ## Abnahme auf Staging: Kauf-Abläufe (legt 4 Bestellungen an), Lighthouse, Bildschirmfotos Kasse/Konto/Mail
+	@KETTELER_ZIEL=staging python3 tests/e2e/abnahme_test.py
+	@node tests/browser/lighthouse.mjs --staging --ziel docs/design/lighthouse.md
+	@node tests/browser/abnahmebilder.mjs --staging --bilder docs/design/bildschirmfotos

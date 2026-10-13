@@ -423,6 +423,11 @@ Ausgabe, Leseproben, Video mit Person, Fakten, Rückmeldung) an den Kategorien �
 und „Eichstätter Kommentar“; die Inhalte stehen je Kategorie in deren Layout-Inhalten (Verwaltung: Kategorie > Layout),
 leere Plätze zeigen nichts. Blöcke: `docs/design/erlebniswelten.md`. Fehlende Dateien: `docs/dateien-ketteler.md`.
 
+**Shop testbereit (13.10.2026):** nur Rechnung im Verkaufskanal (PayPal eingerichtet, aber aus), Mails im neuen Design,
+Formulare Kündigung („Verträge hier kündigen“), Mehrplatz, Kontakt und Widerruf mit Bestätigung, vier Testkonten,
+Suche nach Titel, Nummer und Autor, Cookie-Hinweis nur technisch notwendig, Lizenzstand an der Bestellung in der
+Verwaltung. Anleitung: [testanleitung.md](testanleitung.md). Eigene Entscheidungen: [entscheidungen-code.md](entscheidungen-code.md).
+
 **Storytelling-Seiten: gebaut (13.10.2026)** nach `docs/design/story-*-entwurf.dc.html`, Texte ohne Vorlage wörtlich aus
 `content/`. MAV Einstieg (Übersicht, zugleich „Aktuell & interessant“) als eigene Erlebniswelt; Grundwissen, Praktische
 Arbeitshilfen, Themenbezogene Literatur und Hilfreiche Links im gemeinsamen Layout „MAV Einstieg: Unterseite“ mit

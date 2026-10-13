@@ -38,6 +38,10 @@
     {% endfor %}
     <tr style="font-weight: 700;"><td colspan="3" style="padding: 8px 4px;">Gesamtbetrag</td><td style="padding: 8px 4px; text-align: right;">{{ order.price.totalPrice|currency(waehrung) }}</td></tr>
 </table>
+{% if order.price.taxStatus == 'tax-free' %}
+    {% set land = rechnung.country.iso ?? '' %}
+    <p style="font-size: 14px;" data-kt="steuerfrei">{% if order.orderCustomer.vatIds|default([]) is not empty and land in ['AT','BE','BG','CY','CZ','DK','EE','ES','FI','FR','GR','HR','HU','IE','IT','LT','LU','LV','MT','NL','PL','PT','RO','SE','SI','SK'] %}Ohne Umsatzsteuer: Steuerschuldnerschaft des Empfängers (USt-IdNr. {{ order.orderCustomer.vatIds|first }}).{% else %}Ohne Umsatzsteuer: Lieferung in ein Land außerhalb der EU.{% endif %}</p>
+{% endif %}
 
 {% if werke is not empty %}
     <div style="margin: 24px 0; padding: 12px 16px; background: #f7eaf0; border-left: 3px solid #b7005c;">

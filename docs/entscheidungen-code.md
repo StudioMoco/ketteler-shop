@@ -118,3 +118,23 @@ Entscheidungen, die der Auftrag offen ließ und die ich ohne Rückfrage getroffe
     Upload in ZITADEL, Frage an Atilla bei Bedarf).
 43. **Firmendaten auf den Belegen** aus dem Impressum; Bankverbindung und Steuernummer fehlen (Frage 32). Rechnungen
     schreibt später weclapp.
+
+## Gesamtprüfung (Abschnitt E)
+
+44. **Abnahme-Ablauf über HTTP statt Klicks im Browser.** `tests/e2e/abnahme_test.py` folgt den Links der Startseite,
+    schickt das Formular der Angebotskarte ab (wie der Knopf) und bestellt über die Kasse; die Klicks selbst prüfen die
+    Browsertests. Er legt je Lauf vier Bestellungen an und läuft deshalb nicht in `make test-staging`, sondern einmal
+    in `make abnahme-staging` (höchstens fünf Testbestellungen). Die übrigen automatischen Tests legen wie bisher eigene
+    Bestellungen mit Testadressen an.
+45. **Lighthouse aus dem lokalen npx-Zwischenspeicher** (13.5.0) mit dem lokalen Chrome; nichts auf Staging installiert.
+    SEO-Werte sind auf Staging niedrig, weil Staging absichtlich gesperrt ist (`noindex`) und die Beschreibungen für
+    Suchmaschinen fehlen (Frage 17).
+46. **Jahrgangsreiter ohne Archiv-Link in der Reiterleiste.** Lighthouse meldete einen Link in `role="tablist"`; der Link
+    „Archiv“ steht jetzt daneben.
+47. **Lizenzstand in der Verwaltung sichtbar.** Neue Karte „Online-Zugänge (Lizenzen)“ an jeder Bestellung (Plugin
+    KettelerLizenzen, ohne Bauschritt), damit der Test „Lizenz an der Bestellung sichtbar“ ohne Datenbank geht.
+48. **Steuerfreie Bestellungen in der Bestätigung gekennzeichnet:** „Ohne Umsatzsteuer: Steuerschuldnerschaft des
+    Empfängers (USt-IdNr. …)“ bzw. „Lieferung in ein Land außerhalb der EU“. Die Rechnung mit dem Pflichthinweis
+    schreibt weclapp.
+49. **Kasse und Kopf auf schmalen Bildschirmen:** Überschrift „Zusammenfassung“ kleiner, Kopfzeile unter 420 px enger,
+    damit „Warenkorb“ mit Zahl ganz zu sehen ist.
