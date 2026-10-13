@@ -470,6 +470,14 @@ class EinrichtenCommand extends Command
         if ($paypal !== null) {
             $updates[] = ['id' => $paypal, 'name' => 'PayPal', 'active' => true, 'position' => 2];
             $this->config->set('SwagPayPal.settings.sandbox', true);
+            // Keine Express-Knöpfe und keine „Später bezahlen“-Werbung außerhalb der Kasse: beide laden Skripte von PayPal,
+            // ohne dass PayPal gewählt ist (Gestaltungsgrundsatz: keine fremden Dienste im Browser). In der Kasse lädt
+            // PayPal erst, wenn die Kundin PayPal wählt.
+            foreach (['ecsDetailEnabled', 'ecsCartEnabled', 'ecsOffCanvasEnabled', 'ecsLoginEnabled', 'ecsListingEnabled',
+                'installmentBannerDetailPageEnabled', 'installmentBannerCartEnabled', 'installmentBannerOffCanvasCartEnabled',
+                'installmentBannerLoginPageEnabled', 'installmentBannerFooterEnabled', 'crossBorderMessagingEnabled'] as $feld) {
+                $this->config->set('SwagPayPal.settings.' . $feld, false);
+            }
             foreach (['PAYPAL_SANDBOX_CLIENT_ID' => 'clientIdSandbox', 'PAYPAL_SANDBOX_CLIENT_SECRET' => 'clientSecretSandbox', 'PAYPAL_SANDBOX_MERCHANT_ID' => 'merchantPayerIdSandbox'] as $env => $feld) {
                 $wert = trim((string) ($_SERVER[$env] ?? getenv($env) ?: ''));
                 if ($wert !== '') {

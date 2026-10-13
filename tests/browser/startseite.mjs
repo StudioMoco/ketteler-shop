@@ -109,7 +109,10 @@ try {
     pruefe(seitlich, 'Rückmeldung: Warenkorb öffnet seitlich');
     pruefe((await b.werte('location.href')) === adresse, 'kein Seitenwechsel');
 
-    console.log('Anfragen an fremde Server');
+    console.log('Anfragen an fremde Server (Startseite, Warenkorb seitlich, Kategorie, Artikelseite)');
+    await b.laden(SHOP + '/Praxishandbuecher/');
+    const artikel = await b.werte(`(document.querySelector('.product-name') || {}).href || ''`);
+    if (artikel) { await b.laden(artikel); }
     const hosts = [...new Set(b.anfragen.filter((u) => /^https?:/.test(u)).map((u) => new URL(u).host))];
     pruefe(hosts.length === 1 && hosts[0] === new URL(SHOP).host, 'nur der eigene Server (' + hosts.join(', ') + ')');
 

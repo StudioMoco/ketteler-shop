@@ -183,6 +183,15 @@ make test-staging
 
 Aufbau, Zurück, Sicherung, Speicher und Regeln: [docs/staging.md](docs/staging.md).
 
+## Startseite und Gestaltung
+
+Vorlage, Kopf und Fuß, Pflege der Erlebniswelt-Blöcke und Bildschirmfotos: [docs/design/](docs/design/). Browsertests
+(eigenes Headless-Chrome, nichts zu installieren außer Google Chrome):
+
+```bash
+make test-browser BILDER=docs/design/bildschirmfotos
+```
+
 ## Wenn etwas nicht klappt
 
 - **„Docker läuft nicht“:** Docker Desktop öffnen und warten, bis unten links „Engine running“ steht.
