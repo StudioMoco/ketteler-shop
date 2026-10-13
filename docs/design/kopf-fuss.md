@@ -21,7 +21,7 @@ Erweiterungen > Ketteler Theme > Konfigurieren (`KettelerTheme.config.*`), im Te
 | `bibliothekUrl` | leer = `KETTELER_BIBLIOTHEK_URL` (wie „Jetzt lesen“) | „Zur Bibliothek“ |
 | `kontaktKategorie` | Kategorie „Kontakt“ (Verlag) | „Kontakt“ |
 
-Logo: `Resources/public/logo/ketteler-logo-fachverlag.png` (1064 × 208, transparent; Anzeige 240 × 47 im Kopf, mobil
+Logo: `Resources/public/logo/ketteler-logo-fachverlag.png` (480 × 94, transparent, doppelte Auflösung; Anzeige 240 × 47 im Kopf, mobil
 höchstens 180 px breit, im Fuß 168 px), Alt-Text „KETTELER-Verlag“. Vorläufig, bis Ketteler eine SVG liefert. Fehlt die
 Datei, zeigt der Shop das bisherige Logo.
 

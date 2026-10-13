@@ -67,7 +67,7 @@ Erklärung geht per E-Mail an Sie und steht an der Bestellung. Dazu brauchen wir
 18. **Fuß:** Dort steht „Widerruf erklären“ (führt zur Widerrufsfunktion) und „Verträge hier kündigen“ (diese Beschriftung
     schreibt das Gesetz für den Kündigungsknopf vor). Bitte die Beschriftung „Widerruf erklären“ mit Ihrer Rechtsberatung
     prüfen; Shopware verwendet dafür „Vertrag widerrufen“.
-19. **Logo:** Der Shop zeigt vorläufig `ketteler-logo-fachverlag.png` (1064 × 208). Bitte liefern Sie das Logo als SVG,
+19. **Logo:** Der Shop zeigt vorläufig `ketteler-logo-fachverlag.png` (480 × 94). Bitte liefern Sie das Logo als SVG,
     dann wird es überall scharf dargestellt.
 20. **Muster-Formulare „Fachliteratur katholisch“ und „Fachliteratur evangelisch“:** Bitte die beiden Word-Dateien
     liefern (oder freigeben, dass wir sie aus dem heutigen Shop übernehmen). Bis dahin führen beide Links auf die Seite

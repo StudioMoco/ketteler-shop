@@ -146,7 +146,8 @@ try {
 
     console.log('Logo');
     const logo = await b.werte(`(() => { const i = document.querySelector('[data-kt="logo"]'); const r = i.getBoundingClientRect(); return { src: i.currentSrc, nw: i.naturalWidth, nh: i.naturalHeight, w: Math.round(r.width), h: Math.round(r.height), alt: i.alt }; })()`);
-    pruefe(/ketteler-logo-fachverlag\\.png/.test(logo.src) && logo.nw === 1064 && logo.nh === 208, 'Logo-Datei ausgeliefert (1064 × 208)', JSON.stringify(logo));
+    // Logo in doppelter Auflösung für 240 × 47 (docs/design/logo/ketteler-logo-fachverlag.png, 480 × 94)
+    pruefe(logo.src.includes('ketteler-logo-fachverlag.png') && logo.nw === 480 && logo.nh === 94, 'Logo-Datei ausgeliefert (480 × 94, doppelte Auflösung)', JSON.stringify(logo));
     pruefe(logo.w === 240 && Math.abs(logo.h - 47) <= 1, 'Logo am Desktop 240 × 47 px', logo.w + ' × ' + logo.h);
     pruefe(logo.alt === 'KETTELER-Verlag', 'Logo: Alt-Text „KETTELER-Verlag“', logo.alt);
 

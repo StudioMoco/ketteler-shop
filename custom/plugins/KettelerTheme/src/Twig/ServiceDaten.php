@@ -34,7 +34,7 @@ class ServiceDaten extends AbstractExtension
         'kontaktKategorie' => '',
     ];
 
-    /** Logo: vorläufig PNG (1064 × 208, Anzeige 240 × 47) bis Ketteler eine SVG liefert; fehlt die Datei, das bisherige */
+    /** Logo: vorläufig PNG (480 × 94, doppelte Auflösung für 240 × 47) bis Ketteler eine SVG liefert; fehlt die Datei, das bisherige */
     public const LOGO_NEU = 'logo/ketteler-logo-fachverlag.png';
     public const LOGO_ALT = 'logo/ketteler-logo.png';
 
