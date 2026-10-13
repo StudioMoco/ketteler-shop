@@ -1,0 +1,24 @@
+{# Begrüßungsbrief (MAV Einstieg): Anrede als h1, Brieftext und Gruß kursiv, daneben ein Kasten in Rosé mit zwei Knöpfen #}
+{% set c = element.config %}
+{% set d = element.data %}
+{% if c.titel.value %}
+    <section class="kt-rahmen kt-begruessung" aria-label="{{ c.titel.value|striptags }}" data-kt="begruessung">
+        <div class="kt-begruessung-brief">
+            <h1>{{ c.titel.value }}</h1>
+            {% for absatz in (c.text.value|default(''))|split("\n\n") %}{% if absatz|trim %}<p class="kt-begruessung-text">{{ absatz|trim|kt_text }}</p>{% endif %}{% endfor %}
+            {% if c.gruss.value %}<p class="kt-begruessung-gruss">{{ c.gruss.value }}</p>{% endif %}
+        </div>
+        {% if c.kastenTitel.value %}
+            <div class="kt-begruessung-kasten" data-kt="willkommensgruss">
+                {% if c.kastenDachzeile.value %}<p class="kt-dachzeile">{{ c.kastenDachzeile.value }}</p>{% endif %}
+                <h2>{{ c.kastenTitel.value }}</h2>
+                <div class="kt-ausgabe-knoepfe">
+                    {% for k in c.knoepfe.value|default([]) %}
+                        {% set ziel = k.datei and d.medien[k.datei] is defined ? d.medien[k.datei].url : kt_link(k.link) %}
+                        {% if k.text and ziel %}<a class="kt-knopf {{ loop.first ? 'kt-knopf--magenta' : 'kt-knopf--rand kt-knopf--weissgrund' }}" href="{{ ziel }}">{{ k.text }}</a>{% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    </section>
+{% endif %}

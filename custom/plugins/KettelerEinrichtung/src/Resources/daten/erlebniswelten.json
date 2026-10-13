@@ -228,6 +228,478 @@
           }
         }
       ]
+    },
+    {
+      "schluessel": "mav-einstieg",
+      "name": "MAV Einstieg",
+      "kategorien": [
+        "neu-in-der-mav",
+        "mav-aktuelles"
+      ],
+      "bloecke": [
+        {
+          "typ": "unternavigation",
+          "config": {
+            "kategorie": "@kategorie:neu-in-der-mav",
+            "uebersicht": "@kategorie:mav-aktuelles"
+          }
+        },
+        {
+          "typ": "begruessung",
+          "config": {
+            "titel": "Liebe neugewählte Mitarbeitervertreterinnen und Mitarbeitervertreter,",
+            "text": "speziell für den MAV-Neueinstieg haben wir unsere Literatur zum kirchlichen Arbeitsrecht für die MAV übersichtlich strukturiert. Sie lesen unten, was Sie davon haben, wenn Sie die Produkte nutzen und auch neue Leseproben sowie die Einladung zum Anfordern eines kostenlosen ZMV-Probehefts (Print oder Digital) erwarten Sie als kleiner Willkommensgruß.",
+            "gruss": "Wir wünschen Ihnen viel Spaß bei der Lektüre und einen guten Start in Ihren wichtigen und spannenden Aufgabenbereich.",
+            "kastenDachzeile": "Willkommensgruß",
+            "kastenTitel": "Kostenloses ZMV-Probeheft",
+            "knoepfe": [
+              {
+                "text": "Probeheft Print",
+                "link": "@link-artikel:TEST-P-ZMV-PROBE",
+                "datei": null
+              },
+              {
+                "text": "Probeheft Digital",
+                "link": null,
+                "datei": "@pdf:ZMV-Probeheft Digital"
+              }
+            ]
+          }
+        },
+        {
+          "typ": "bereichskacheln",
+          "config": {
+            "ueberschrift": "Unsere Literatur haben wir in folgende Bereiche aufgeteilt",
+            "kacheln": [
+              {
+                "nummer": "1",
+                "titel": "Grundausstattung/Basiswissen für die MAV",
+                "text": "Zeitschrift ZMV · Eichstätter Kommentar · Die AVR von A bis Z",
+                "link": "@link-kategorie:mav-grundwissen",
+                "produkte": [
+                  "@artikel:TEST-ABO-ZMV-P",
+                  "@artikel:TEST-O-EK",
+                  "@artikel:TEST-O-AVR"
+                ]
+              },
+              {
+                "nummer": "2",
+                "titel": "Praktische Arbeitshilfen",
+                "text": "Praxiswissen Arbeitsrecht katholisch und evangelisch · Checklisten",
+                "link": "@link-kategorie:mav-arbeitshilfen",
+                "produkte": [
+                  "@artikel:TEST-PH-PW-K",
+                  "@artikel:TEST-PH-PW-E",
+                  "@artikel:TEST-PH-CHECKLISTEN"
+                ]
+              },
+              {
+                "nummer": "3",
+                "titel": "Themenbezogene Literatur",
+                "text": "Arbeitszeit und Dienstplanung · Beschäftigtendatenschutz · KAVO Handbuch",
+                "link": "@link-kategorie:mav-literatur",
+                "produkte": [
+                  "@artikel:TEST-PH-ARBEITSZEIT",
+                  "@artikel:TEST-PH-DATENSCHUTZ",
+                  "@artikel:TEST-PH-KAVO"
+                ]
+              }
+            ],
+            "zeileText": "**Muster-Formulare** als Word-Dokument zur Beantragung von Fachliteratur beim Dienstgeber",
+            "zeileLinks": [
+              {
+                "text": "Fachliteratur katholisch",
+                "link": "@link-kategorie:mav-aktuelles",
+                "datei": null
+              },
+              {
+                "text": "Fachliteratur evangelisch",
+                "link": "@link-kategorie:mav-aktuelles",
+                "datei": null
+              }
+            ]
+          }
+        },
+        {
+          "typ": "artikelliste",
+          "config": {
+            "anker": "",
+            "ueberschrift": "Hilfreiche Artikel aus der ZMV",
+            "text": "Für Sie als Besucherinnen und Besucher unserer MAV-Einstieg-Seiten haben wir folgende Artikel zum kostenlosen Download bereitgestellt.",
+            "eintraege": [
+              {
+                "vorspalte": "Rech",
+                "titel": "Beteiligung der MAV bei der ordentlichen Kündigung – Teil 1: katholisch",
+                "beschreibung": "",
+                "nachspalte": "ZMV 02/2024",
+                "link": null,
+                "datei": "@pdf:ZMV-Artikel Rech, Beteiligung der MAV bei der ordentlichen Kündigung – Teil 1: katholisch"
+              },
+              {
+                "vorspalte": "Rech",
+                "titel": "Beteiligung der MAV bei der ordentlichen Kündigung – Teil 2: evangelisch",
+                "beschreibung": "",
+                "nachspalte": "ZMV 03/2024",
+                "link": null,
+                "datei": "@pdf:ZMV-Artikel Rech, Beteiligung der MAV bei der ordentlichen Kündigung – Teil 2: evangelisch"
+              },
+              {
+                "vorspalte": "Dute",
+                "titel": "Der rechtliche Rahmen für die MAV-Tätigkeit im Home-Office",
+                "beschreibung": "",
+                "nachspalte": "ZMV 04/2024",
+                "link": null,
+                "datei": "@pdf:ZMV-Artikel Dute, Der rechtliche Rahmen für die MAV-Tätigkeit im Home-Office"
+              },
+              {
+                "vorspalte": "Eder",
+                "titel": "Zustimmungsverweigerung der MAV zur Einstellung",
+                "beschreibung": "",
+                "nachspalte": "ZMV 05/2024",
+                "link": null,
+                "datei": "@pdf:ZMV-Artikel Eder, Zustimmungsverweigerung der MAV zur Einstellung"
+              },
+              {
+                "vorspalte": "Fitzthum",
+                "titel": "Die ordentliche Kündigung",
+                "beschreibung": "",
+                "nachspalte": "ZMV 5/2023",
+                "link": null,
+                "datei": "@pdf:ZMV-Artikel Fitzthum, Die ordentliche Kündigung"
+              },
+              {
+                "vorspalte": "Fitzthum",
+                "titel": "Die außerordentliche Kündigung",
+                "beschreibung": "",
+                "nachspalte": "ZMV 3/2023",
+                "link": null,
+                "datei": "@pdf:ZMV-Artikel Fitzthum, Die außerordentliche Kündigung"
+              },
+              {
+                "vorspalte": "Eder",
+                "titel": "Pflichtverletzung von MAV-Mitgliedern",
+                "beschreibung": "",
+                "nachspalte": "ZMV 2/2023",
+                "link": null,
+                "datei": "@pdf:ZMV-Artikel Eder, Pflichtverletzung von MAV-Mitgliedern"
+              },
+              {
+                "vorspalte": "Richartz",
+                "titel": "Und was habt ihr so? Die Ausstattung der Mitarbeitervertretung",
+                "beschreibung": "",
+                "nachspalte": "ZMV 5/2021",
+                "link": null,
+                "datei": "@pdf:ZMV-Artikel Richartz, Und was habt ihr so? Die Ausstattung der Mitarbeitervertretung"
+              },
+              {
+                "vorspalte": "Fey",
+                "titel": "Digitale MAV-Arbeit",
+                "beschreibung": "",
+                "nachspalte": "ZMV 4/2021",
+                "link": null,
+                "datei": "@pdf:ZMV-Artikel Fey, Digitale MAV-Arbeit"
+              },
+              {
+                "vorspalte": "Joussen",
+                "titel": "In die MAV gewählt - los geht’s",
+                "beschreibung": "",
+                "nachspalte": "ZMV 2/2021",
+                "link": null,
+                "datei": "@pdf:ZMV-Artikel Joussen, In die MAV gewählt - los geht’s"
+              },
+              {
+                "vorspalte": "Joussen",
+                "titel": "Die Gesamtmitarbeitervertretung",
+                "beschreibung": "",
+                "nachspalte": "ZMV 1/2021",
+                "link": null,
+                "datei": "@pdf:ZMV-Artikel Joussen, Die Gesamtmitarbeitervertretung"
+              }
+            ],
+            "fussLinkText": "Weitere Links zu ZMV Artikeln für den MAV-Einstieg",
+            "fussLink": "bibliothek"
+          }
+        }
+      ]
+    },
+    {
+      "schluessel": "zmv-fachtagung",
+      "name": "ZMV Fachtagung",
+      "kategorie": "verlag-fachtagung",
+      "bloecke": [
+        {
+          "typ": "veranstaltung",
+          "config": {
+            "dachzeile": "29. Fachtagung zum kirchlichen Arbeitsrecht",
+            "titel": "„Streiten, Schlichten, Gewinnen im kirchlichen Arbeitsrecht“",
+            "text": "Hiermit laden wir Sie herzlich zu unserer nächsten Fachtagung ein.",
+            "datum": "1. und 2. März 2027",
+            "ort": "in Eichstätt",
+            "zeilen": [
+              {
+                "text": "**Programm** ab 1. November 2026",
+                "linkText": "zmv-online.de/fachtagung",
+                "link": "http://www.zmv-online.de/fachtagung.php"
+              },
+              {
+                "text": "**Anmeldung** ebenfalls ab 1. November 2026",
+                "linkText": "zmv-online.de/fachtagung",
+                "link": "http://www.zmv-online.de/fachtagung.php"
+              }
+            ],
+            "seitentext": "Die Tagung findet in Kooperation mit dem Institut für Kirchliches Arbeitsrecht an der Ruhr-Universität Bochum und der Katholischen Universität Eichstätt-Ingolstadt statt."
+          }
+        },
+        {
+          "typ": "leseproben",
+          "config": {
+            "anker": "rueckblick",
+            "flaeche": "sand",
+            "ueberschrift": "Rückblick",
+            "text": "",
+            "knopfText": "",
+            "knopfDatei": null,
+            "kastenDachzeile": "",
+            "kastenTitel": "",
+            "kastenPunkte": "",
+            "dateien": [
+              {
+                "kuerzel": "2025",
+                "titel": "Bericht zur Fachtagung 2025 „Kirchen im Sturm - Kirchliches Arbeitsrecht als Anker?!“",
+                "art": "PDF",
+                "link": null,
+                "datei": "@pdf:Bericht zur Fachtagung 2025"
+              },
+              {
+                "kuerzel": "2025",
+                "titel": "Bericht der zak.mas zur 27. Fachtagung zum kirchlichen Arbeitsrecht 2025",
+                "art": "extern",
+                "link": "https://www.zak-mas.de/nachrichten",
+                "datei": null
+              },
+              {
+                "kuerzel": "2024",
+                "titel": "Pressebericht der katholischen Universität Eichstätt-Ingolstadt über die Fachtagung 2024",
+                "art": "extern",
+                "link": "https://www.ku.de/die-ku/kontakt/presse/presseinformationen-detail/fachtagung-diskutiert-die-rolle-von-mitarbeitervertretungen-in-kirchlichen-einrichtungen",
+                "datei": null
+              },
+              {
+                "kuerzel": "2024",
+                "titel": "Bericht der ak.mas zur 26. Fachtagung zum kirchlichen Arbeitsrecht",
+                "art": "extern",
+                "link": "https://www.akmas.de/themen/arbeitszeit-arbeitsrecht/26-fachtagung-zum-kirchlichen-arbeitsrecht.html",
+                "datei": null
+              },
+              {
+                "kuerzel": "2023",
+                "titel": "Bericht zur Online-Fachtagung 2023 „Kirchliches Arbeitsrecht im Gegenwind!?“",
+                "art": "PDF",
+                "link": null,
+                "datei": "@pdf:Bericht zur Online-Fachtagung 2023"
+              },
+              {
+                "kuerzel": "",
+                "titel": "Berichte zu den vergangenen Fachtagungen",
+                "art": "extern",
+                "link": "https://zmv-online.de/fachtg_bericht.php",
+                "datei": null
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schluessel": "interviews",
+      "name": "Interviews Autoren & Schriftleiter",
+      "kategorie": "verlag-gespraech",
+      "bloecke": [
+        {
+          "typ": "seitenkopf",
+          "config": {
+            "brotkrumen": true,
+            "titel": "Interviews Autoren & Schriftleiter",
+            "unterzeile": ""
+          }
+        },
+        {
+          "typ": "interviewliste",
+          "config": {
+            "eintraege": [
+              {
+                "foto": "@bild:Simone Küster",
+                "ort": "Waldmünchen/Hanau, 07. November 2024",
+                "name": "Simone Küster",
+                "rolle": "Autorin des neuen Buches „Eingruppierung in Einrichtungen der Caritas“",
+                "text": "Lesen Sie hier das Interview mit Frau Küster und erfahren Sie mehr über die Hintergründe ihrer Tätigkeit und die Entstehung des Buches, das im Oktober 2024 beim KETTELER-Verlag erschienen ist.",
+                "linkText": "Zum Interview",
+                "link": null,
+                "datei": "@pdf:Interview Simone Küster",
+                "produkt": "@artikel:TEST-PH-EINGRUPPIERUNG",
+                "produktText": "Zum Buch",
+                "produktLink": null
+              },
+              {
+                "foto": "@bild:Matthias Ullrich",
+                "ort": "Waldmünchen/Schönebeck, 29. Juni 2022",
+                "name": "Matthias Ullrich",
+                "rolle": "Autor des neuen Buches „Beschäftigtendatenschutz der katholischen Kirche“",
+                "text": "Viele spannende Informationen und Hintergründe hat unsere Redaktion im Interview mit Matthias Ullrich erfahren. Wir wünschen auch Ihnen viel Spaß beim Lesen dieses interessanten Gesprächs.",
+                "linkText": "Zum Interview",
+                "link": null,
+                "datei": "@pdf:Interview Matthias Ullrich",
+                "produkt": "@artikel:TEST-PH-DATENSCHUTZ",
+                "produktText": "Zum Buch",
+                "produktLink": null
+              },
+              {
+                "foto": "@bild:Ulrich Richartz",
+                "ort": "Waldmünchen/Haltern am See, 15. September 2021",
+                "name": "Ulrich Richartz",
+                "rolle": "Autor des Buches „Arbeitszeugnisse in Kirche, Caritas und Diakonie“",
+                "text": "Erfahren Sie im exklusiven Interview mehr zur Person Ulrich Richartz, zur Entstehungsgeschichte seines Buches, zu Hintergründen, Motivation und Zielen.",
+                "linkText": "Zum Interview",
+                "link": null,
+                "datei": "@pdf:Interview Ulrich Richartz",
+                "produkt": "@artikel:TEST-PH-ZEUGNISSE",
+                "produktText": "Zum Buch",
+                "produktLink": null
+              },
+              {
+                "foto": "@bild:Dr. Sebastian Weber",
+                "ort": "Waldmünchen/München, 17. März 2021",
+                "name": "Dr. Sebastian Weber",
+                "rolle": "Autor des Buches „Arbeitszeit und Dienstplanung in Einrichtungen der Caritas“",
+                "text": "Im November 2020 ist das neue Buch des Autors beim KETTELER-Verlag erschienen. Im Interview spricht er über Hintergründe, gibt zusätzliche Sachinformationen und beantwortet Fragen zu Beruf und Freizeit.",
+                "linkText": "Zum Interview",
+                "link": null,
+                "datei": "@pdf:Interview Dr. Sebastian Weber",
+                "produkt": "@artikel:TEST-PH-ARBEITSZEIT",
+                "produktText": "Zum Buch",
+                "produktLink": null
+              },
+              {
+                "foto": "@bild:Prof. Dr. Jacob Joussen",
+                "ort": "Waldmünchen/Bochum, 1. Dezember 2020",
+                "name": "Prof. Dr. Jacob Joussen",
+                "rolle": "Neu in der Position des verantwortlichen Schriftleiters der ZMV",
+                "text": "Mit der Ausgabe 6/2020 der Zeitschrift „ZMV - DIE MITARBEITERVERTRETUNG“ hat Jacob Joussen die verantwortliche Schriftleitung von Prof. Dr. Renate Oxenknecht-Witzsch übernommen. Wir haben mit ihm über seine Beweggründe, Pläne und mehr gesprochen.",
+                "linkText": "Zum Interview",
+                "link": null,
+                "datei": "@pdf:Interview Prof. Dr. Jacob Joussen",
+                "produkt": "@artikel:TEST-ABO-ZMV-P",
+                "produktText": "Zur Zeitschrift",
+                "produktLink": "@link-kategorie:zmv"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schluessel": "zmv-aktuell",
+      "name": "ZMV aktuell",
+      "kategorie": "zmv-aktuell",
+      "bloecke": [
+        {
+          "typ": "ausgabe",
+          "config": {
+            "anker": "",
+            "flaeche": "rose",
+            "dachzeile": "ZMV aktuell",
+            "titel": "Die neueste Ausgabe: ZMV 5/2026",
+            "untertitel": "September/Oktober 2026 · Rechtsfragen der MAV-Arbeit",
+            "zeilen": [
+              {
+                "rubrik": "Aufsätze",
+                "inhalt": "Öffentlichkeitsarbeit der MAV\nMitwirkung erkrankter MAV-Mitglieder an Sitzungen\nDie Grundlagen der Fristenberechnung"
+              },
+              {
+                "rubrik": "Rechtsprechung",
+                "inhalt": "Zuständigkeit zum Erlass der Reisekostenordnungen im Caritasbereich"
+              },
+              {
+                "rubrik": "Leseranfrage",
+                "inhalt": "Einladung der Vertrauensperson der Schwerbehinderten zu Sitzungen"
+              }
+            ],
+            "links": [
+              {
+                "text": "Inhaltsverzeichnis zum Download",
+                "link": null,
+                "datei": "@pdf:ZMV 5/2026 Inhaltsverzeichnis"
+              },
+              {
+                "text": "Print-Ausgabe",
+                "link": "@link-artikel:TEST-P-ZMV-2026-5",
+                "datei": null
+              },
+              {
+                "text": "Online-Ausgabe",
+                "link": "bibliothek",
+                "datei": null
+              }
+            ],
+            "kastenTitel": "Kostenloses ZMV-Probeheft",
+            "kastenText": "Print oder Digital, ohne Abonnement.",
+            "knoepfe": [
+              {
+                "text": "Probeheft Print anfordern",
+                "link": "@link-artikel:TEST-P-ZMV-PROBE",
+                "datei": null
+              },
+              {
+                "text": "Probeheft Digital herunterladen",
+                "link": null,
+                "datei": "@pdf:ZMV-Probeheft Digital"
+              }
+            ],
+            "kastenFussText": "Leseprobe:",
+            "kastenFussLinkText": "1/2021: „Du musst dein Mikro einschalten...“",
+            "kastenFussDatei": "@pdf:ZMV Leseprobe 1/2021 Du musst dein Mikro einschalten",
+            "hauptueberschrift": true
+          }
+        }
+      ]
+    },
+    {
+      "schluessel": "verlag",
+      "name": "Verlag",
+      "kategorie": "verlag",
+      "bloecke": [
+        {
+          "typ": "seitenkopf",
+          "config": {
+            "brotkrumen": false,
+            "titel": "Was wir tun und wer wir sind: zwei Geschäftsbereiche, eine Philosophie",
+            "unterzeile": ""
+          }
+        },
+        {
+          "typ": "html",
+          "html": "<h2>I. Fachverlag</h2><p><strong>Kirchliches Arbeitsrecht – Ihr Partner für MAV-Einstieg und Praxis</strong><br>Wie können wir die Mitarbeitervertretungen in Einrichtungen der katholischen und evangelischen Kirche bei ihrer täglichen Arbeit unterstützen? Diese Frage steht im Zentrum unserer Aktivitäten - von der Idee und Konzeptionierung bis hin zum fertigen gedruckten oder digitalen Produkt, vom Marketing über Vertrieb, Kundenberatung und Service bis hin zur Logistik. In Zusammenarbeit mit unseren Autoren - Experten und Praktikern des kirchlichen Arbeitsrechts - liefern wir umfassendes juristisches Wissen praxisorientiert aufbereitet und aus verschiedenen Perspektiven.</p><p>Neben der führenden Fachzeitschrift <a href=\"https://www.ketteler-verlag.de/?listview&amp;link=0205000\">ZMV – DIE MITARBEITERVERTRETUNG</a> gehören der <a href=\"@link-kategorie:eichstaetter\">Eichstätter Kommentar</a> und die <a href=\"@link-kategorie:avr\">AVR von A bis Z</a> zu unserem Sortiment für die Grundausstattung der Mitarbeitervertretungen. Darüber hinaus bieten wir <a href=\"https://www.ketteler-verlag.de/?listview&amp;link=0103000\">verschiedene Arbeitshilfen und Publikationen zu Fachthemen</a>.</p><p><strong>Sozialethik</strong> Der Firmenname KETTELER-Verlag geht auf Bischof Wilhelm Emmanuel von Ketteler zurück. Er gilt als Vorbild für sozial-politisches Engagement. Diese Wurzeln prägen nicht nur unsere Philosophie, sondern zeigen sich auch in unserem Sozialethik-Sortiment.</p><p><strong>Sonderprojekte / Kooperationen</strong><br>Neben der Zusammenarbeit mit der Katholischen Arbeitnehmer-Bewegung bei Buchprojekten gibt es weitere Kooperationen, die Erfolgsgeschichte schrieben. Das Liederbuch <a href=\"https://www.ketteler-verlag.de/?listview&amp;link=0612005\">„QuerBeet“</a>, herausgegeben von der Jugendbildungsstätte der KAB &amp; CAJ, Waldmünchen, feierte kürzlich seinen 25. Geburtstag.</p><h2>II. Serviceunternehmen der KAB – gemeinsam engagiert auftreten</h2><p>Unsere Wurzeln liegen bei der Katholischen Arbeitnehmer Bewegung (KAB Deutschlands). Nach dem Zusammenschluss des damaligen Ketteler-Verlags und des KAB- Bücherdienstes und Verlags ist der KETTELER-Verlag in seiner heutigen Form im Jahr 2005 entstanden. Dem KAB Deutschlands e. V. und seinen Mitgliedern bietet der KETTELER-Verlag heute ein umfangreiches <a href=\"@link-kategorie:kab\">Sortiment an Produkten und Dienstleistungen</a> – von Büchern, Themenheften, Magazinen, Geschenken, Werbe- und Aktionsartikeln bis hin zu umfassenden Kommunikations- und Logistikleistungen.</p><h2>Leitbild KETTELER-Verlag</h2><p>Im Fachverlag für kirchliches Arbeitsrecht liefern wir verlässliches Wissen und hilfreiche Informationen, damit die gewählten Mitarbeitervertreterinnen und -vertreter ihre Beteiligungsrechte sicher, juristisch fundiert und zielorientiert vertreten können. Für kreative Lösungen, aktives Mitgestalten und ein gutes Miteinander in der Dienstgemeinschaft.<br>Als KAB-Serviceunternehmen leben wir die Werte einer gerechten und solidarischen Gesellschaft und kommunizieren sie mit unseren Produkten.</p><p>Der gemeinsame Nenner unserer gesamten Unternehmenstätigkeit ist die Freude und Begeisterung für Botschaften und Wissen, die helfen, die Arbeitswelt positiv zu verändern und Menschen unterstützt, Rechte selbstbewusst und verantwortungsvoll zu vertreten.</p><p>Nicht nur mit unseren Produkten möchten wir etwas bewegen, auch wir möchten in Bewegung bleiben – Entwicklungen aufspüren, Bedürfnisse erkennen und in neue praxisorientierte Produkte für eine lebendige und gerechte Arbeitswelt umsetzen. Dabei spielen Teamgeist, Service- und Kundenorientierung sowie das persönliche Gespräch in unserem familiären Verlag eine große Rolle.</p>"
+        }
+      ]
+    },
+    {
+      "schluessel": "links",
+      "name": "Links",
+      "kategorie": "verlag-links",
+      "bloecke": [
+        {
+          "typ": "seitenkopf",
+          "config": {
+            "brotkrumen": false,
+            "titel": "Links",
+            "unterzeile": ""
+          }
+        },
+        {
+          "typ": "html",
+          "html": "<p>Kirchliches Arbeitsrecht, ZMV - Fachzeitschrift: <a href=\"https://www.zmv-online.de/\">www.zmv-online.de</a><br>Katholische Arbeitnehmer-Bewegung Deutschlands e.V. (KAB):<br><a href=\"https://www.kab.de/\">www.kab.de</a><br>Jugendbildungsstätte Waldmünchen:<br><a href=\"https://www.jugendbildungsstaette.org/\">www.jugendbildungsstaette.org</a><br>kifas, KAB-Institut für Fortbildung &amp; angewandte Sozialethik:<br><a href=\"https://www.kifas.org/\">www.kifas.org</a><br>Ethik und Gesellschaft:<br><a href=\"http://www.ethik-und-gesellschaft.de/\">www.ethik-und-gesellschaft.de</a><br>Stiftung Zukunft der Arbeit und sozialen Sicherung (ZASS):<br><a href=\"http://www.stiftung-zass.de/\">www.stiftung-zass.de</a><br>Christliche Arbeiterjugend Deutschland e.V (CAJ).:<br><a href=\"http://www.caj.de/\">www.caj.de</a></p><p><strong>Haftungsausschluss für Inhalte und Verlinkung</strong><br>Auf den Internetseiten der KETTELER-Verlag GmbH befinden sich Querverweise (\"Links\") zu anderen Internetangeboten bzw. Internetseiten. Für die durch diese Zugänge vermittelten fremden Inhalte ist die KETTELER-Verlag GmbH nicht verantwortlich.<br>Die KETTELER-Verlag GmbH kann auch nicht garantieren, dass die Links zum Zeitpunkt des Besuchs noch zum Ziel führen. Wir betonen ausdrücklich, dass wir keinerlei Einfluss auf die Gestaltung und die Inhalte der gelinkten Seiten haben. Diese Erklärung gilt für alle auf unserer Homepage ausgebrachten Links und für alle Inhalte der Seiten, zu denen Links oder Banner führen. Links zu externen Anbietern stellen keine Wertung oder Empfehlung der KETTELER-Verlag GmbH dar.</p>"
+        }
+      ]
     }
   ],
   "layouts": [
@@ -433,7 +905,7 @@
             "dachzeile": "AVR 2027 nachgefragt: Praxiswissen kompakt",
             "titel": "Folge 1: Wie ist die Struktur der neuen AVR 2027?",
             "text": "Mit Rechtsanwalt Marvin Milleschewski, Schriftleiter von „Die AVR von A bis Z“.",
-            "foto": null,
+            "foto": "@bild:Rechtsanwalt Marvin Milleschewski",
             "personTitel": "Grußwort des neuen Schriftleiters",
             "personName": "Rechtsanwalt Marvin Milleschewski",
             "links": [
@@ -854,6 +1326,458 @@
                 "datei": "@pdf:Eichstätter Kommentar Leseprobe § 14 / VI. Die Sitzungen der MAV"
               }
             ]
+          }
+        }
+      }
+    },
+    {
+      "schluessel": "mav-literatur",
+      "name": "MAV Einstieg: Unterseite",
+      "bloecke": [
+        "unternavigation",
+        "seitenkopf",
+        "titelkarten",
+        "artikelliste"
+      ],
+      "inhalte": {
+        "mav-grundwissen": {
+          "unternavigation": {
+            "kategorie": "@kategorie:neu-in-der-mav",
+            "uebersicht": "@kategorie:mav-aktuelles"
+          },
+          "seitenkopf": {
+            "brotkrumen": false,
+            "titel": "Grundwissen/Basisausstattung",
+            "unterzeile": "1. Grundausstattung/Basiswissen für die MAV"
+          },
+          "titelkarten": {
+            "karten": [
+              {
+                "produkt": "@artikel:TEST-ABO-ZMV-P",
+                "flaeche": "rose",
+                "hrsg": "Joussen/Fey u.a. (Hrsg.)",
+                "titel": "Zeitschrift ZMV – DIE MITARBEITERVERTRETUNG",
+                "zeilen": "Wissen vom Marktführer: Fachzeitschrift für die Praxis seit 30 Jahren\nSprachrohr der Mitarbeitervertretungen in der katholischen und evangelischen Kirche\nJuristisch fundiertes Wissen zum kirchlichen Arbeitsrecht verständlich aufbereitet\nRechtssicher immer auf dem aktuellen Stand\nRelevantes Basis- und Spezialwissen\nMuss als erforderliches Sachmittel vom Dienstgeber gestellt werden\nPrint und Online",
+                "leseprobenTitel": "Leseproben",
+                "leseproben": [
+                  {
+                    "text": "1/2021: „Du musst dein Mikro einschalten...“",
+                    "link": null,
+                    "datei": "@pdf:ZMV Leseprobe 1/2021 Du musst dein Mikro einschalten"
+                  },
+                  {
+                    "text": "Kostenloses ZMV-Probeheft Print",
+                    "link": "@link-artikel:TEST-P-ZMV-PROBE",
+                    "datei": null
+                  },
+                  {
+                    "text": "Kostenloses ZMV-Probeheft Digital",
+                    "link": null,
+                    "datei": "@pdf:ZMV-Probeheft Digital"
+                  }
+                ],
+                "preisPraefix": "ab",
+                "linkText": "Zum Werk",
+                "link": "@link-kategorie:zmv"
+              },
+              {
+                "produkt": "@artikel:TEST-O-EK",
+                "flaeche": "blaugrau",
+                "hrsg": "Oxenknecht-Witzsch/Eder/Stöcke-Muhlack/Muhlack/Schmitz/Richartz (Hrsg.)",
+                "titel": "Eichstätter Kommentar - Online Version",
+                "zeilen": "Zwei Kommentierungen in einem Band: MAVO (Mitarbeitervertretungsordnung) und KAGO (Kirchliche Arbeitsgerichtsordnung)\nVerständliche Erläuterungen für die tägliche Praxis\nRechtssicherer Durchblick bei zwei komplizierten Regelungswerken\nDirekt anwendbare Arbeitshilfen\nSchnelle Antworten durch umfangreiches Stichwortverzeichnis\nMuss als erforderliches Sachmittel vom Dienstgeber gestellt werden\nPrint und Online - zur Zeit nur als Online-Version verfügbar",
+                "leseprobenTitel": "Leseproben",
+                "leseproben": [
+                  {
+                    "text": "§ 14 Gliederung",
+                    "link": null,
+                    "datei": "@pdf:Eichstätter Kommentar Leseprobe § 14 Gliederung"
+                  },
+                  {
+                    "text": "§ 14 / III. Die Konstituierung der MAV",
+                    "link": null,
+                    "datei": "@pdf:Eichstätter Kommentar Leseprobe § 14 / III. Die Konstituierung der MAV"
+                  },
+                  {
+                    "text": "§ 14 / VI. Die Sitzungen der MAV",
+                    "link": null,
+                    "datei": "@pdf:Eichstätter Kommentar Leseprobe § 14 / VI. Die Sitzungen der MAV"
+                  }
+                ],
+                "preisPraefix": "",
+                "linkText": "Zum Werk",
+                "link": "@link-kategorie:eichstaetter"
+              },
+              {
+                "produkt": "@artikel:TEST-O-AVR",
+                "flaeche": "sand",
+                "hrsg": "Kompendium AVR Caritas",
+                "titel": "Die AVR von A bis Z – Erläuterungen zu den Arbeitsvertragsrichtlinien des Deutschen Caritasverbandes",
+                "zeilen": "Aus Sicht und für die Bedürfnisse der Mitarbeitervertretungen\nDurch Stichworte sehr übersichtlich\nVom Paragrafen in den AVR direkt zur Erläuterung dank Modulfinder\nGesamtinhaltsverzeichnis für den schnellen Überblick\nNach Themen gegliedert für schnelle Beantwortung von Mitarbeiterfragen\nRubrik „Aktuelle Informationen“ – Aktualisierung mit Nachrichtenwert\nPraxisorientierte Arbeitshilfen wie Checklisten\nMit Rechts- und Fachbegriffen für AVR-Anwender/innen",
+                "leseprobenTitel": "Leseproben",
+                "leseproben": [
+                  {
+                    "text": "Modulfinder",
+                    "link": null,
+                    "datei": "@pdf:AVR Leseprobe Modulfinder"
+                  },
+                  {
+                    "text": "A 4 Arbeitsbefreiung und Sonderurlaub mit Gliederung",
+                    "link": null,
+                    "datei": "@pdf:AVR Leseprobe A 4 Arbeitsbefreiung und Sonderurlaub mit Gliederung"
+                  },
+                  {
+                    "text": "E 1 Eingruppierung mit Gliederung",
+                    "link": null,
+                    "datei": "@pdf:AVR Leseprobe E 1 Eingruppierung mit Gliederung"
+                  },
+                  {
+                    "text": "G 1 Arbeits- und Gesundheitsschutz mit Gliederung",
+                    "link": null,
+                    "datei": "@pdf:AVR Leseprobe G 1 Arbeits- und Gesundheitsschutz mit Gliederung"
+                  }
+                ],
+                "preisPraefix": "",
+                "linkText": "Zum Werk",
+                "link": "@link-kategorie:avr"
+              }
+            ]
+          }
+        },
+        "mav-arbeitshilfen": {
+          "unternavigation": {
+            "kategorie": "@kategorie:neu-in-der-mav",
+            "uebersicht": "@kategorie:mav-aktuelles"
+          },
+          "seitenkopf": {
+            "brotkrumen": false,
+            "titel": "Praktische Arbeitshilfen",
+            "unterzeile": "2. Praktische Arbeitshilfen"
+          },
+          "titelkarten": {
+            "karten": [
+              {
+                "produkt": "@artikel:TEST-PH-PW-K",
+                "flaeche": "rose",
+                "hrsg": "Fey (Hrsg.)",
+                "titel": "Praxiswissen Arbeitsrecht 2025 katholisch",
+                "zeilen": "MAV-Grundwissen der katholischen Kirche im handlichen Format\nSchnelle und präzise Antworten auf häufige Rechtsfragen\nErläuterungen wichtiger Begriffe von A – Z\nHinweis zu weiterführender Literatur",
+                "leseprobenTitel": "Leseprobe",
+                "leseproben": [
+                  {
+                    "text": "Mitarbeitervertretung",
+                    "link": null,
+                    "datei": "@pdf:Praxiswissen katholisch Leseprobe Mitarbeitervertretung"
+                  }
+                ],
+                "preisPraefix": "",
+                "linkText": "Zum Werk",
+                "link": "@link-artikel:TEST-PH-PW-K"
+              },
+              {
+                "produkt": "@artikel:TEST-PH-PW-E",
+                "flaeche": "blaugrau",
+                "hrsg": "Fitzthum (Hrsg.)",
+                "titel": "Praxiswissen Arbeitrecht 2025 evangelisch",
+                "zeilen": "MAV-Grundwissen im Taschenformat\nSchnelle und präzise Antworten auf häufige Rechtsfragen\nEine separate Ausgabe für den evangelischen Bereich\nSpezifische Informationen zum Tarif- und Mitbestimmungrecht der evangelischen Kirche und ihrer Diakonie",
+                "leseprobenTitel": "Leseprobe",
+                "leseproben": [
+                  {
+                    "text": "Mitarbeitervertretung",
+                    "link": null,
+                    "datei": "@pdf:Praxiswissen evangelisch Leseprobe Mitarbeitervertretung"
+                  }
+                ],
+                "preisPraefix": "",
+                "linkText": "Zum Werk",
+                "link": "@link-artikel:TEST-PH-PW-E"
+              },
+              {
+                "produkt": "@artikel:TEST-PH-CHECKLISTEN",
+                "flaeche": "sand",
+                "hrsg": "Oxenknecht-Witzsch (Hrsg.)",
+                "titel": "Checklisten zum Arbeits- und Mitarbeitervertretungsrecht",
+                "zeilen": "Für die sichere und vollständige Bearbeitung von Kernthemen\nSystematische Aufschlüsselung von komplexen Rechtsfragen\nChecklisten mit Erläuterungen und Online-Zugriff auf Listen",
+                "leseprobenTitel": "Leseprobe",
+                "leseproben": [
+                  {
+                    "text": "Dienstvereinbarung",
+                    "link": null,
+                    "datei": "@pdf:Checklisten Leseprobe Dienstvereinbarung"
+                  }
+                ],
+                "preisPraefix": "",
+                "linkText": "Zum Werk",
+                "link": "@link-artikel:TEST-PH-CHECKLISTEN"
+              }
+            ]
+          }
+        },
+        "mav-literatur": {
+          "unternavigation": {
+            "kategorie": "@kategorie:neu-in-der-mav",
+            "uebersicht": "@kategorie:mav-aktuelles"
+          },
+          "seitenkopf": {
+            "brotkrumen": false,
+            "titel": "Themenbezogene Literatur",
+            "unterzeile": "3. Themenbezogene Literatur"
+          },
+          "titelkarten": {
+            "karten": [
+              {
+                "produkt": "@artikel:TEST-PH-ARBEITSZEIT",
+                "flaeche": "rose",
+                "hrsg": "Sebastian Weber",
+                "titel": "Arbeitszeit und Dienstplanung in Einrichtungen der Caritas",
+                "zeilen": "Wertvoller Leitfaden für die Praxis\nFür Lösungen, die im Alltag Bestand haben\nVerlässliches und umfassendes Wissen verständlich auf den Punkt gebracht\nMit praxisorientierten Beispielen\nHilfreiches Glossar und Stichwortverzeichnis",
+                "leseprobenTitel": "Leseprobe",
+                "leseproben": [
+                  {
+                    "text": "Leistungsversprechen des Mitarbeitenden: Überstunden und Mehrarbeit",
+                    "link": null,
+                    "datei": "@pdf:Arbeitszeit und Dienstplanung Leseprobe Überstunden und Mehrarbeit"
+                  }
+                ],
+                "preisPraefix": "",
+                "linkText": "Zum Werk",
+                "link": "@link-artikel:TEST-PH-ARBEITSZEIT"
+              },
+              {
+                "produkt": "@artikel:TEST-PH-DATENSCHUTZ",
+                "flaeche": "blaugrau",
+                "hrsg": "Matthias Ullrich",
+                "titel": "Beschäftigtendatenschutz der katholischen Kirche",
+                "zeilen": "Datenschutz schützt Menschen\nGrundlagen des Datenschutzes\nEinstellungen\nBeschäftigungsverhältnis\nMitarbeitervertretung und Datenschutz",
+                "leseprobenTitel": "Leseprobe",
+                "leseproben": [
+                  {
+                    "text": "Vorwort",
+                    "link": null,
+                    "datei": "@pdf:Beschäftigtendatenschutz Vorwort"
+                  },
+                  {
+                    "text": "Inhaltsverzeichnis",
+                    "link": null,
+                    "datei": "@pdf:Beschäftigtendatenschutz Inhaltsverzeichnis"
+                  }
+                ],
+                "preisPraefix": "",
+                "linkText": "Zum Werk",
+                "link": "@link-artikel:TEST-PH-DATENSCHUTZ"
+              },
+              {
+                "produkt": "@artikel:TEST-PH-KAVO",
+                "flaeche": "sand",
+                "hrsg": "Joussen (Hrsg.)/Richartz/Nowak/Meiers",
+                "titel": "KAVO Handbuch",
+                "zeilen": "Das einzige Buch mit Erläuterungen zur KAVO NRW (Kirchliche Arbeits- und Vergütungsordnung Nordrhein-Westfalen)\nKompakter Leitfaden\nVerständliche Antworten auf Fragen des Arbeitsalltags von A - Z",
+                "leseprobenTitel": "Leseproben",
+                "leseproben": [
+                  {
+                    "text": "Direktionsrecht",
+                    "link": null,
+                    "datei": "@pdf:KAVO Leseprobe Direktionsrecht"
+                  },
+                  {
+                    "text": "Fürsorgepflicht",
+                    "link": null,
+                    "datei": "@pdf:KAVO Leseprobe Fürsorgepflicht"
+                  }
+                ],
+                "preisPraefix": "",
+                "linkText": "Zum Werk",
+                "link": "@link-artikel:TEST-PH-KAVO"
+              }
+            ]
+          }
+        },
+        "mav-links": {
+          "unternavigation": {
+            "kategorie": "@kategorie:neu-in-der-mav",
+            "uebersicht": "@kategorie:mav-aktuelles"
+          },
+          "seitenkopf": {
+            "brotkrumen": false,
+            "titel": "Hilfreiche Links",
+            "unterzeile": ""
+          },
+          "artikelliste": {
+            "anker": "",
+            "ueberschrift": "",
+            "text": "",
+            "eintraege": [
+              {
+                "vorspalte": "",
+                "titel": "www.akmas.de",
+                "beschreibung": "(Mitarbeiterseite in der AK; für alle MAVen im Anwendungsbereich der AVR)",
+                "nachspalte": "",
+                "link": "https://www.akmas.de/",
+                "datei": null
+              },
+              {
+                "vorspalte": "",
+                "titel": "www.arbeitsschutz-katholisch.de",
+                "beschreibung": "(Arbeitssicherheit und Gesundheitsschutz in der kath. Kirche – eine Seite des VDD)",
+                "nachspalte": "",
+                "link": "https://www.arbeitsschutz-katholisch.de/",
+                "datei": null
+              },
+              {
+                "vorspalte": "",
+                "titel": "www.bag-mav.de",
+                "beschreibung": "(Bundesarbeitsgemeinschaft der Mitarbeitervertretungen; mit Links zu allen DiAG MAVen)",
+                "nachspalte": "",
+                "link": "https://www.bag-mav.de/",
+                "datei": null
+              },
+              {
+                "vorspalte": "",
+                "titel": "www.bgw-online.de",
+                "beschreibung": "(Berufsgenossenschaft für Gesundheitsdienst und Wohlfahrtspflege)",
+                "nachspalte": "",
+                "link": "https://www.bgw-online.de/",
+                "datei": null
+              },
+              {
+                "vorspalte": "",
+                "titel": "www.bundesarbeitsgericht.de",
+                "beschreibung": "(Entscheidungen und Pressemitteilungen des Bundesarbeitsgerichts)",
+                "nachspalte": "",
+                "link": "https://www.bundesarbeitsgericht.de/",
+                "datei": null
+              },
+              {
+                "vorspalte": "",
+                "titel": "www.caritas.de",
+                "beschreibung": "(Deutscher Caritasverband)",
+                "nachspalte": "",
+                "link": "https://www.caritas.de/",
+                "datei": null
+              },
+              {
+                "vorspalte": "",
+                "titel": "www.dbk.de/kagh/entscheidungen-kagh-l",
+                "beschreibung": "(Entscheidungen der Kirchlichen Arbeitsgerichte und des kirchlichen Arbeitsgerichtshofs)",
+                "nachspalte": "",
+                "link": "https://www.dbk.de/kagh/entscheidungen-kagh-l/",
+                "datei": null
+              },
+              {
+                "vorspalte": "",
+                "titel": "www.diag-mav-freiburg.de",
+                "beschreibung": "(auf der Unterseite „A-Z“ Infos zu arbeits- und mitarbeitervertretungsrechtlichen Stichworten, u.a. zahlreiche Musterdienstvereinbarungen)",
+                "nachspalte": "",
+                "link": "https://www.diag-mav-freiburg.de/",
+                "datei": null
+              },
+              {
+                "vorspalte": "",
+                "titel": "www.diakonie.de",
+                "beschreibung": "(Diakonie Deutschland Evangelisches Werk für Diakonie und Entwicklung e.V.)",
+                "nachspalte": "",
+                "link": "https://www.diakonie.de/",
+                "datei": null
+              },
+              {
+                "vorspalte": "",
+                "titel": "www.diakonie-ark.de",
+                "beschreibung": "(Arbeitsrechtliche Kommission der Diakonie Deutschland)",
+                "nachspalte": "",
+                "link": "https://www.diakonie-ark.de/",
+                "datei": null
+              },
+              {
+                "vorspalte": "",
+                "titel": "www.efas-online.de",
+                "beschreibung": "(Evangelische Fachstelle für Arbeits- und Gesundheitsschutz)",
+                "nachspalte": "",
+                "link": "https://www.efas-online.de/",
+                "datei": null
+              },
+              {
+                "vorspalte": "",
+                "titel": "www.ekd.de",
+                "beschreibung": "(Evangelische Kirche in Deutschland)",
+                "nachspalte": "",
+                "link": "https://www.ekd.de/",
+                "datei": null
+              },
+              {
+                "vorspalte": "",
+                "titel": "www.gesetze-im-internet.de",
+                "beschreibung": "(alle Bundesgesetze in aktueller Fassung und alphabetisch geordnet)",
+                "nachspalte": "",
+                "link": "https://www.gesetze-im-internet.de/",
+                "datei": null
+              },
+              {
+                "vorspalte": "",
+                "titel": "www.kab.de",
+                "beschreibung": "(Katholische Arbeitnehmerbewegung)",
+                "nachspalte": "",
+                "link": "https://www.kab.de/",
+                "datei": null
+              },
+              {
+                "vorspalte": "",
+                "titel": "www.kdsa-ost.de",
+                "beschreibung": "(Kirchliche Datenschutzaufsicht der ostdeutschen Bistümer mit weiterführenden Informationen zum Beschäftigtendatenschutz)",
+                "nachspalte": "",
+                "link": "https://www.kdsa-ost.de/",
+                "datei": null
+              },
+              {
+                "vorspalte": "",
+                "titel": "www.kifas.org",
+                "beschreibung": "(kifas gemeinnützige GmbH, KAB-Institut für Fortbildung & angewandte Sozialethik)",
+                "nachspalte": "",
+                "link": "https://www.kifas.org/",
+                "datei": null
+              },
+              {
+                "vorspalte": "",
+                "titel": "www.kirchengewerkschaft.de",
+                "beschreibung": "(Gewerkschaft der Mitarbeitenden in Kirche, Diakonie und Caritas)",
+                "nachspalte": "",
+                "link": "https://www.kirchengewerkschaft.de/",
+                "datei": null
+              },
+              {
+                "vorspalte": "",
+                "titel": "www.kirchenrecht-ekd.de",
+                "beschreibung": "(Fachinformationssystem Kirchenrecht der EKD (evangelisch)",
+                "nachspalte": "",
+                "link": "https://www.kirchenrecht-ekd.de/",
+                "datei": null
+              },
+              {
+                "vorspalte": "",
+                "titel": "www.schiering.org",
+                "beschreibung": "(Internetportal mit umfassendem Zugang zu allen wichtigen Gesetzestexten, zahlreichen Arbeitshilfen, aktuellen Informationen usw.)",
+                "nachspalte": "",
+                "link": "http://www.schiering.org/",
+                "datei": null
+              },
+              {
+                "vorspalte": "",
+                "titel": "www.zmv-online.de",
+                "beschreibung": "(Zeitschrift für die Praxis der Mitarbeitervertretungen)",
+                "nachspalte": "",
+                "link": "https://www.zmv-online.de/",
+                "datei": null
+              },
+              {
+                "vorspalte": "",
+                "titel": "www.zentralkoda.de",
+                "beschreibung": "(Mitarbeiterseite katholisch)",
+                "nachspalte": "",
+                "link": "https://www.zentralkoda.de/",
+                "datei": null
+              }
+            ],
+            "fussLinkText": "",
+            "fussLink": null
           }
         }
       }

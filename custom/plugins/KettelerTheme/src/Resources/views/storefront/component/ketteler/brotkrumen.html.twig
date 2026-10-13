@@ -1,0 +1,14 @@
+{# Brotkrumen nach den Vorlagen: „Home / Bereich / Seite“, die aktuelle Seite ohne Link; Kurzname der Kategorie, wenn gepflegt (Werk-Kopf, Unternavigation, Seitenkopf) #}
+{% set aktiv = page.header.navigation.active ?? null %}
+<nav class="kt-brotkrumen" aria-label="Brotkrumen">
+    <a href="{{ path('frontend.home.page') }}">Home</a>
+    {% if aktiv %}
+        {% for k in sw_breadcrumb_full(aktiv, context.context) %}
+            {% if k.id != context.salesChannel.navigationCategoryId %}
+                <span aria-hidden="true">/</span>
+                {% set name = (k.translated.customFields.ketteler_kurzname ?? null) ?: k.translated.name %}
+                {% if k.id == aktiv.id %}<span aria-current="page">{{ name }}</span>{% else %}<a href="{{ seoUrl('frontend.navigation.page', { navigationId: k.id }) }}">{{ name }}</a>{% endif %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</nav>

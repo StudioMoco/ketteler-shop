@@ -1,0 +1,37 @@
+{#
+    Veranstaltung (ZMV Fachtagung): Brotkrumen, große Fläche in Magenta mit Dachzeile, Titel (h1), Text, Datum und Ort;
+    darunter Zeilen (z. B. Programm, Anmeldung) mit Link und ein Text daneben.
+#}
+{% set c = element.config %}
+{% if c.titel.value %}
+    <div class="kt-rahmen kt-veranstaltung-rahmen" data-kt="veranstaltung">
+        {% sw_include '@KettelerTheme/storefront/component/ketteler/brotkrumen.html.twig' %}
+        <section class="kt-veranstaltung" aria-label="{{ c.titel.value|striptags }}">
+            <div class="kt-veranstaltung-text">
+                {% if c.dachzeile.value %}<p class="kt-veranstaltung-dachzeile">{{ c.dachzeile.value }}</p>{% endif %}
+                <h1>{{ c.titel.value }}</h1>
+                {% if c.text.value %}<p class="kt-veranstaltung-beschreibung">{{ c.text.value }}</p>{% endif %}
+            </div>
+            {% if c.datum.value or c.ort.value %}
+                <div class="kt-veranstaltung-wann">
+                    {% if c.datum.value %}<p class="kt-veranstaltung-datum">{{ c.datum.value }}</p>{% endif %}
+                    {% if c.ort.value %}<p class="kt-veranstaltung-ort">{{ c.ort.value }}</p>{% endif %}
+                </div>
+            {% endif %}
+        </section>
+        {% set zeilen = c.zeilen.value|default([])|filter(z => z.text) %}
+        {% if zeilen is not empty or c.seitentext.value %}
+            <div class="kt-veranstaltung-unten">
+                <div class="kt-veranstaltung-zeilen">
+                    {% for z in zeilen %}
+                        <div class="kt-angebote-zeile">
+                            <p>{{ z.text|kt_text }}</p>
+                            {% if z.linkText and kt_link(z.link) %}<a class="kt-textlink kt-textlink--magenta" href="{{ kt_link(z.link) }}" data-kt="veranstaltung-link">{{ z.linkText }}</a>{% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+                {% if c.seitentext.value %}<p class="kt-veranstaltung-seitentext">{{ c.seitentext.value }}</p>{% endif %}
+            </div>
+        {% endif %}
+    </div>
+{% endif %}

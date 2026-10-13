@@ -32,20 +32,39 @@ def main(ziel, vorlage=VORLAGE):
     daten = {name: js_liste(html, name) for name in set(re.findall(r'<sc-for list="\{\{(\w+)\}\}"', html))}
     html = html.replace("{{accent}}", "#b7005c")
 
-    def ausrollen(m):
-        liste, name, inhalt = m.group(1), m.group(2), m.group(3)
-        aus = []
-        for eintrag in daten[liste]:
-            teil = inhalt
-            if isinstance(eintrag, dict):
-                for k, v in eintrag.items():
-                    teil = teil.replace("{{%s.%s}}" % (name, k), str(v))
-            else:
-                teil = teil.replace("{{%s}}" % name, str(eintrag))
-            aus.append(teil)
-        return "".join(aus)
+    def ausrollen(text, werte):
+        """sc-for-Listen ausrollen, auch verschachtelt (list="{{t.acro}}" greift auf den äußeren Eintrag zu)."""
+        aus, pos = [], 0
+        start = re.compile(r'<sc-for list="\{\{([\w.]+)\}\}" as="(\w+)"[^>]*>')
+        while True:
+            m = start.search(text, pos)
+            if not m:
+                aus.append(text[pos:])
+                return "".join(aus)
+            aus.append(text[pos:m.start()])
+            tiefe, i = 1, m.end()
+            while tiefe:
+                a, z = text.find("<sc-for", i), text.find("</sc-for>", i)
+                if a != -1 and a < z:
+                    tiefe, i = tiefe + 1, a + 7
+                else:
+                    tiefe, i = tiefe - 1, z + 9
+            inhalt = text[m.end():i - 9]
+            liste = werte
+            for teil in m.group(1).split("."):
+                liste = liste[teil]
+            for eintrag in liste:
+                teil = ausrollen(inhalt, dict(werte, **{m.group(2): eintrag}))
+                if isinstance(eintrag, dict):
+                    for k, v in eintrag.items():
+                        if not isinstance(v, (list, dict)):
+                            teil = teil.replace("{{%s.%s}}" % (m.group(2), k), str(v))
+                else:
+                    teil = teil.replace("{{%s}}" % m.group(2), str(eintrag))
+                aus.append(teil)
+            pos = i
 
-    html = re.sub(r'<sc-for list="\{\{(\w+)\}\}" as="(\w+)"[^>]*>(.*?)</sc-for>', ausrollen, html, flags=re.S)
+    html = ausrollen(html, daten)
     html = re.sub(r'<script src="./support.js"></script>', "", html)
     html = re.sub(r'<link[^>]+fonts\.(googleapis|gstatic)\.com[^>]*>', "", html)
     html = re.sub(r'<script type="text/x-dc".*?</script>', "", html, flags=re.S)

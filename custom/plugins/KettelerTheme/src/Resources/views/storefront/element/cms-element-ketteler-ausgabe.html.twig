@@ -11,7 +11,7 @@
     <div class="kt-rahmen kt-ausgabe">
         <div class="kt-ausgabe-inhalt">
             {% if c.dachzeile.value %}<p class="kt-dachzeile">{{ c.dachzeile.value }}</p>{% endif %}
-            {% if c.titel.value %}<h2>{{ c.titel.value }}</h2>{% endif %}
+            {% if c.titel.value %}{% if c.hauptueberschrift.value %}<h1 class="kt-ausgabe-h1">{{ c.titel.value }}</h1>{% else %}<h2>{{ c.titel.value }}</h2>{% endif %}{% endif %}
             {% if c.untertitel.value %}<p class="kt-ausgabe-untertitel">{{ c.untertitel.value }}</p>{% endif %}
             {% set zeilen = c.zeilen.value|default([])|filter(z => z.rubrik) %}
             {% if zeilen is not empty %}

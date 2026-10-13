@@ -1,0 +1,9 @@
+{# Seitenkopf: optional Brotkrumen, dann die Hauptüberschrift (h1) und eine Unterzeile #}
+{% set c = element.config %}
+{% if c.titel.value %}
+    <div class="kt-rahmen kt-seitenkopf{% if c.brotkrumen.value %} kt-seitenkopf--brotkrumen{% endif %}" data-kt="seitenkopf">
+        {% if c.brotkrumen.value %}{% sw_include '@KettelerTheme/storefront/component/ketteler/brotkrumen.html.twig' %}{% endif %}
+        <h1>{{ c.titel.value }}</h1>
+        {% if c.unterzeile.value %}<p class="kt-seitenkopf-unterzeile">{{ c.unterzeile.value }}</p>{% endif %}
+    </div>
+{% endif %}

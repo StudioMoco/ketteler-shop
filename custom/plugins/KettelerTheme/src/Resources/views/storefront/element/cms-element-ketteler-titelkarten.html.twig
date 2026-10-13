@@ -1,0 +1,40 @@
+{#
+    Titelkarten (MAV Einstieg): je Werk eine Karte mit Cover auf farbiger Fläche, Herausgeber, Titel, Zeilen mit großem
+    Anfangsbuchstaben (Akrostichon), Leseproben, Preis aus dem Produkt und Knopf.
+#}
+{% set c = element.config %}
+{% set d = element.data %}
+{% if c.karten.value is not empty %}
+    <section class="kt-rahmen kt-titelkarten" data-kt="titelkarten">
+        {% for k in c.karten.value %}
+            {% set p = k.produkt and d.produkte[k.produkt] is defined ? d.produkte[k.produkt] : null %}
+            {% set ziel = kt_link(k.link) ?? (p ? seoUrl('frontend.detail.page', { productId: p.id }) : null) %}
+            <article class="kt-titelkarte" data-kt="titelkarte">
+                <div class="kt-titelkarte-bild kt-flaeche--{{ k.flaeche|default('rose') }}">
+                    {% sw_include '@KettelerTheme/storefront/component/ketteler/cover.html.twig' with { produkt: p, titel: k.titel, groesse: 'titelkarte', dekorativ: true } only %}
+                </div>
+                <div class="kt-titelkarte-inhalt">
+                    {% if k.hrsg %}<p class="kt-titelkarte-hrsg">{{ k.hrsg }}</p>{% endif %}
+                    <h2>{{ k.titel }}</h2>
+                    {% for zeile in (k.zeilen|default(''))|split("\n") %}
+                        {% set z = zeile|trim %}
+                        {% if z %}<p class="kt-titelkarte-zeile"><span class="kt-titelkarte-anfang">{{ z|slice(0, 1) }}</span>{{ z|slice(1) }}</p>{% endif %}
+                    {% endfor %}
+                    {% set proben = [] %}
+                    {% for l in k.leseproben|default([]) %}
+                        {% set lz = l.datei and d.medien[l.datei] is defined ? d.medien[l.datei].url : kt_link(l.link) %}
+                        {% if l.text and lz %}{% set proben = proben|merge([{ text: l.text, ziel: lz }]) %}{% endif %}
+                    {% endfor %}
+                    {% if proben is not empty %}
+                        <p class="kt-titelkarte-proben-titel">{{ k.leseprobenTitel ?: 'Leseproben' }}</p>
+                        {% for l in proben %}<a class="kt-titelkarte-probe" href="{{ l.ziel }}">{{ l.text }}</a>{% endfor %}
+                    {% endif %}
+                    <div class="kt-titelkarte-fuss">
+                        {% if p %}<span class="kt-titelkarte-preis" data-kt="titelkarte-preis">{% if k.preisPraefix %}{{ k.preisPraefix }} {% endif %}{{ p.calculatedPrice.unitPrice|currency }}</span>{% endif %}
+                        {% if k.linkText and ziel %}<a class="kt-knopf kt-knopf--rand kt-knopf--klein" href="{{ ziel }}">{{ k.linkText }}</a>{% endif %}
+                    </div>
+                </div>
+            </article>
+        {% endfor %}
+    </section>
+{% endif %}

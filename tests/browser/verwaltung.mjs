@@ -77,7 +77,7 @@ try {
     pruefe(felder > 5, 'Einstellungsfenster des Schaufensters mit Feldern', String(felder));
     // Alle eigenen Blöcke mit deutschem Namen und Vorschau registriert; Layout „Werkseite“ mit seinen zehn Plätzen
     const bloecke = await b.werte(`Object.values(Shopware.Service('cmsService').getCmsBlockRegistry()).filter((x) => x.name.startsWith('ketteler-')).map((x) => x.label + (x.previewComponent ? '' : ' (ohne Vorschau)'))`);
-    pruefe(bloecke.length === 16 && bloecke.every((l) => l.startsWith('KETTELER: ') && !l.includes('ohne Vorschau')), '16 KETTELER-Blöcke mit Namen und Vorschau', bloecke.join(' | '));
+    pruefe(bloecke.length === 24 && bloecke.every((l) => l.startsWith('KETTELER: ') && !l.includes('ohne Vorschau')), '24 KETTELER-Blöcke mit Namen und Vorschau', bloecke.join(' | '));
     // Layout „Werkseite“: innerhalb der Verwaltung wechseln (ein zweiter Start der Verwaltung scheitert an Shopware selbst)
     await b.werte(`(document.querySelector('.sw-modal__close') || { click() {} }).click()`);
     await b.warte(800);
@@ -101,3 +101,5 @@ try {
     await b.beenden();
 }
 
+console.log(`\n${gut} bestanden, ${schlecht.length} fehlgeschlagen`);
+process.exit(schlecht.length ? 1 : 0);

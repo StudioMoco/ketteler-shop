@@ -51,11 +51,13 @@ class Erlebniswelten
         }
         foreach ($daten['seiten'] as $seite) {
             $id = self::id('cms.' . $seite['schluessel']);
-            $kategorie = self::id('kategorie.' . $seite['kategorie']);
+            $kategorien = array_map(static fn (string $k): string => self::id('kategorie.' . $k), (array) ($seite['kategorien'] ?? $seite['kategorie']));
             $vorhanden = $this->repo('cms_page')->searchIds(new Criteria([$id]), $context)->firstId() !== null;
             if ($vorhanden && !$neu) {
                 $io->writeln(\sprintf('Erlebniswelt „%s“ besteht schon und bleibt, wie sie in der Verwaltung gepflegt ist.', $seite['name']));
-                $this->zuweisen($kategorie, $id, $context, false);
+                foreach ($kategorien as $kategorie) {
+                    $this->zuweisen($kategorie, $id, $context, false);
+                }
                 continue;
             }
             if ($vorhanden) {
@@ -67,7 +69,9 @@ class Erlebniswelten
                 $this->repo('cms_page')->delete([['id' => $id]], $context);
             }
             $this->repo('cms_page')->create([$this->seite($id, $seite, $context)], $context);
-            $this->zuweisen($kategorie, $id, $context, true);
+            foreach ($kategorien as $kategorie) {
+                $this->zuweisen($kategorie, $id, $context, true);
+            }
             $io->writeln(\sprintf('Erlebniswelt „%s“ angelegt (%d Blöcke).', $seite['name'], \count($seite['bloecke'])));
         }
         foreach ($daten['layouts'] ?? [] as $layout) {
@@ -186,6 +190,27 @@ class Erlebniswelten
             ];
         }
         foreach ($seite['bloecke'] as $i => $block) {
+            if ($block['typ'] === 'html') {
+                // Fließtext (Verlag, Links) im Textelement von Shopware, in der Breite der Vorlagen
+                $bloecke[] = [
+                    'id' => self::id('cms.' . $seite['schluessel'] . '.block.' . $i),
+                    'type' => 'text',
+                    'position' => $position++,
+                    'sectionPosition' => 'main',
+                    'cssClass' => 'kt-textseite',
+                    'marginTop' => '0',
+                    'marginBottom' => '88px',
+                    'marginLeft' => '0',
+                    'marginRight' => '0',
+                    'slots' => [[
+                        'id' => self::id('cms.' . $seite['schluessel'] . '.block.' . $i . '.text'),
+                        'type' => 'text',
+                        'slot' => 'content',
+                        'config' => ['content' => ['source' => 'static', 'value' => $this->aufloesenHtml($block['html'])]],
+                    ]],
+                ];
+                continue;
+            }
             $typ = 'ketteler-' . $block['typ'];
             $konfig = [];
             foreach ($block['config'] as $feld => $wert) {
@@ -245,6 +270,7 @@ class Erlebniswelten
             'link-artikel' => 'produkt:' . self::id('artikel.' . $schluessel),
             'medium' => $this->medium($schluessel, $context),
             'pdf' => $this->pdf($schluessel, $context),
+            'bild' => $this->bild($schluessel, $context),
             default => throw new \RuntimeException('Unbekannter Verweis: ' . $wert),
         };
     }
@@ -284,6 +310,30 @@ class Erlebniswelten
         $this->repo('media')->create([['id' => $id, 'mediaFolderId' => $ordner, 'title' => $titel, 'alt' => $titel]], $context);
         $name = 'platzhalter-' . trim((string) preg_replace('/[^a-z0-9]+/', '-', strtolower(strtr($titel, ['ä' => 'ae', 'ö' => 'oe', 'ü' => 'ue', 'ß' => 'ss', 'Ä' => 'ae', 'Ö' => 'oe', 'Ü' => 'ue', '§' => 'paragraf']))), '-');
         $this->medien->saveFile(self::platzhalterPdf($titel), 'pdf', 'application/pdf', substr($name, 0, 80) . '-' . substr($id, 0, 6), $context, null, $id);
+
+        return $id;
+    }
+
+    /**
+     * Link-Ziele im HTML ersetzen: href="@link-kategorie:verlag" wird zum SEO-Platzhalter von Shopware, den der Shop beim
+     * Ausliefern durch die Adresse der Kategorie ersetzt (wie Links, die man in der Verwaltung im Text setzt)
+     */
+    private function aufloesenHtml(string $html): string
+    {
+        return (string) preg_replace_callback('/href="@link-kategorie:([a-z0-9-]+)"/', static fn (array $t): string => 'href="124c71d524604ccbad6042edce3ac799/navigation/' . self::id('kategorie.' . $t[1]) . '#"', $html);
+    }
+
+    /** Platzhalterbild (Sand) mit Alt-Text, z. B. für Fotos von Personen, bis Ketteler das echte Bild liefert */
+    private function bild(string $alt, Context $context): string
+    {
+        $id = self::id('bild.' . $alt);
+        if ($this->repo('media')->searchIds(new Criteria([$id]), $context)->firstId() !== null) {
+            return $id;
+        }
+        $ordner = $this->repo('media_folder')->searchIds((new Criteria())->addFilter(new EqualsFilter('defaultFolder.entity', 'cms_page'))->setLimit(1), $context)->firstId();
+        $this->repo('media')->create([['id' => $id, 'mediaFolderId' => $ordner, 'title' => 'Platzhalter: ' . $alt, 'alt' => $alt]], $context);
+        $name = 'platzhalter-foto-' . substr($id, 0, 10);
+        $this->medien->saveFile((string) file_get_contents(self::DATEN . 'medien/platzhalter-sand.png'), 'png', 'image/png', $name, $context, null, $id);
 
         return $id;
     }

@@ -73,6 +73,38 @@
             <argument>ketteler-rueckmeldung</argument>
             <tag name="shopware.cms.data_resolver"/>
         </service>
+        <service id="Ketteler\Theme\Cms\KettelerElementResolver.unternavigation" class="Ketteler\Theme\Cms\KettelerElementResolver">
+            <argument>ketteler-unternavigation</argument>
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+        <service id="Ketteler\Theme\Cms\KettelerElementResolver.seitenkopf" class="Ketteler\Theme\Cms\KettelerElementResolver">
+            <argument>ketteler-seitenkopf</argument>
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+        <service id="Ketteler\Theme\Cms\KettelerElementResolver.begruessung" class="Ketteler\Theme\Cms\KettelerElementResolver">
+            <argument>ketteler-begruessung</argument>
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+        <service id="Ketteler\Theme\Cms\KettelerElementResolver.bereichskacheln" class="Ketteler\Theme\Cms\KettelerElementResolver">
+            <argument>ketteler-bereichskacheln</argument>
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+        <service id="Ketteler\Theme\Cms\KettelerElementResolver.artikelliste" class="Ketteler\Theme\Cms\KettelerElementResolver">
+            <argument>ketteler-artikelliste</argument>
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+        <service id="Ketteler\Theme\Cms\KettelerElementResolver.titelkarten" class="Ketteler\Theme\Cms\KettelerElementResolver">
+            <argument>ketteler-titelkarten</argument>
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+        <service id="Ketteler\Theme\Cms\KettelerElementResolver.veranstaltung" class="Ketteler\Theme\Cms\KettelerElementResolver">
+            <argument>ketteler-veranstaltung</argument>
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
+        <service id="Ketteler\Theme\Cms\KettelerElementResolver.interviewliste" class="Ketteler\Theme\Cms\KettelerElementResolver">
+            <argument>ketteler-interviewliste</argument>
+            <tag name="shopware.cms.data_resolver"/>
+        </service>
         <service id="Ketteler\Theme\Weiterleitung\AlteAdressen">
             <argument type="service" id="Doctrine\DBAL\Connection"/>
             <tag name="kernel.event_subscriber"/>

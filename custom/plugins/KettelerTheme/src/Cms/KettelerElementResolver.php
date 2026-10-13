@@ -60,6 +60,11 @@ class KettelerElementResolver extends AbstractCmsElementResolver
         if ($ids['medien'] !== []) {
             $sammlung->add($this->schluessel($slot, 'medien'), MediaDefinition::class, new Criteria($ids['medien']));
         }
+        $bereich = $this->werte($slot)['kategorie'] ?? null;
+        if ($this->typ === 'ketteler-unternavigation' && \is_string($bereich) && Uuid::isValid($bereich)) {
+            $c = (new Criteria())->addFilter(new EqualsFilter('parentId', $bereich), new EqualsFilter('active', true), new EqualsFilter('visible', true));
+            $sammlung->add($this->schluessel($slot, 'kinder'), CategoryDefinition::class, $c);
+        }
         $hefte = $this->werte($slot)[self::HEFT_FELD] ?? null;
         if (\is_string($hefte) && Uuid::isValid($hefte)) {
             $c = (new Criteria())->addFilter(new EqualsFilter('categoriesRo.id', $hefte))->addAssociation('cover.media')->setLimit(500);
@@ -85,8 +90,37 @@ class KettelerElementResolver extends AbstractCmsElementResolver
         foreach ($result->get($this->schluessel($slot, 'medien'))?->getEntities() ?? [] as $m) {
             $daten['medien'][$m->getId()] = $m;
         }
+        $daten['kinder'] = self::reihenfolge(array_values($result->get($this->schluessel($slot, 'kinder'))?->getEntities()?->getElements() ?? []));
         $daten['jahrgaenge'] = self::nachJahrgang(array_values($result->get($this->schluessel($slot, 'hefte'))?->getEntities()?->getElements() ?? []));
         $slot->setData(new ArrayStruct($daten));
+    }
+
+    /**
+     * Geschwister-Kategorien in der Reihenfolge des Baums (afterCategoryId zeigt auf den Vorgänger)
+     *
+     * @param list<object> $kategorien
+     *
+     * @return list<object>
+     */
+    public static function reihenfolge(array $kategorien): array
+    {
+        $nach = [];
+        foreach ($kategorien as $k) {
+            $nach[(string) $k->getAfterCategoryId()] = $k;
+        }
+        $liste = [];
+        $vorher = '';
+        while (isset($nach[$vorher]) && \count($liste) < \count($kategorien)) {
+            $liste[] = $nach[$vorher];
+            $vorher = $nach[$vorher]->getId();
+        }
+        foreach ($kategorien as $k) {
+            if (!\in_array($k, $liste, true)) {
+                $liste[] = $k;
+            }
+        }
+
+        return $liste;
     }
 
     /**

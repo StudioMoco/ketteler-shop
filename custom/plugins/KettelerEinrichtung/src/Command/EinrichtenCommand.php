@@ -280,6 +280,25 @@ class EinrichtenCommand extends Command
                 ],
             ],
         ]]);
+        // Kategorien: Kurzname für die Unternavigation (z. B. „Aktuell & interessant“ statt des langen Namens)
+        $this->schreiben('custom_field_set', [[
+            'id' => $this->id('zusatzfelder.kategorie'),
+            'name' => 'ketteler_kategorie',
+            'config' => ['label' => ['de-DE' => 'Ketteler', 'en-GB' => 'Ketteler'], 'translated' => true],
+            'relations' => [['id' => $this->id('zusatzfelder.kategorie.category'), 'entityName' => 'category']],
+            'customFields' => [[
+                'id' => $this->id('zusatzfeld.kurzname'),
+                'name' => 'ketteler_kurzname',
+                'type' => CustomFieldTypes::TEXT,
+                'config' => [
+                    'label' => ['de-DE' => 'Kurzname (Unternavigation)', 'en-GB' => 'Short name (sub navigation)'],
+                    'helpText' => ['de-DE' => 'Beschriftung in der Reiterzeile eines Bereichs (z. B. MAV Einstieg). Leer = Name der Kategorie.'],
+                    'componentName' => 'sw-field',
+                    'customFieldType' => 'text',
+                    'customFieldPosition' => 1,
+                ],
+            ]],
+        ]]);
         // Einzelhefte: Jahrgang und Heft nur für Ausnahmen (sonst aus der Artikelnummer Z5-2026); eigene Zeilen, damit sie
         // auch in eine schon bestehende Gruppe kommen
         $this->schreiben('custom_field', array_map(fn (array $f): array => [
@@ -594,6 +613,7 @@ class EinrichtenCommand extends Command
                 'active' => true,
                 'visible' => empty($kind['versteckt']),
                 'description' => !empty($kind['platzhalter']) || ($fuss && !$hatKinder && empty($kind['link'])) ? '<p>Platzhalter. Der Text folgt.</p>' : null,
+                'customFields' => ['ketteler_kurzname' => $kind['kurzname'] ?? null],
             ];
             // Verweis statt eigener Seite: auf eine andere Kategorie oder eine Adresse (z. B. /mehrplatz-anfrage)
             if (isset($kind['link']['kategorie'])) {

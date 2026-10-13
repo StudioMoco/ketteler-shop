@@ -825,6 +825,49 @@
       ],
       "beschreibung": "Testartikel KAB Service Karten. Echte Daten kommen aus weclapp.",
       "abo": null
+    },
+    {
+      "nummer": "TEST-PH-PW-K",
+      "name": "Praxiswissen Arbeitsrecht 2025 katholisch (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 14.9,
+      "gewicht": 0.2,
+      "kategorien": [
+        "praxishandbuecher"
+      ],
+      "beschreibung": "Testartikel (PW25-K). Preis und Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-PH-PW-E",
+      "name": "Praxiswissen Arbeitsrecht 2025 evangelisch (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 14.9,
+      "gewicht": 0.2,
+      "kategorien": [
+        "praxishandbuecher"
+      ],
+      "beschreibung": "Testartikel (PW25-E). Preis und Daten kommen aus weclapp.",
+      "abo": null
+    },
+    {
+      "nummer": "TEST-PH-KAVO",
+      "name": "KAVO Handbuch (Test)",
+      "artikelart": "print",
+      "produkt": null,
+      "steuer": "print7",
+      "preis": 39.9,
+      "gewicht": 0.6,
+      "kategorien": [
+        "praxishandbuecher"
+      ],
+      "autor": "Joussen (Hrsg.)/Richartz/Nowak/Meiers",
+      "beschreibung": "Testartikel KAVO Handbuch. Preis und Daten kommen aus weclapp.",
+      "abo": null
     }
   ],
   "entfernt": [

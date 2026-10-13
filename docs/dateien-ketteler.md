@@ -37,3 +37,23 @@ ersetzen“ wählen; alle Verweise bleiben gültig.
 **Bilder:** Cover kommen später mit den Artikeln aus weclapp (heute im alten Shop z. B. `res/user/zmv/media/05029-d_k.jpg`,
 `05029_k.jpg`, `608082_g.jpg`, `030-p_k.jpg`, `031_k.jpg`). Foto von Rechtsanwalt Marvin Milleschewski für „Video mit
 Person“ (keine Quelle in `content/`). Video AVR 2027 Folge 1 mit Untertiteln und Vorschaubild (Frage 15).
+
+## Storytelling-Seiten (Abschnitt C)
+
+| Platzhalter (Titel in den Medien) | Wo | Alte Adresse |
+|---|---|---|
+| ZMV-Artikel Rech, … Teil 1: katholisch (und zehn weitere „ZMV-Artikel …“) | MAV Einstieg, Hilfreiche Artikel | https://www.ketteler-verlag.de/download/zmv_02_2024_mav_ordentlichek%C3%BCndigung.pdf und die übrigen `download/zmv_*.pdf` aus `content/storytelling/mav-einstieg-aktuell-interessant.md` |
+| AVR Leseprobe Modulfinder | Grundwissen, Titelkarte AVR | keine Quelle in `content/` (bitte liefern) |
+| Praxiswissen katholisch Leseprobe Mitarbeitervertretung | Praktische Arbeitshilfen | https://www.ketteler-verlag.de/res/user/zmv/webbook/praxiswissen_leseprobe_mitarbeitervertretung_katholisch.pdf |
+| Praxiswissen evangelisch Leseprobe Mitarbeitervertretung | Praktische Arbeitshilfen | https://www.ketteler-verlag.de/res/user/zmv/webbook/praxiswissen_leseprobe_mitarbeitervertretung_evangelisch.pdf |
+| Checklisten Leseprobe Dienstvereinbarung | Praktische Arbeitshilfen | https://www.ketteler-verlag.de/res/user/zmv/media/checklisten_leseprobe_dienstvereinbarung.pdf |
+| Arbeitszeit und Dienstplanung Leseprobe Überstunden und Mehrarbeit | Themenbezogene Literatur | https://www.ketteler-verlag.de/res/user/zmv/media/avr_arbeitszeit_dienstplan_leseprobe_1.pdf |
+| Beschäftigtendatenschutz Vorwort, … Inhaltsverzeichnis | Themenbezogene Literatur | https://www.ketteler-verlag.de/download/beschaeftigtendatenschutz_vorwort.pdf, …_inhalt.pdf |
+| KAVO Leseprobe Direktionsrecht, … Fürsorgepflicht | Themenbezogene Literatur | https://www.ketteler-verlag.de/res/user/zmv/media/kavo_leseprobe_direktionsrecht.pdf, …_fuersorgepflicht.pdf |
+| Bericht zur Fachtagung 2025 | ZMV Fachtagung, Rückblick | https://www.ketteler-verlag.de/res/user/zmv/webbook/bericht_fachtagung_2025.pdf |
+| Bericht zur Online-Fachtagung 2023 | ZMV Fachtagung, Rückblick | https://www.ketteler-verlag.de/res/user/zmv/webbook/bericht_fachtagung_2023.pdf |
+| Interview Simone Küster, Matthias Ullrich, Ulrich Richartz, Dr. Sebastian Weber, Prof. Dr. Jacob Joussen | Interviews | https://www.ketteler-verlag.de/wb/?node=Neuigkeiten.InterviewK%C3%BCster, …InterviewUllrich, …InterviewRichartz, …InterviewWeber, …Interview (Seiten; bitte als PDF oder Text) |
+
+**Fotos (Platzhalter Sand mit Alt-Text, Titel „Platzhalter: Name“):** Simone Küster, Matthias Ullrich, Ulrich Richartz,
+Dr. Sebastian Weber, Prof. Dr. Jacob Joussen, Rechtsanwalt Marvin Milleschewski. **Cover** der Praxishandbücher (PW25-K,
+PW25-E, C2022, KAVO Handbuch u. a.) kommen mit den Artikeln aus weclapp.

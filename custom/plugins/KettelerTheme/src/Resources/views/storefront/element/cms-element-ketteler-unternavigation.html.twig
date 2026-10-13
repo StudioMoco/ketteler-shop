@@ -1,0 +1,27 @@
+{#
+    Unternavigation (MAV Einstieg): Brotkrumen und die Unterseiten des Bereichs als Reiterzeile aus dem Kategoriebaum.
+    Beschriftung aus dem Zusatzfeld „Kurzname“ der Kategorie, sonst der Name. Die aktive Seite ist markiert; auf der
+    Übersicht des Bereichs die als „Übersicht“ gewählte Unterseite, die immer vorn steht. Mobil eine waagerecht
+    scrollbare Zeile.
+#}
+{% set c = element.config %}
+{% set d = element.data %}
+{% if c.kategorie.value %}
+    {% set aktiv = page.header.navigation.active ?? null %}
+    {% set aktivId = aktiv ? aktiv.id : '' %}
+    {% set markiert = aktivId == c.kategorie.value ? c.uebersicht.value : aktivId %}
+    {% set kinder = d.kinder|default([]) %}
+    {% set vorn = kinder|filter(k => k.id == c.uebersicht.value) %}
+    {% set kinder = vorn|merge(kinder|filter(k => k.id != c.uebersicht.value)) %}
+    <div class="kt-rahmen kt-unternavigation-rahmen">
+        {% sw_include '@KettelerTheme/storefront/component/ketteler/brotkrumen.html.twig' %}
+        {% if kinder is not empty %}
+            <nav class="kt-unternavigation" aria-label="{{ (d.kategorien[c.kategorie.value] ?? null) ? d.kategorien[c.kategorie.value].translated.name : 'Unterseiten' }}" data-kt="unternavigation">
+                {% for k in kinder %}
+                    {% set name = k.translated.customFields.ketteler_kurzname ?? null %}
+                    <a href="{{ seoUrl('frontend.navigation.page', { navigationId: k.id }) }}"{% if k.id == markiert %} aria-current="page"{% endif %}>{{ name ?: k.translated.name }}</a>
+                {% endfor %}
+            </nav>
+        {% endif %}
+    </div>
+{% endif %}

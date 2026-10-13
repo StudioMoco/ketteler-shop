@@ -1,0 +1,38 @@
+{# Bereichskacheln (MAV Einstieg): Überschrift, Kacheln mit drei Covern, Nummer, Titel und Text, darunter eine Zeile mit Links #}
+{% set c = element.config %}
+{% set d = element.data %}
+{% if c.kacheln.value is not empty %}
+    <section class="kt-band--weiss" aria-label="{{ c.ueberschrift.value|striptags }}" data-kt="bereichskacheln">
+        <div class="kt-rahmen kt-bereiche">
+            {% if c.ueberschrift.value %}<h2>{{ c.ueberschrift.value }}</h2>{% endif %}
+            <div class="kt-bereiche-reihe">
+                {% for k in c.kacheln.value %}
+                    {% set ziel = kt_link(k.link) %}
+                    <a class="kt-bereich" href="{{ ziel ?? '#' }}" data-kt="bereich">
+                        <span class="kt-bereich-cover" aria-hidden="true">
+                            {% for pid in k.produkte|default([])|slice(0, 3) %}
+                                {% if d.produkte[pid] is defined %}{% sw_include '@KettelerTheme/storefront/component/ketteler/cover.html.twig' with { produkt: d.produkte[pid], groesse: 'bereich', dekorativ: true } only %}{% endif %}
+                            {% endfor %}
+                        </span>
+                        <span class="kt-bereich-text">
+                            {% if k.nummer %}<span class="kt-bereich-nummer">{{ k.nummer }}</span>{% endif %}
+                            <span class="kt-bereich-titel">{{ k.titel }}</span>
+                            {% if k.text %}<span class="kt-bereich-beschreibung">{{ k.text }}</span>{% endif %}
+                        </span>
+                    </a>
+                {% endfor %}
+            </div>
+            {% set links = [] %}
+            {% for l in c.zeileLinks.value|default([]) %}
+                {% set ziel = l.datei and d.medien[l.datei] is defined ? d.medien[l.datei].url : kt_link(l.link) %}
+                {% if l.text and ziel %}{% set links = links|merge([{ text: l.text, ziel: ziel }]) %}{% endif %}
+            {% endfor %}
+            {% if c.zeileText.value %}
+                <div class="kt-angebote-zeile kt-bereiche-zeile">
+                    <p>{{ c.zeileText.value|kt_text }}</p>
+                    <span class="kt-bereiche-links">{% for l in links %}<a class="kt-textlink kt-textlink--magenta" href="{{ l.ziel }}">{{ l.text }}</a>{% endfor %}</span>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+{% endif %}

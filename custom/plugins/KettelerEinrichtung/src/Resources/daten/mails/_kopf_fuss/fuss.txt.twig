@@ -1,9 +1,14 @@
 
-
 Unser Kundenservice ist gern für Sie da
-Schloßhof 1, 93449 Waldmünchen
-Telefon 09972 94 14-51
-kontakt@ketteler-verlag.de
+Telefon 09972 94 14-51, kontakt@ketteler-verlag.de
+Montag, Dienstag, Donnerstag von 8.00 bis 13.00 Uhr, Mittwoch und Freitag von 8.00 bis 12.00 Uhr
+KETTELER-Verlag GmbH, Niederlassung, Schloßhof 1, 93449 Waldmünchen
 
-KETTELER-Verlag GmbH, Bernhard-Letterhaus-Str. 26, 50670 Köln
-Amtsgericht Köln HRB 34678
+{% set basis = (salesChannel.domains|first).url|default('') %}AGB: {{ basis }}/{{SEO:fuss-agb}}
+Widerrufsbelehrung: {{ basis }}/{{SEO:fuss-widerruf}}
+Datenschutzerklärung: {{ basis }}/{{SEO:fuss-datenschutz}}
+Impressum: {{ basis }}/{{SEO:fuss-impressum}}
+Verträge hier kündigen: {{ basis }}/{{SEO:fuss-kuendigen}}
+
+KETTELER-Verlag GmbH, Sitz des Verlages: Bernhard-Letterhaus-Str. 26, 50670 Köln
+Geschäftsführer: Josef Singer · Amtsgericht Köln HRB 34678 · USt-IdNr. DE 122 792 915

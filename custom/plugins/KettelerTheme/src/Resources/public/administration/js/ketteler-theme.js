@@ -1,7 +1,9 @@
 /*
  * Erlebniswelten: eigene Blöcke des KETTELER-Verlags (Schaufenster, Kategorien mit Cover-Stapel, Werke, Hinweis mit
  * Zeichen, Drei Beiträge, Nummerierte Liste, Produktreihe; für die Werkseiten Werk-Kopf, Angebote, Vorteile / Liste,
- * Leseproben, Video mit Person, Einzelhefte mit Jahrgangsauswahl, Aktuelle Ausgabe, Fakten, Rückmeldung). Bewusst ohne Bauschritt geschrieben (kein Webpack),
+ * Leseproben, Video mit Person, Einzelhefte mit Jahrgangsauswahl, Aktuelle Ausgabe, Fakten, Rückmeldung; für die
+ * Storytelling-Seiten Unternavigation, Seitenkopf, Begrüßungsbrief, Bereichskacheln, Artikelliste, Titelkarten,
+ * Veranstaltung, Interviewliste). Bewusst ohne Bauschritt geschrieben (kein Webpack),
  * Shopware lädt diese Datei direkt. Jeder Block hat genau ein Element gleichen Namens; dessen Einstellungen beschreibt
  * ein Feldschema (FELDER), aus dem das Einstellungsfenster gebaut wird. Darstellung im Shop:
  * Resources/views/storefront/element/cms-element-ketteler-*.html.twig, Daten lädt Cms/KettelerElementResolver.php.
@@ -241,9 +243,11 @@
                 {
                     name: 'dateien', label: 'Dateien', typ: 'liste', max: 30, eintrag: 'Datei',
                     felder: [
-                        { name: 'kuerzel', label: 'Kürzel, z. B. „A 11“ (optional)', typ: 'text' },
+                        { name: 'kuerzel', label: 'Kürzel, z. B. „A 11“ oder Jahr (optional)', typ: 'text' },
                         { name: 'titel', label: 'Titel', typ: 'text' },
-                        { name: 'datei', label: 'PDF aus den Medien', typ: 'medium', akzeptiert: 'application/pdf' }
+                        { name: 'datei', label: 'PDF aus den Medien', typ: 'medium', akzeptiert: 'application/pdf' },
+                        { name: 'link', label: 'oder Link (z. B. Bericht auf einer anderen Seite)', typ: 'link' },
+                        { name: 'art', label: 'Angabe rechts (leer: „PDF“, z. B. „extern“)', typ: 'text' }
                     ]
                 }
             ]
@@ -302,6 +306,7 @@
             felder: [
                 ANKER,
                 { name: 'flaeche', label: 'Fläche', typ: 'auswahl', optionen: FLAECHEN_WERK },
+                { name: 'hauptueberschrift', label: 'Titel ist die Hauptüberschrift der Seite (eigene Seite „ZMV aktuell“)', typ: 'schalter' },
                 { name: 'dachzeile', label: 'Dachzeile', typ: 'text' },
                 { name: 'titel', label: 'Titel', typ: 'text' },
                 { name: 'untertitel', label: 'Untertitel', typ: 'text' },
@@ -358,6 +363,160 @@
                 { name: 'text', label: 'Text', typ: 'text' },
                 { name: 'knopfText', label: 'Knopf: Text', typ: 'text' },
                 { name: 'knopfLink', label: 'Knopf: Ziel (z. B. mailto:kontakt@ketteler-verlag.de)', typ: 'link' }
+            ]
+        },
+        unternavigation: {
+            label: 'Unternavigation',
+            beschreibung: 'Brotkrumen und die Unterseiten eines Bereichs (z. B. MAV Einstieg) als Reiterzeile, aktive Seite markiert',
+            felder: [
+                { name: 'kategorie', label: 'Bereich (seine Unterkategorien werden gezeigt; Beschriftung: Zusatzfeld „Kurzname“ oder Name)', typ: 'kategorie' },
+                { name: 'uebersicht', label: 'Unterseite, die auf der Übersicht des Bereichs markiert ist (steht vorn)', typ: 'kategorie' }
+            ]
+        },
+        seitenkopf: {
+            label: 'Seitenkopf',
+            beschreibung: 'Optional Brotkrumen, dann Hauptüberschrift und Unterzeile',
+            felder: [
+                { name: 'brotkrumen', label: 'Brotkrumen zeigen', typ: 'schalter' },
+                { name: 'titel', label: 'Titel (einzige Hauptüberschrift der Seite)', typ: 'text' },
+                { name: 'unterzeile', label: 'Unterzeile', typ: 'text' }
+            ]
+        },
+        begruessung: {
+            label: 'Begrüßungsbrief',
+            beschreibung: 'Anrede als Hauptüberschrift, Brieftext und Gruß, daneben ein Kasten mit Knöpfen (z. B. Probeheft)',
+            felder: [
+                { name: 'titel', label: 'Anrede (einzige Hauptüberschrift der Seite)', typ: 'text' },
+                { name: 'text', label: 'Brieftext', typ: 'textarea' },
+                { name: 'gruss', label: 'Gruß (kursiv)', typ: 'textarea' },
+                { name: 'kastenDachzeile', label: 'Kasten: Dachzeile', typ: 'text' },
+                { name: 'kastenTitel', label: 'Kasten: Titel', typ: 'text' },
+                {
+                    name: 'knoepfe', label: 'Kasten: Knöpfe (der erste in Magenta)', typ: 'liste', max: 2, eintrag: 'Knopf',
+                    felder: [
+                        { name: 'text', label: 'Text', typ: 'text' },
+                        { name: 'link', label: 'Ziel', typ: 'link' },
+                        { name: 'datei', label: 'oder Datei aus den Medien (geht vor)', typ: 'medium', akzeptiert: '*/*' }
+                    ]
+                }
+            ]
+        },
+        bereichskacheln: {
+            label: 'Bereichskacheln',
+            beschreibung: 'Überschrift und bis zu vier Kacheln mit Nummer, Titel, Text und drei Covern, darunter eine Zeile mit Links',
+            felder: [
+                { name: 'ueberschrift', label: 'Überschrift', typ: 'text' },
+                {
+                    name: 'kacheln', label: 'Kacheln', typ: 'liste', max: 4, eintrag: 'Kachel',
+                    felder: [
+                        { name: 'nummer', label: 'Nummer', typ: 'text' },
+                        { name: 'titel', label: 'Titel', typ: 'text' },
+                        { name: 'text', label: 'Text (z. B. die Titel des Bereichs)', typ: 'text' },
+                        { name: 'link', label: 'Ziel', typ: 'link' },
+                        { name: 'produkte', label: 'Cover (bis zu drei Produkte)', typ: 'produkte', max: 3 }
+                    ]
+                },
+                { name: 'zeileText', label: 'Zeile darunter: Text (' + HINWEIS_TEXT + ')', typ: 'text' },
+                {
+                    name: 'zeileLinks', label: 'Zeile darunter: Links', typ: 'liste', max: 3, eintrag: 'Link',
+                    felder: [
+                        { name: 'text', label: 'Text', typ: 'text' },
+                        { name: 'link', label: 'Ziel', typ: 'link' },
+                        { name: 'datei', label: 'oder Datei aus den Medien (geht vor)', typ: 'medium', akzeptiert: '*/*' }
+                    ]
+                }
+            ]
+        },
+        artikelliste: {
+            label: 'Artikelliste',
+            beschreibung: 'Überschrift und Text links, rechts eine Liste (Autor, Titel mit Beschreibung, Angabe rechts), z. B. Artikel zum Download oder Links',
+            felder: [
+                ANKER,
+                { name: 'ueberschrift', label: 'Überschrift (leer: Liste über die ganze Breite)', typ: 'text' },
+                { name: 'text', label: 'Text', typ: 'textarea' },
+                {
+                    name: 'eintraege', label: 'Einträge', typ: 'liste', max: 40, eintrag: 'Eintrag',
+                    felder: [
+                        { name: 'vorspalte', label: 'Vorne, z. B. Autor', typ: 'text' },
+                        { name: 'titel', label: 'Titel', typ: 'text' },
+                        { name: 'beschreibung', label: 'Beschreibung darunter', typ: 'text' },
+                        { name: 'nachspalte', label: 'Rechts, z. B. „ZMV 02/2024“', typ: 'text' },
+                        { name: 'link', label: 'Ziel', typ: 'link' },
+                        { name: 'datei', label: 'oder Datei aus den Medien (geht vor)', typ: 'medium', akzeptiert: '*/*' }
+                    ]
+                },
+                { name: 'fussLinkText', label: 'Link darunter: Text', typ: 'text' },
+                { name: 'fussLink', label: 'Link darunter: Ziel', typ: 'link' }
+            ]
+        },
+        titelkarten: {
+            label: 'Titelkarten',
+            beschreibung: 'Bis zu drei Karten mit Cover, Herausgeber, Titel, Zeilen mit großem Anfangsbuchstaben, Leseproben, Preis und Link',
+            felder: [
+                {
+                    name: 'karten', label: 'Karten', typ: 'liste', max: 3, eintrag: 'Karte',
+                    felder: [
+                        { name: 'produkt', label: 'Produkt (Cover und Preis)', typ: 'produkt' },
+                        { name: 'flaeche', label: 'Fläche hinter dem Cover', typ: 'auswahl', optionen: FLAECHEN_WERK },
+                        { name: 'hrsg', label: 'Herausgeber/Autor', typ: 'text' },
+                        { name: 'titel', label: 'Titel', typ: 'text' },
+                        { name: 'zeilen', label: 'Zeilen (eine je Zeile; der erste Buchstabe wird groß gesetzt)', typ: 'textarea' },
+                        { name: 'leseprobenTitel', label: 'Überschrift der Leseproben (leer: „Leseproben“)', typ: 'text' },
+                        {
+                            name: 'leseproben', label: 'Leseproben und Links', typ: 'liste', max: 5, eintrag: 'Link',
+                            felder: [
+                                { name: 'text', label: 'Text', typ: 'text' },
+                                { name: 'link', label: 'Ziel', typ: 'link' },
+                                { name: 'datei', label: 'oder Datei aus den Medien (geht vor)', typ: 'medium', akzeptiert: '*/*' }
+                            ]
+                        },
+                        { name: 'preisPraefix', label: 'Vor dem Preis, z. B. „ab“', typ: 'text' },
+                        { name: 'linkText', label: 'Knopf: Text (z. B. „Zum Werk“)', typ: 'text' },
+                        { name: 'link', label: 'Knopf: Ziel', typ: 'link' }
+                    ]
+                }
+            ]
+        },
+        veranstaltung: {
+            label: 'Veranstaltung',
+            beschreibung: 'Große Fläche in Magenta mit Dachzeile, Titel, Text, Datum und Ort, darunter Zeilen mit Links und ein Text',
+            felder: [
+                { name: 'dachzeile', label: 'Dachzeile', typ: 'text' },
+                { name: 'titel', label: 'Titel (einzige Hauptüberschrift der Seite)', typ: 'text' },
+                { name: 'text', label: 'Text', typ: 'textarea' },
+                { name: 'datum', label: 'Datum', typ: 'text' },
+                { name: 'ort', label: 'Ort', typ: 'text' },
+                {
+                    name: 'zeilen', label: 'Zeilen (z. B. Programm, Anmeldung)', typ: 'liste', max: 4, eintrag: 'Zeile',
+                    felder: [
+                        { name: 'text', label: 'Text (' + HINWEIS_TEXT + ')', typ: 'text' },
+                        { name: 'linkText', label: 'Linktext', typ: 'text' },
+                        { name: 'link', label: 'Ziel', typ: 'link' }
+                    ]
+                },
+                { name: 'seitentext', label: 'Text neben den Zeilen', typ: 'textarea' }
+            ]
+        },
+        interviewliste: {
+            label: 'Interviewliste',
+            beschreibung: 'Interviews untereinander: Foto, Ort und Datum, Name, Rolle, Text, Link und Buch aus dem Katalog',
+            felder: [
+                {
+                    name: 'eintraege', label: 'Interviews', typ: 'liste', max: 20, eintrag: 'Interview',
+                    felder: [
+                        { name: 'foto', label: 'Foto', typ: 'medium', akzeptiert: 'image/*' },
+                        { name: 'ort', label: 'Ort und Datum', typ: 'text' },
+                        { name: 'name', label: 'Name', typ: 'text' },
+                        { name: 'rolle', label: 'Rolle (kursiv)', typ: 'text' },
+                        { name: 'text', label: 'Text', typ: 'textarea' },
+                        { name: 'linkText', label: 'Link: Text (z. B. „Zum Interview“)', typ: 'text' },
+                        { name: 'link', label: 'Link: Ziel', typ: 'link' },
+                        { name: 'datei', label: 'oder Datei aus den Medien (geht vor)', typ: 'medium', akzeptiert: '*/*' },
+                        { name: 'produkt', label: 'Buch oder Zeitschrift (Cover)', typ: 'produkt' },
+                        { name: 'produktText', label: 'Text unter dem Cover (z. B. „Zum Buch“)', typ: 'text' },
+                        { name: 'produktLink', label: 'Ziel des Covers (leer: Seite des Produkts)', typ: 'link' }
+                    ]
+                }
             ]
         },
         produktreihe: {
@@ -510,7 +669,7 @@
                 },
                 anzahl: function () {
                     var c = this.element.config || {};
-                    var l = ['eintraege', 'kacheln', 'produkte', 'karten', 'dateien', 'zeilen'].map(function (f) { return c[f] && c[f].value; }).filter(function (v) { return Array.isArray(v) && v.length; })[0];
+                    var l = ['eintraege', 'kacheln', 'produkte', 'karten', 'dateien', 'zeilen', 'knoepfe'].map(function (f) { return c[f] && c[f].value; }).filter(function (v) { return Array.isArray(v) && v.length; })[0];
                     return Array.isArray(l) ? l.length + ' Einträge' : null;
                 }
             },

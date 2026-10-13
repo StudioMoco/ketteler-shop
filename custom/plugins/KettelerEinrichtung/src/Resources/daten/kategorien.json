@@ -1,5 +1,5 @@
 {
-  "_hinweis": "Kategorien nach der Startseiten-Vorlage (docs/design/startseite-entwurf.dc.html), Namen aus Vorlage und content/. Schlüssel sind fest, daraus entstehen die IDs. Reihenfolge = Reihenfolge im Menü. platzhalter: Seite ohne Produkte mit Platzhaltertext; versteckt: nicht im Menü; link: Verweis auf eine Kategorie oder eine Adresse. „Verträge hier kündigen“ (§ 312k BGB) und „Widerruf erklären“ (EU-Widerrufsfunktion) stehen zusätzlich zur Vorlage im Fuß.",
+  "_hinweis": "Kategorien nach der Startseiten-Vorlage (docs/design/startseite-entwurf.dc.html), Namen aus Vorlage und content/. Schlüssel sind fest, daraus entstehen die IDs. Reihenfolge = Reihenfolge im Menü. platzhalter: Seite ohne Produkte mit Platzhaltertext; versteckt: nicht im Menü; link: Verweis auf eine Kategorie oder eine Adresse. „Verträge hier kündigen“ (§ 312k BGB) und „Widerruf erklären“ (EU-Widerrufsfunktion) stehen zusätzlich zur Vorlage im Fuß. kurzname: Beschriftung in der Unternavigation (Zusatzfeld ketteler_kurzname).",
   "wurzel": {
     "schluessel": "katalog",
     "name": "KETTELER-Verlag"
@@ -9,6 +9,10 @@
       "schluessel": "zmv",
       "name": "Zeitschrift ZMV",
       "kinder": [
+        {
+          "schluessel": "zmv-aktuell",
+          "name": "ZMV aktuell"
+        },
         {
           "schluessel": "zmv-print",
           "name": "ZMV Print"
@@ -46,27 +50,27 @@
         {
           "schluessel": "mav-grundwissen",
           "name": "Grundausstattung/Basiswissen für die MAV",
-          "platzhalter": true
+          "kurzname": "Grundwissen/Basisausstattung"
         },
         {
           "schluessel": "mav-arbeitshilfen",
           "name": "Praktische Arbeitshilfen",
-          "platzhalter": true
+          "kurzname": "Praktische Arbeitshilfen"
         },
         {
           "schluessel": "mav-literatur",
           "name": "Themenbezogene Literatur",
-          "platzhalter": true
+          "kurzname": "Themenbezogene Literatur"
         },
         {
           "schluessel": "mav-aktuelles",
           "name": "Aktuell & interessant: hilfreiche Artikel aus der ZMV",
-          "platzhalter": true
+          "kurzname": "Aktuell & interessant"
         },
         {
           "schluessel": "mav-links",
           "name": "Hilfreiche Links",
-          "platzhalter": true
+          "kurzname": "Hilfreiche Links"
         }
       ]
     },
@@ -173,17 +177,14 @@
     {
       "schluessel": "verlag",
       "name": "Verlag",
-      "platzhalter": true,
       "kinder": [
         {
           "schluessel": "verlag-fachtagung",
-          "name": "ZMV Fachtagung",
-          "platzhalter": true
+          "name": "ZMV Fachtagung"
         },
         {
           "schluessel": "verlag-gespraech",
-          "name": "Interviews Autoren & Schriftleiter",
-          "platzhalter": true
+          "name": "Interviews Autoren & Schriftleiter"
         },
         {
           "schluessel": "verlag-programm",
@@ -192,8 +193,7 @@
         },
         {
           "schluessel": "verlag-links",
-          "name": "Links",
-          "platzhalter": true
+          "name": "Links"
         },
         {
           "schluessel": "fuss-kontakt",

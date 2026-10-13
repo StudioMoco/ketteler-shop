@@ -89,3 +89,18 @@ Erklärung geht per E-Mail an Sie und steht an der Bestellung. Dazu brauchen wir
     Zusatzfelder „Jahrgang“ und „Heft“ festlegen.
 26. **Eichstätter Kommentar Print und Online:** Zurzeit wird nur der Online-Zugang (608082) verkauft. Bitte bestätigen,
     dass es kein Paket mit der Printausgabe mehr gibt.
+
+## Zu den Storytelling-Seiten (MAV Einstieg, Fachtagung, Interviews)
+
+27. **Anmeldung zur Fachtagung:** Heute über zmv-online.de; der Shop verlinkt dorthin wie bisher. Soll die Anmeldung
+    künftig über den Shop laufen (z. B. als Artikel „Teilnahme Fachtagung“)?
+28. **Interviews:** Die vollständigen Interviews liegen heute auf Unterseiten des alten Shops. Bitte als Text oder PDF
+    liefern; bis dahin führt „Zum Interview“ auf ein Platzhalter-PDF.
+29. **Schreibweisen aus dem alten Shop:** Wir übernehmen die Texte wörtlich, auch „Praxiswissen Arbeitrecht 2025
+    evangelisch“, „Mitbestimmungrecht“ und „Aussstattung“ (im Artikeltitel „Und was habt ihr so?“ steht in der
+    freigegebenen Vorlage „Ausstattung“). Sollen wir diese Tippfehler berichtigen?
+30. **Gedankenstriche in übernommenen Texten:** Artikeltitel der ZMV (z. B. „… Kündigung – Teil 1: katholisch“), die Texte
+    der Seite „Verlag“ und einzelne Beschreibungen der „Hilfreichen Links“ enthalten Gedankenstriche. Wir lassen sie
+    wörtlich stehen; neue Texte des Shops schreiben wir ohne. Einverstanden?
+31. **„Weitere Links zu ZMV Artikeln für den MAV-Einstieg“:** Die Artikel liegen heute in der Digibib. Bis zur Antwort auf
+    Frage 14 führt der Link in die KETTELER-Bibliothek.

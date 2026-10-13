@@ -28,7 +28,8 @@ class WerkseitenTest extends TestCase
         self::assertSame('zmv-print', AlteAdressen::finden($liste, '/', ['listview' => '', 'link' => '0205000']));
         self::assertNull(AlteAdressen::finden($liste, '/', ['listview' => '', 'link' => '0999999']));
         self::assertNull(AlteAdressen::finden($liste, '/', []));
-        self::assertSame('zmv', AlteAdressen::finden($liste, '/DigiBib/', ['digisubscribe' => '']));
+        self::assertSame('zmv', AlteAdressen::finden($liste, '/digibib/', ['digisubscribe' => '']));
+        self::assertNull(AlteAdressen::finden([['alt' => '/verlag', 'ziel' => 'verlag']], '/Verlag/', []));
         self::assertSame('eichstaetter', AlteAdressen::finden($liste, '/listview', ['link' => '0500000']));
         self::assertNull(AlteAdressen::finden($liste, '/Zeitschrift-ZMV/', []));
     }

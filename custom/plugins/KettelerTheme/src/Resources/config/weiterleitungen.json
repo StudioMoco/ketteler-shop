@@ -1,8 +1,9 @@
 {
-  "_hinweis": "Alte Adressen des bisherigen Shops, 301 auf die neuen Seiten. ziel: Kategorie-Schlüssel aus ketteler:einrichten (kategorien.json), optional mit #Sprungmarke. Liste auch in docs/plan.md.",
+  "_hinweis": "Alte Adressen des bisherigen Shops, 301 auf die neuen Seiten. ziel: Kategorie-Schlüssel aus ketteler:einrichten (kategorien.json), optional mit #Sprungmarke. Pfade mit Groß-/Kleinschreibung wie im alten Shop (klein), damit neue Adressen wie /Verlag/ nicht getroffen werden. Liste auch in docs/plan.md.",
   "weiterleitungen": [
+    { "alt": "/digibib/?digisubscribe", "ziel": "zmv" },
     { "alt": "/digibib", "ziel": "zmv" },
-    { "alt": "/zmvaktuell", "ziel": "zmv#probeheft" },
+    { "alt": "/zmvaktuell", "ziel": "zmv-aktuell" },
     { "alt": "/?listview&link=0205000", "ziel": "zmv-print" },
     { "alt": "/?listview&link=0207000", "ziel": "zmv-archiv" },
     { "alt": "/listview?link=0200000", "ziel": "zmv" },
@@ -15,6 +16,21 @@
     { "alt": "/kompendiumaktuell", "ziel": "avr" },
     { "alt": "/kompendiumavrcaritas", "ziel": "avr" },
     { "alt": "/neuepreise", "ziel": "fuss-preise-zmv" },
-    { "alt": "/stob", "ziel": "fuss-agb" }
+    { "alt": "/stob", "ziel": "fuss-agb" },
+    { "alt": "/aktuellinteressant", "ziel": "mav-aktuelles" },
+    { "alt": "/grundwissenbasisausstattung", "ziel": "mav-grundwissen" },
+    { "alt": "/praktischearbeitshilfen", "ziel": "mav-arbeitshilfen" },
+    { "alt": "/themenbezogeneliteratur", "ziel": "mav-literatur" },
+    { "alt": "/hilfreichelinks", "ziel": "mav-links" },
+    { "alt": "/interviewsautoren", "ziel": "verlag-gespraech" },
+    { "alt": "/zmvfachtagung", "ziel": "verlag-fachtagung" },
+    { "alt": "/verlag", "ziel": "verlag" },
+    { "alt": "/links", "ziel": "verlag-links" },
+    { "alt": "/impressum", "ziel": "fuss-impressum" },
+    { "alt": "/privacy", "ziel": "fuss-datenschutz" },
+    { "alt": "/revocation", "ziel": "fuss-widerruf" },
+    { "alt": "/shipping", "ziel": "fuss-versand" },
+    { "alt": "/stob2", "ziel": "fuss-agb-anzeigen" },
+    { "alt": "/cancelform", "ziel": "fuss-kuendigen" }
   ]
 }

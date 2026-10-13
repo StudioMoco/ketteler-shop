@@ -423,6 +423,13 @@ Ausgabe, Leseproben, Video mit Person, Fakten, Rückmeldung) an den Kategorien �
 und „Eichstätter Kommentar“; die Inhalte stehen je Kategorie in deren Layout-Inhalten (Verwaltung: Kategorie > Layout),
 leere Plätze zeigen nichts. Blöcke: `docs/design/erlebniswelten.md`. Fehlende Dateien: `docs/dateien-ketteler.md`.
 
+**Storytelling-Seiten: gebaut (13.10.2026)** nach `docs/design/story-*-entwurf.dc.html`, Texte ohne Vorlage wörtlich aus
+`content/`. MAV Einstieg (Übersicht, zugleich „Aktuell & interessant“) als eigene Erlebniswelt; Grundwissen, Praktische
+Arbeitshilfen, Themenbezogene Literatur und Hilfreiche Links im gemeinsamen Layout „MAV Einstieg: Unterseite“ mit
+Inhalten je Kategorie; alle sechs MAV-Seiten mit Unternavigation aus dem Kategoriebaum (Kurzname im Zusatzfeld
+„Kurzname“). ZMV Fachtagung, Interviews Autoren & Schriftleiter, ZMV aktuell (neue Kategorie unter Zeitschrift ZMV),
+Verlag und Links als eigene Erlebniswelten. Die Anmeldung zur Fachtagung bleibt wie heute auf zmv-online.de (Frage 27).
+
 ### Entscheidungen von Atilla zu den Werkseiten (13.10.2026)
 
 1. **Mehrere Lizenzen nur über die Mehrplatz-Anfrage.** Jede Leselizenz braucht in der Bibliothek einen eigenen Zugang,
@@ -451,7 +458,6 @@ Liste in `custom/plugins/KettelerTheme/src/Resources/config/weiterleitungen.json
 | Alte Adresse | Neue Seite |
 |---|---|
 | `/digibib` | Zeitschrift ZMV |
-| `/zmvaktuell` | Zeitschrift ZMV, Aktuelle Ausgabe (`#probeheft`) |
 | `/?listview&link=0205000` | ZMV Print (Einzelhefte) |
 | `/?listview&link=0207000` | ZMV Archiv |
 | `/listview?link=0200000` | Zeitschrift ZMV |
@@ -460,6 +466,13 @@ Liste in `custom/plugins/KettelerTheme/src/Resources/config/weiterleitungen.json
 | `/importraet`, `/kompendiumaktuell`, `/kompendiumavrcaritas` | Kompendium AVR Caritas |
 | `/neuepreise` | Preise ZMV (bleibt eigene Seite unter „Rechtliches & Informationen“) |
 | `/stob` | AGB |
+| `/digibib/?digisubscribe` | Zeitschrift ZMV |
+| `/aktuellinteressant` | MAV Einstieg, Aktuell & interessant |
+| `/grundwissenbasisausstattung`, `/praktischearbeitshilfen`, `/themenbezogeneliteratur`, `/hilfreichelinks` | die gleichnamigen MAV-Seiten |
+| `/zmvaktuell` | ZMV aktuell (vorher Aktuelle Ausgabe der ZMV-Seite) |
+| `/zmvfachtagung`, `/interviewsautoren` | ZMV Fachtagung, Interviews Autoren & Schriftleiter |
+| `/verlag`, `/links` | Verlag, Links |
+| `/impressum`, `/privacy`, `/revocation`, `/shipping`, `/stob2`, `/cancelform` | Impressum, Datenschutzerklärung, Widerrufsbelehrung, Versand & Lieferung, AGB für Anzeigen/Beilagen, Verträge hier kündigen |
 
 ### Ursprüngliche Empfehlung
 

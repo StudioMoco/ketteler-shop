@@ -40,7 +40,14 @@ class AlteAdressen implements EventSubscriberInterface
         if (!$event->isMainRequest() || !\in_array($request->getMethod(), ['GET', 'HEAD'], true)) {
             return;
         }
-        $treffer = self::finden($this->liste(), $request->getPathInfo(), $request->query->all());
+        // Ursprünglicher Pfad: Shopware löst SEO-Adressen schon vorher auf, auch ohne Groß-/Kleinschreibung (/verlag)
+        $original = (string) ($request->attributes->get(RequestTransformer::ORIGINAL_REQUEST_URI) ?: $request->getRequestUri());
+        $pfad = (string) parse_url($original, \PHP_URL_PATH);
+        $basis = rtrim((string) $request->attributes->get(RequestTransformer::SALES_CHANNEL_BASE_URL, ''), '/');
+        if ($basis !== '' && str_starts_with($pfad, $basis)) {
+            $pfad = substr($pfad, \strlen($basis)) ?: '/';
+        }
+        $treffer = self::finden($this->liste(), $pfad, $request->query->all());
         if ($treffer === null) {
             return;
         }
@@ -49,23 +56,23 @@ class AlteAdressen implements EventSubscriberInterface
         if ($pfad === null) {
             return;
         }
-        $basis = rtrim((string) $request->attributes->get(RequestTransformer::SALES_CHANNEL_BASE_URL, ''), '/');
         $event->setResponse(new RedirectResponse($request->getSchemeAndHttpHost() . $basis . '/' . ltrim($pfad, '/') . ($marke ? '#' . $marke : ''), 301));
     }
 
     /**
-     * Ziel zur alten Adresse: Pfad ohne Groß-/Kleinschreibung und ohne Schrägstrich am Ende; alle Parameter der alten
-     * Adresse müssen in der Anfrage vorkommen (mit gleichem Wert, leerer Wert = nur vorhanden).
+     * Ziel zur alten Adresse: Pfad genau wie im alten Shop (Kleinbuchstaben; neue SEO-Adressen wie /Verlag/ beginnen groß
+     * und werden so nie umgeleitet), Schrägstrich am Ende egal; alle Parameter der alten Adresse müssen in der Anfrage
+     * vorkommen (mit gleichem Wert, leerer Wert = nur vorhanden).
      *
      * @param list<array{alt: string, ziel: string}> $liste
      * @param array<string, mixed> $parameter
      */
     public static function finden(array $liste, string $pfad, array $parameter): ?string
     {
-        $pfad = strtolower(rtrim($pfad, '/')) ?: '/';
+        $pfad = rtrim($pfad, '/') ?: '/';
         foreach ($liste as $eintrag) {
             $teile = parse_url($eintrag['alt']);
-            $altPfad = strtolower(rtrim($teile['path'] ?? '/', '/')) ?: '/';
+            $altPfad = rtrim($teile['path'] ?? '/', '/') ?: '/';
             if ($altPfad !== $pfad) {
                 continue;
             }

@@ -9,21 +9,10 @@
 {% set d = element.data %}
 {% set produkt = c.produkt.value ? d.produkte[c.produkt.value] ?? null : null %}
 {% set bild = c.bild.value ? d.medien[c.bild.value] ?? null : null %}
-{% set aktiv = page.header.navigation.active ?? null %}
 {% set bestandZiel = kt_link(c.bestandLink.value) ?? kt_service().bibliothekUrl %}
 <div class="kt-rahmen">
     <section class="kt-werkkopf" aria-label="{{ c.titel.value|striptags }}" data-kt="werkkopf">
-        <nav class="kt-brotkrumen" aria-label="Brotkrumen">
-            <a href="{{ path('frontend.home.page') }}">Home</a>
-            {% if aktiv %}
-                {% for k in sw_breadcrumb_full(aktiv, context.context) %}
-                    {% if k.id != context.salesChannel.navigationCategoryId %}
-                        <span aria-hidden="true">/</span>
-                        {% if k.id == aktiv.id %}<span aria-current="page">{{ k.translated.name }}</span>{% else %}<a href="{{ seoUrl('frontend.navigation.page', { navigationId: k.id }) }}">{{ k.translated.name }}</a>{% endif %}
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-        </nav>
+        {% sw_include '@KettelerTheme/storefront/component/ketteler/brotkrumen.html.twig' %}
         <div class="kt-werkkopf-reihe">
             <div class="kt-werkkopf-bild kt-werkkopf-bild--{{ c.flaeche.value|default('rose') }}">
                 {% if bild or produkt %}

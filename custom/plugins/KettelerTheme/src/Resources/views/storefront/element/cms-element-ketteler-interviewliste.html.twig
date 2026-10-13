@@ -1,0 +1,28 @@
+{# Interviewliste: je Interview Foto (Kreis), Ort und Datum, Name, Rolle kursiv, Text, Link, rechts Cover mit Link #}
+{% set c = element.config %}
+{% set d = element.data %}
+{% if c.eintraege.value is not empty %}
+    <section class="kt-rahmen kt-interviews" aria-label="Interviews" data-kt="interviewliste">
+        {% for e in c.eintraege.value %}
+            {% set foto = e.foto and d.medien[e.foto] is defined ? d.medien[e.foto] : null %}
+            {% set ziel = e.datei and d.medien[e.datei] is defined ? d.medien[e.datei].url : kt_link(e.link) %}
+            {% set p = e.produkt and d.produkte[e.produkt] is defined ? d.produkte[e.produkt] : null %}
+            <article class="kt-interview" data-kt="interview">
+                <span class="kt-interview-foto">{% if foto %}<img src="{{ foto.url }}" alt="{{ foto.translated.alt ?: e.name }}" loading="lazy">{% endif %}</span>
+                <div class="kt-interview-text">
+                    {% if e.ort %}<p class="kt-interview-ort">{{ e.ort }}</p>{% endif %}
+                    <h2>{{ e.name }}</h2>
+                    {% if e.rolle %}<p class="kt-interview-rolle">{{ e.rolle }}</p>{% endif %}
+                    {% if e.text %}<p class="kt-interview-beschreibung">{{ e.text }}</p>{% endif %}
+                    {% if e.linkText and ziel %}<a class="kt-textlink kt-textlink--magenta" href="{{ ziel }}">{{ e.linkText }}</a>{% endif %}
+                </div>
+                {% if p %}
+                    <a class="kt-interview-buch" href="{{ kt_link(e.produktLink) ?? seoUrl('frontend.detail.page', { productId: p.id }) }}" data-kt="interview-buch">
+                        {% sw_include '@KettelerTheme/storefront/component/ketteler/cover.html.twig' with { produkt: p, groesse: 'interview', dekorativ: true } only %}
+                        <span>{{ e.produktText ?: p.translated.name }}</span>
+                    </a>
+                {% endif %}
+            </article>
+        {% endfor %}
+    </section>
+{% endif %}

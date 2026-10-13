@@ -60,3 +60,32 @@ Entscheidungen, die der Auftrag offen ließ und die ich ohne Rückfrage getroffe
     diesen Durchgang vor; die Testdaten ändern sich aber je Abschnitt (B: Testartikel und Abo, D: Zahlarten, Mails), und
     „Tests auf Staging grün“ gilt je Abschnitt. Auf Staging gibt es keine von Ketteler gepflegten Inhalte; Erlebniswelten
     und die Inhalte der Werkseiten bleiben auch beim Überschreiben unberührt (dafür gibt es nur `--erlebniswelten-neu`).
+
+## Storytelling-Seiten (Abschnitt C)
+
+23. **MAV Einstieg und „Aktuell & interessant“ sind dieselbe Seite.** Die Vorlage markiert auf der Übersicht den Reiter
+    „Aktuell & interessant“; die Übersicht enthält genau dessen Inhalte. Beide Kategorien zeigen dieselbe Erlebniswelt,
+    gepflegt wird an einer Stelle.
+24. **Reiterbeschriftung über das Zusatzfeld „Kurzname“.** Die Kategorien heißen im Menü wie auf der Startseite
+    („Grundausstattung/Basiswissen für die MAV“), die Reiter und Brotkrumen wie in der Vorlage („Grundwissen/
+    Basisausstattung“). Ohne Kurzname gilt der Name.
+25. **Shopware-Brotkrumen auf Seiten mit eigenen Brotkrumen ausgeblendet** (Werk-Kopf, Unternavigation, Seitenkopf,
+    Veranstaltung), sonst stünden sie doppelt.
+26. **Brotkrumen folgen dem Kategoriebaum.** Die Vorlagen zeigen „Zeitschrift ZMV / ZMV Fachtagung“ und „Praxishandbücher /
+    Interviews Autoren“; im Menü der Startseite stehen beide unter „Verlag“. Der Baum bleibt wie freigegeben, die
+    Brotkrumen zeigen „Verlag / …“.
+27. **Übernommene Texte wörtlich, auch mit Gedankenstrichen und Tippfehlern.** Grundsatz 2 („wörtlich“) geht bei fremden
+    Texten (Artikeltitel, Verlagstext) vor; eigene Texte des Shops haben keine Gedankenstriche. Fragen 29 und 30.
+28. **„ZMV aktuell“ als eigene Kategorie unter Zeitschrift ZMV** mit dem Block „Aktuelle Ausgabe“ wie auf der ZMV-Seite
+    (Texte der freigegebenen ZMV-Vorlage statt der alten Sammelzeile). `/zmvaktuell` leitet jetzt dorthin.
+29. **Seiten ohne Vorlage im Layout der nächsten Vorlage:** Praktische Arbeitshilfen und Themenbezogene Literatur wie
+    Grundwissen (Titelkarten), Hilfreiche Links als Artikelliste über die ganze Breite, Verlag und Links als Fließtext
+    mit Seitenkopf. Die Unterzeilen „2. Praktische Arbeitshilfen“ und „3. Themenbezogene Literatur“ stammen aus der
+    Übersicht in `content/`.
+30. **Platzhalterbilder statt leerer Kreise.** Personenfotos sind Medien „Platzhalter: Name“ (Sand) mit dem Namen als
+    Alt-Text; Ketteler ersetzt die Datei, Alt-Text und Verweise bleiben.
+31. **Weiterleitungen unterscheiden Groß- und Kleinschreibung.** Die alten Adressen sind klein (`/verlag`), die neuen
+    beginnen groß (`/Verlag/`); ohne Unterscheidung leitete die neue Seite auf sich selbst um.
+32. **Auf Staging einmal `--erlebniswelten-neu`** (mit der Auslieferung von Abschnitt C), damit Startseite, Werkseiten und
+    die neuen Seiten genau dem Stand der Daten entsprechen (u. a. Foto-Platzhalter auf der AVR-Seite). Auf Staging pflegt
+    noch niemand Inhalte.

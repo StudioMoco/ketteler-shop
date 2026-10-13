@@ -1,6 +1,6 @@
 {#
-    Leseproben (Werkseiten): Fläche Rosé, Sand oder Blaugrau. Links Überschrift, Text, optional Knopf (z. B. Lesemuster)
-    und weißer Kasten mit Punkten, rechts die PDF-Dateien aus den Medien mit Kürzel und Titel. Dateien ohne Medium
+    Leseproben (Werkseiten, auch „Rückblick“ der Fachtagung): Fläche Rosé, Sand oder Blaugrau. Links Überschrift, Text, optional Knopf (z. B. Lesemuster)
+    und weißer Kasten mit Punkten, rechts die PDF-Dateien aus den Medien (oder Links) mit Kürzel, Titel und Angabe (Vorgabe „PDF“). Dateien ohne Medium
     erscheinen ohne Link (Platzhalter, bis Ketteler die Datei liefert).
 #}
 {% set c = element.config %}
@@ -23,15 +23,16 @@
             {% endif %}
         </div>
         {% set dateien = c.dateien.value|default([])|filter(e => e.titel) %}
+        {% set mitKuerzel = dateien|filter(e => e.kuerzel)|length > 0 %}
         {% if dateien is not empty %}
             <ul class="kt-leseproben-liste">
                 {% for e in dateien %}
-                    {% set m = e.datei and d.medien[e.datei] is defined ? d.medien[e.datei] : null %}
+                    {% set lz = e.datei and d.medien[e.datei] is defined ? d.medien[e.datei].url : kt_link(e.link ?? null) %}
                     <li>
-                        {% if m %}<a class="kt-leseprobe" href="{{ m.url }}" data-kt="leseprobe">{% else %}<span class="kt-leseprobe">{% endif %}
-                            <span class="kt-leseprobe-name">{% if e.kuerzel %}<span class="kt-leseprobe-kuerzel">{{ e.kuerzel }}</span>{% endif %}<span>{{ e.titel }}</span></span>
-                            <span class="kt-leseprobe-art">PDF</span>
-                        {% if m %}</a>{% else %}</span>{% endif %}
+                        {% if lz %}<a class="kt-leseprobe" href="{{ lz }}" data-kt="leseprobe">{% else %}<span class="kt-leseprobe">{% endif %}
+                            <span class="kt-leseprobe-name">{% if mitKuerzel %}<span class="kt-leseprobe-kuerzel">{{ e.kuerzel }}</span>{% endif %}<span>{{ e.titel }}</span></span>
+                            <span class="kt-leseprobe-art">{{ (e.art ?? '') ?: 'PDF' }}</span>
+                        {% if lz %}</a>{% else %}</span>{% endif %}
                     </li>
                 {% endfor %}
             </ul>

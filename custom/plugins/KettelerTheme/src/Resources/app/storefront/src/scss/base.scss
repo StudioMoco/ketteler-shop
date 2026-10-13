@@ -462,7 +462,7 @@ h3, .h3 { font-size: 30px; line-height: 1.2; }
 }
 
 // 1. Werk-Kopf (bringt eigene Brotkrumen nach der Vorlage mit; die von Shopware entfallen dort)
-.container-main:has(.kt-werkkopf) > .cms-breadcrumb { display: none; }
+.container-main:has(.kt-brotkrumen) > .cms-breadcrumb { display: none; }
 .kt-werkkopf { padding-top: 28px; padding-bottom: 72px; }
 .kt-brotkrumen { margin-bottom: 36px; font-size: 14px; color: $kt-hinweis; }
 .kt-brotkrumen a { color: $kt-hinweis; }
@@ -557,7 +557,7 @@ h3, .h3 { font-size: 30px; line-height: 1.2; }
 .kt-leseprobe { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; padding: 17px 0; color: $kt-text; }
 a.kt-leseprobe:hover { color: $kt-magenta; }
 .kt-leseprobe-name { display: flex; gap: 20px; align-items: baseline; min-width: 0; font-size: 18px; }
-.kt-leseprobe-kuerzel { flex: 0 0 34px; width: 34px; white-space: nowrap; font-family: $kt-serif; font-style: italic; color: $kt-magenta; }
+.kt-leseprobe-kuerzel { flex: 0 0 auto; min-width: 34px; white-space: nowrap; font-family: $kt-serif; font-style: italic; color: $kt-magenta; }
 .kt-leseprobe-art { flex: 0 0 auto; font-size: 13px; color: $kt-hinweis; }
 
 // 5. Video mit Person
@@ -670,4 +670,146 @@ a.kt-leseprobe:hover { color: $kt-magenta; }
     .kt-fakten dt { flex-basis: 100%; }
     .kt-leseprobe-name { font-size: 17px; }
     .kt-videoperson-text h2 { font-size: 28px; }
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// Storytelling-Seiten (docs/design/story-*-entwurf.dc.html): MAV Einstieg, Fachtagung, Interviews
+// ---------------------------------------------------------------------------------------------------------------
+.kt-cover--bereich { --kt-cover-b: 76px; --kt-cover-h: 106px; --kt-cover-schrift: 10px; border-radius: 2px 3px 3px 2px; box-shadow: 0 8px 16px rgba(60, 30, 40, 0.14); }
+.kt-cover--titelkarte { --kt-cover-b: 150px; --kt-cover-h: 212px; --kt-cover-schrift: 15px; border-radius: 3px 5px 0 0; box-shadow: 0 -4px 24px rgba(60, 30, 40, 0.12); }
+.kt-cover--interview { --kt-cover-b: 104px; --kt-cover-h: 146px; --kt-cover-schrift: 13px; box-shadow: 0 10px 20px rgba(60, 30, 40, 0.14); }
+.kt-cover--bereich .kt-cover-titel, .kt-cover--bereich .kt-cover-verlag, .kt-cover--interview .kt-cover-verlag { display: none; }
+.kt-cover--bereich .kt-cover-platzhalter, .kt-cover--interview .kt-cover-platzhalter { padding: 10px; }
+.kt-knopf--klein { min-height: 48px; padding: 0 22px; border-radius: 24px; }
+.kt-knopf--weissgrund { background: #ffffff; }
+
+// Unternavigation (Reiterzeile der Unterseiten)
+.kt-unternavigation-rahmen { padding-top: 28px; }
+.kt-unternavigation { display: flex; flex-wrap: wrap; gap: 6px 30px; font-size: 16px; border-bottom: 1px solid $kt-linie; }
+.kt-unternavigation a { padding: 0 0 12px; color: $kt-text; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.kt-unternavigation a:hover { color: $kt-magenta; }
+.kt-unternavigation a[aria-current='page'] { color: $kt-magenta; border-bottom-color: $kt-magenta; }
+
+// Seitenkopf
+.kt-seitenkopf { padding-top: 64px; padding-bottom: 40px; }
+.kt-seitenkopf h1 { margin: 0 0 14px; font-size: 48px; line-height: 1.12; letter-spacing: -0.01em; hyphens: auto; }
+.kt-seitenkopf-unterzeile { margin: 0; font-size: 18px; color: $kt-text-gedaempft; }
+.kt-seitenkopf--brotkrumen { padding-top: 28px; padding-bottom: 64px; }
+.kt-seitenkopf--brotkrumen h1 { margin: 0; font-size: 52px; line-height: 1.1; }
+
+// Begrüßungsbrief
+.kt-begruessung { display: flex; flex-wrap: wrap; gap: 48px 80px; align-items: flex-start; padding-top: 72px; padding-bottom: 80px; }
+.kt-begruessung-brief { flex: 1.4 1 560px; min-width: 0; }
+.kt-begruessung h1 { margin: 0 0 28px; font-size: 48px; line-height: 1.12; letter-spacing: -0.01em; hyphens: auto; }
+.kt-begruessung-text { margin: 0 0 22px; max-width: 680px; font-size: 20px; line-height: 1.6; color: $kt-text-gedaempft; }
+.kt-begruessung-text strong { font-weight: 400; }
+.kt-begruessung-gruss { margin: 0; font-family: $kt-serif; font-style: italic; font-size: 20px; color: $kt-text-gedaempft; }
+.kt-begruessung-kasten { flex: 1 1 340px; min-width: 0; padding: 34px 32px; border-radius: 10px; background: $kt-rose; }
+.kt-begruessung-kasten h2 { margin: 0 0 22px; font-size: 28px; line-height: 1.2; font-weight: 500; }
+
+// Bereichskacheln
+.kt-bereiche { padding-top: 80px; padding-bottom: 80px; }
+.kt-bereiche h2 { margin: 0 0 36px; font-size: 36px; line-height: 1.2; font-weight: 500; }
+.kt-bereiche-reihe { display: flex; flex-wrap: wrap; gap: 24px; }
+.kt-bereich { flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column; gap: 22px; padding: 28px 28px 26px; border: 1px solid $kt-linie; border-radius: 10px; color: $kt-text; }
+.kt-bereich:hover { border-color: $kt-linie-sand; color: $kt-text; }
+.kt-bereich:hover .kt-bereich-titel { color: $kt-magenta; }
+.kt-bereich-cover { position: relative; height: 120px; }
+.kt-bereich-cover .kt-cover { position: absolute; bottom: 0; }
+.kt-bereich-cover .kt-cover:nth-child(1) { left: 0; }
+.kt-bereich-cover .kt-cover:nth-child(2) { left: 54px; --kt-cover-h: 114px; }
+.kt-bereich-cover .kt-cover:nth-child(3) { left: 108px; --kt-cover-h: 100px; }
+.kt-bereich-text { display: block; }
+.kt-bereich-nummer { display: block; margin: 0 0 4px; font-family: $kt-serif; font-style: italic; font-size: 18px; color: $kt-magenta; }
+.kt-bereich-titel { display: block; margin: 0 0 8px; font-family: $kt-serif; font-size: 24px; line-height: 1.25; }
+.kt-bereich-beschreibung { display: block; font-size: 15px; color: $kt-hinweis; }
+.kt-bereiche-zeile { margin-top: 32px; border-bottom: 1px solid $kt-linie; }
+.kt-bereiche-links { display: flex; flex-wrap: wrap; gap: 8px 24px; }
+
+// Artikelliste
+.kt-artikelliste { display: flex; flex-wrap: wrap; gap: 40px 80px; padding-top: 88px; padding-bottom: 96px; }
+.kt-artikelliste--breit { padding-top: 8px; }
+.kt-artikelliste-kopf { flex: 1 1 340px; min-width: 0; }
+.kt-artikelliste-kopf h2 { margin: 0 0 18px; font-size: 36px; line-height: 1.2; font-weight: 500; }
+.kt-artikelliste-kopf p { margin: 0; max-width: 400px; font-size: 18px; color: $kt-text-gedaempft; }
+.kt-artikelliste-liste { flex: 1.6 1 600px; min-width: 0; margin: 0; padding: 0; list-style: none; }
+.kt-artikelliste-liste > li { border-top: 1px solid $kt-linie; }
+.kt-artikelliste-liste > li.kt-artikelliste-fuss { padding-top: 20px; }
+.kt-artikel { display: flex; flex-wrap: wrap; gap: 4px 20px; align-items: baseline; padding: 15px 0; color: $kt-text; }
+a.kt-artikel:hover .kt-artikel-titel { color: $kt-magenta; }
+.kt-artikel-vorspalte { flex: 0 0 150px; font-size: 15px; color: $kt-hinweis; }
+.kt-artikel-titel { flex: 1 1 300px; min-width: 0; font-size: 18px; }
+.kt-artikel-beschreibung { display: block; margin-top: 2px; font-size: 15px; color: $kt-hinweis; }
+.kt-artikel-nachspalte { flex: 0 0 auto; font-size: 14px; color: $kt-hinweis; }
+
+// Titelkarten
+.kt-titelkarten { display: flex; flex-wrap: wrap; gap: 32px; padding-top: 16px; padding-bottom: 96px; }
+.kt-titelkarte { flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; overflow: hidden; border: 1px solid $kt-linie-hell; border-radius: 10px; background: #ffffff; }
+.kt-titelkarte-bild { display: flex; align-items: flex-end; justify-content: center; height: 250px; padding-top: 30px; }
+.kt-titelkarte-inhalt { display: flex; flex-direction: column; flex: 1 1 auto; padding: 28px 28px 30px; }
+.kt-titelkarte-hrsg { margin: 0 0 6px; font-size: 14px; color: $kt-hinweis; }
+.kt-titelkarte h2 { margin: 0 0 20px; font-size: 24px; line-height: 1.25; font-weight: 500; }
+.kt-titelkarte-zeile { margin: 0; padding: 7px 0; border-top: 1px solid #f0e9df; font-size: 16px; line-height: 1.45; }
+.kt-titelkarte-anfang { font-family: $kt-serif; font-size: 20px; font-weight: 600; color: $kt-magenta; }
+.kt-titelkarte-proben-titel { margin: 22px 0 8px; font-size: 14px; color: $kt-hinweis; }
+.kt-titelkarte-probe { display: block; padding: 3px 0; font-size: 15px; color: $kt-magenta; }
+.kt-titelkarte-probe:hover { color: darken($kt-magenta, 10%); }
+.kt-titelkarte-fuss { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: auto; padding-top: 26px; }
+.kt-titelkarte-preis { font-size: 20px; font-weight: 600; }
+
+// Veranstaltung
+.kt-veranstaltung-rahmen { padding-top: 28px; }
+.kt-veranstaltung-rahmen .kt-brotkrumen { margin-bottom: 40px; }
+.kt-veranstaltung { display: flex; flex-wrap: wrap; gap: 40px 72px; align-items: flex-end; padding: 64px 56px 56px; border-radius: 10px; background: $kt-magenta; color: #ffffff; }
+.kt-veranstaltung-text { flex: 1.5 1 520px; min-width: 0; }
+.kt-veranstaltung-dachzeile { margin: 0 0 18px; font-size: 17px; color: $kt-auf-magenta-zart; }
+.kt-veranstaltung h1 { margin: 0 0 28px; font-size: 56px; line-height: 1.08; letter-spacing: -0.015em; color: #ffffff; }
+.kt-veranstaltung-beschreibung { margin: 0; font-size: 19px; color: $kt-auf-magenta-text; }
+.kt-veranstaltung-wann { flex: 0 1 300px; min-width: 0; padding-top: 22px; border-top: 1px solid rgba(255, 255, 255, 0.4); }
+.kt-veranstaltung-datum { margin: 0 0 6px; font-family: $kt-serif; font-size: 34px; line-height: 1.15; }
+.kt-veranstaltung-ort { margin: 0; font-size: 19px; color: $kt-auf-magenta-text; }
+.kt-veranstaltung-unten { display: flex; flex-wrap: wrap; gap: 40px 80px; padding-top: 88px; padding-bottom: 88px; }
+.kt-veranstaltung-zeilen { flex: 1.3 1 520px; min-width: 0; }
+.kt-veranstaltung-zeilen .kt-angebote-zeile { padding: 18px 0; }
+.kt-veranstaltung-zeilen .kt-angebote-zeile p { font-size: 18px; }
+.kt-veranstaltung-seitentext { flex: 1 1 340px; min-width: 0; margin: 0; font-size: 18px; color: $kt-text-gedaempft; }
+
+// Interviewliste
+.kt-interviews { padding-bottom: 96px; }
+.kt-interview { display: flex; flex-wrap: wrap; gap: 28px 56px; align-items: flex-start; padding: 40px 0; border-top: 1px solid $kt-linie; }
+.kt-interview-foto { flex: 0 0 132px; height: 132px; overflow: hidden; border-radius: 50%; background: $kt-sand; }
+.kt-interview-foto img { width: 100%; height: 100%; object-fit: cover; }
+.kt-interview-text { flex: 1 1 480px; min-width: 0; }
+.kt-interview-ort { margin: 0 0 8px; font-size: 15px; color: $kt-hinweis; }
+.kt-interview h2 { margin: 0 0 6px; font-size: 28px; line-height: 1.25; font-weight: 500; }
+.kt-interview-rolle { margin: 0 0 14px; font-family: $kt-serif; font-style: italic; font-size: 19px; color: $kt-text-gedaempft; }
+.kt-interview-beschreibung { margin: 0 0 18px; max-width: 680px; font-size: 17px; color: $kt-text-gedaempft; }
+.kt-interview-buch { flex: 0 0 170px; display: flex; flex-direction: column; gap: 10px; font-size: 15px; color: $kt-text; }
+.kt-interview-buch:hover { color: $kt-magenta; }
+.kt-person-foto img { display: block; }
+
+// Fließtextseiten (Verlag, Links): Shopware-Textelement im Rahmen der Vorlagen
+.kt-textseite .cms-element-text { max-width: 780px; font-size: 18px; color: $kt-text-gedaempft; }
+.kt-textseite .cms-element-text h2 { margin: 40px 0 14px; font-size: 30px; color: $kt-text; }
+.kt-textseite .cms-element-text h3 { margin: 28px 0 8px; font-family: $kt-sans; font-size: 18px; font-weight: 600; color: $kt-text; }
+
+// Storytelling mobil: Unternavigation als waagerecht scrollbare Zeile, Kacheln untereinander
+@media (max-width: 767.98px) {
+    .kt-unternavigation { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; white-space: nowrap; gap: 0 22px; -webkit-overflow-scrolling: touch; }
+    .kt-unternavigation::-webkit-scrollbar { display: none; }
+    .kt-seitenkopf h1, .kt-begruessung h1 { font-size: 32px; }
+    .kt-seitenkopf--brotkrumen h1 { font-size: 34px; }
+    .kt-begruessung { padding-top: 40px; padding-bottom: 48px; gap: 32px; }
+    .kt-begruessung-text, .kt-begruessung-gruss { font-size: 18px; }
+    .kt-bereiche, .kt-artikelliste { padding-top: 56px; padding-bottom: 56px; }
+    .kt-bereiche h2, .kt-artikelliste-kopf h2 { font-size: 28px; }
+    .kt-bereiche-reihe, .kt-titelkarten { flex-direction: column; }
+    .kt-bereich, .kt-titelkarte { flex: 1 1 auto; }
+    .kt-artikel-vorspalte { flex-basis: 100%; }
+    .kt-veranstaltung { padding: 36px 24px 32px; }
+    .kt-veranstaltung h1 { font-size: 34px; }
+    .kt-veranstaltung-datum { font-size: 26px; }
+    .kt-veranstaltung-unten { padding-top: 48px; padding-bottom: 56px; }
+    .kt-interview { gap: 18px; padding: 28px 0; }
+    .kt-interview-foto { flex-basis: 96px; height: 96px; }
 }

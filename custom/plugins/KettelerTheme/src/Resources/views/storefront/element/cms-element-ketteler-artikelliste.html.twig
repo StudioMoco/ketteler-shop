@@ -1,0 +1,30 @@
+{#
+    Artikelliste: links Überschrift und Text, rechts die Einträge (vorne z. B. Autor, Titel mit Beschreibung, rechts z. B.
+    die Ausgabe), jeder als Link auf eine Datei oder Seite; ohne Überschrift über die ganze Breite (z. B. Hilfreiche Links).
+#}
+{% set c = element.config %}
+{% set d = element.data %}
+{% if c.eintraege.value is not empty %}
+    <section class="kt-rahmen kt-artikelliste{% if not c.ueberschrift.value %} kt-artikelliste--breit{% endif %}"{% if c.anker.value %} id="{{ c.anker.value }}"{% endif %} aria-label="{{ c.ueberschrift.value|default('Liste')|striptags }}" data-kt="artikelliste">
+        {% if c.ueberschrift.value or c.text.value %}
+            <div class="kt-artikelliste-kopf">
+                {% if c.ueberschrift.value %}<h2>{{ c.ueberschrift.value }}</h2>{% endif %}
+                {% if c.text.value %}<p>{{ c.text.value|kt_text }}</p>{% endif %}
+            </div>
+        {% endif %}
+        <ul class="kt-artikelliste-liste">
+            {% for e in c.eintraege.value %}
+                {% set ziel = e.datei and d.medien[e.datei] is defined ? d.medien[e.datei].url : kt_link(e.link) %}
+                <li>
+                    {% if ziel %}<a class="kt-artikel" href="{{ ziel }}" data-kt="artikel"{% if ziel starts with 'http' and app.request.host not in ziel %} rel="noopener"{% endif %}>{% else %}<span class="kt-artikel">{% endif %}
+                        {% if e.vorspalte %}<span class="kt-artikel-vorspalte">{{ e.vorspalte }}</span>{% endif %}
+                        <span class="kt-artikel-titel">{{ e.titel }}{% if e.beschreibung %}<span class="kt-artikel-beschreibung">{{ e.beschreibung }}</span>{% endif %}</span>
+                        {% if e.nachspalte %}<span class="kt-artikel-nachspalte">{{ e.nachspalte }}</span>{% endif %}
+                    {% if ziel %}</a>{% else %}</span>{% endif %}
+                </li>
+            {% endfor %}
+            {% set fuss = kt_link(c.fussLink.value) %}
+            {% if c.fussLinkText.value and fuss %}<li class="kt-artikelliste-fuss"><a class="kt-textlink kt-textlink--magenta" href="{{ fuss }}">{{ c.fussLinkText.value }}</a></li>{% endif %}
+        </ul>
+    </section>
+{% endif %}
