@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Die AVR von A bis Z, Werkseite</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Serif:ital,wght@0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#fbf8f3}
+a{color:#2a2326;text-decoration:none}
+a:hover{color:#b7005c}
+</style>
+</helmet>
+<div style="font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #2a2326; background: #fbf8f3; font-size: 16px; line-height: 1.6">
+
+<!-- Servicezeile -->
+<div style="border-bottom: 1px solid #e8e0d4; font-size: 13px; color: #6b5f63">
+<div style="max-width: 1240px; margin: 0 auto; padding: 9px 24px; display: flex; flex-wrap: wrap; gap: 6px 24px; justify-content: space-between">
+<span>Servicezeiten: Montag, Dienstag, Donnerstag von 8.00 bis 13.00 Uhr, Mittwoch und Freitag von 8.00 bis 12.00 Uhr · Tel. 09972-9414-51</span>
+<span style="display: flex; gap: 22px"><a href="#" style="color: #b7005c">Zur Bibliothek</a><a href="#" style="color: #6b5f63">Kontakt</a></span>
+</div>
+</div>
+
+<!-- Kopf -->
+<header>
+<div style="max-width: 1240px; margin: 0 auto; padding: 26px 24px 18px; display: flex; flex-wrap: wrap; gap: 18px 36px; align-items: center">
+<a href="Main.dc.html" style="display: block; flex: 0 0 auto"><img src="/_blob/0809b0bc01d4d3b6df76e6afcb8c1afc" alt="KETTELER-Verlag, zur Startseite" style="width: 240px; height: 47px; display: block"></a>
+<form style="flex: 1 1 300px; min-width: 0; display: flex; align-items: center; border-bottom: 1.5px solid #2a2326" role="search">
+<label for="suche2" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Suche</label>
+<input id="suche2" type="search" placeholder="Suchen nach Titel, Autor, Stichwort" style="flex: 1 1 auto; min-width: 0; height: 44px; border: none; background: transparent; font: inherit; font-size: 16px; color: #2a2326">
+<button type="submit" aria-label="Suchen" style="width: 44px; height: 44px; border: none; background: transparent; color: #2a2326; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg></button>
+</form>
+<nav aria-label="Konto" style="display: flex; gap: 26px; align-items: center; font-size: 15px">
+<a href="#">Anmelden</a>
+<a href="#" style="display: flex; align-items: center; gap: 8px">Warenkorb <span style="min-width: 22px; height: 22px; border-radius: 11px; background: #b7005c; color: #ffffff; font-size: 12px; display: inline-flex; align-items: center; justify-content: center">0</span></a>
+</nav>
+</div>
+<nav aria-label="Hauptnavigation" style="max-width: 1240px; margin: 0 auto; padding: 0 24px; display: flex; flex-wrap: wrap; gap: 0 30px; font-size: 16px">
+<a href="#" style="padding: 10px 0 16px">Zeitschrift ZMV</a>
+<a href="#" style="padding: 10px 0 16px">Eichstätter Kommentar</a>
+<a href="#" style="padding: 10px 0 14px; color: {{accent}}; border-bottom: 2px solid {{accent}}">Kompendium AVR Caritas</a>
+<a href="#" style="padding: 10px 0 16px">Praxishandbücher</a>
+<a href="#" style="padding: 10px 0 16px">MAV Einstieg</a>
+<a href="#" style="padding: 10px 0 16px">KAB Service</a>
+<a href="#" style="padding: 10px 0 16px">Verlag</a>
+</nav>
+</header>
+
+<!-- Werk-Kopf -->
+<section style="max-width: 1240px; margin: 0 auto; padding: 28px 24px 72px">
+<nav aria-label="Brotkrumen" style="font-size: 14px; color: #6b5f63; margin-bottom: 36px"><a href="Main.dc.html" style="color: #6b5f63">Home</a> <span aria-hidden="true">/</span> Kompendium AVR Caritas</nav>
+<div style="display: flex; flex-wrap: wrap; gap: 48px 80px; align-items: center">
+<div style="flex: 0 1 380px; min-width: 0; display: flex; justify-content: center; position: relative; padding: 24px 0">
+<div style="position: absolute; left: 50%; top: 50%; width: 340px; height: 340px; margin: -170px 0 0 -170px; border-radius: 50%; background: #f3e4ea"></div>
+<div style="position: relative; width: 250px; height: 350px; border-radius: 3px 6px 6px 3px; background: #e9d9c4; transform: rotate(-3deg); box-shadow: inset 8px 0 0 rgba(0,0,0,0.07), 0 26px 44px rgba(60,30,40,0.2); padding: 28px 26px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between">
+<span style="font-family: 'IBM Plex Serif', serif; font-size: 34px; line-height: 1.1; font-weight: 500">Die AVR von A&nbsp;bis&nbsp;Z</span>
+<span style="font-size: 13px; color: #6b5f63">[Cover] Kompendium AVR Caritas</span>
+</div>
+</div>
+<div style="flex: 1 1 520px; min-width: 0">
+<p style="margin: 0 0 12px; font-size: 16px; color: {{accent}}">Kompendium AVR Caritas</p>
+<h1 style="font-family: 'IBM Plex Serif', Georgia, serif; font-size: 56px; line-height: 1.06; font-weight: 500; margin: 0 0 14px; letter-spacing: -0.015em">Die AVR von A bis Z</h1>
+<p style="font-family: 'IBM Plex Serif', Georgia, serif; font-style: italic; font-size: 22px; color: #4e4447; margin: 0 0 26px">Erläuterungen zu den Arbeitsvertragsrichtlinien des Deutschen Caritasverbandes</p>
+<p style="font-size: 18px; line-height: 1.6; color: #4e4447; margin: 0 0 16px; max-width: 600px">Praxisbezogen und verständlich erläutert das Kompendium die AVR Caritas und alle für die Einrichtungen der Caritas geltenden staatlichen und kirchlichen Rechtsgrundlagen. Dabei erhalten Sie wertvolle Informationen sowohl zu Kernbereichen wie Arbeitszeit, Eingruppierung, Vergütung / Entgelt als auch zum gesamten staatlichen Arbeitsrecht mit Bezug zur AVR Caritas.</p>
+<p style="font-size: 18px; line-height: 1.6; margin: 0 0 28px; max-width: 600px">„Die AVR von A bis Z“ gibt es zukünftig <span style="font-weight: 500">ausschließlich online</span>.</p>
+<p style="margin: 0 0 32px; font-size: 15px; color: #6b5f63">Schriftleiter: Rechtsanwalt Marvin Milleschewski</p>
+<div style="display: flex; flex-wrap: wrap; gap: 14px 28px; align-items: center">
+<a href="#angebote" style="display: inline-flex; align-items: center; min-height: 52px; padding: 0 28px; border-radius: 26px; background: {{accent}}; color: #ffffff; font-weight: 500">Angebote ansehen</a>
+<a href="#leseproben" style="font-weight: 500; border-bottom: 1.5px solid currentColor; padding-bottom: 2px">Leseproben</a>
+</div>
+<p style="margin: 28px 0 0; font-size: 15px; color: #6b5f63">Sie haben schon einen Zugang? <a href="#" style="color: {{accent}}; border-bottom: 1px solid currentColor">In der Bibliothek lesen</a></p>
+</div>
+</div>
+</section>
+
+<!-- Angebote -->
+<section id="angebote" style="background: #ffffff; border-top: 1px solid #ece4d8; border-bottom: 1px solid #ece4d8">
+<div style="max-width: 1240px; margin: 0 auto; padding: 80px 24px 80px">
+<h2 style="font-family: 'IBM Plex Serif', Georgia, serif; font-size: 40px; line-height: 1.15; font-weight: 500; margin: 0 0 40px">Kompendium bestellen</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: stretch">
+
+<div style="flex: 1.25 1 340px; min-width: 0; border: 2px solid {{accent}}; border-radius: 10px; padding: 34px 32px 30px; display: flex; flex-direction: column">
+<p style="margin: 0 0 6px; font-size: 15px; color: {{accent}}">Bestell-Nr. 05029-D</p>
+<h3 style="font-family: 'IBM Plex Serif', Georgia, serif; font-size: 28px; line-height: 1.2; font-weight: 500; margin: 0 0 6px">Die AVR von A bis Z - Digital</h3>
+<p style="margin: 0 0 22px; color: #4e4447">Abonnement, zu lesen in der KETTELER-Bibliothek</p>
+<p style="margin: 0 0 28px"><span style="font-size: 36px; font-weight: 600; letter-spacing: -0.01em">198,90 €</span> <span style="color: #6b5f63; font-size: 15px">inkl. MwSt.</span></p>
+<button type="button" style="margin-top: auto; min-height: 52px; border: none; border-radius: 26px; background: {{accent}}; color: #ffffff; font: inherit; font-weight: 500; cursor: pointer">In den Warenkorb</button>
+</div>
+
+<div style="flex: 1 1 300px; min-width: 0; border: 1px solid #e8e0d4; border-radius: 10px; padding: 34px 32px 30px; display: flex; flex-direction: column">
+<p style="margin: 0 0 6px; font-size: 15px; color: #6b5f63">Bestell-Nr. 05029</p>
+<h3 style="font-family: 'IBM Plex Serif', Georgia, serif; font-size: 28px; line-height: 1.2; font-weight: 500; margin: 0 0 6px">Die AVR von A bis Z</h3>
+<p style="margin: 0 0 22px; color: #4e4447">Print, solange der Vorrat reicht</p>
+<p style="margin: 0 0 28px"><span style="font-size: 36px; font-weight: 600; letter-spacing: -0.01em">125,50 €</span> <span style="color: #6b5f63; font-size: 15px">inkl. MwSt.</span></p>
+<button type="button" style="margin-top: auto; min-height: 52px; border: 1.5px solid #2a2326; border-radius: 26px; background: #ffffff; color: #2a2326; font: inherit; font-weight: 500; cursor: pointer">In den Warenkorb</button>
+</div>
+
+</div>
+<div style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 8px 32px; justify-content: space-between; align-items: baseline; padding: 10px 0; border-top: 1px solid #e8e0d4; border-bottom: 1px solid #e8e0d4">
+<p style="margin: 0; font-size: 17px">Mehrere Lizenzen für Ihre Einrichtung: <span style="font-weight: 600">Mehrplatzlizenz auf Anfrage</span></p>
+<a href="#" style="font-weight: 500; color: {{accent}}; border-bottom: 1.5px solid currentColor">Lizenzen anfragen</a>
+</div>
+<p style="margin: 20px 0 0; font-size: 14px; color: #6b5f63">Beachten Sie auch unsere <a href="#" style="color: #6b5f63; border-bottom: 1px solid currentColor">AGB</a>.</p>
+</div>
+</section>
+
+<!-- Inhalt -->
+<section style="max-width: 1240px; margin: 0 auto; padding: 96px 24px 80px; display: flex; flex-wrap: wrap; gap: 40px 80px">
+<div style="flex: 1 1 360px; min-width: 0">
+<h2 style="font-family: 'IBM Plex Serif', Georgia, serif; font-size: 40px; line-height: 1.15; font-weight: 500; margin: 0 0 18px">Ihre Vorteile im Überblick</h2>
+<p style="margin: 0 0 14px; font-size: 18px; color: #4e4447; max-width: 420px">Autorenteam: Praktiker, Referenten und Juristen, alle Expertinnen und Experten bei der Anwendung der AVR.</p>
+<p style="margin: 0; font-size: 16px; color: #6b5f63; max-width: 420px">Rechtsänderungen werden zeitnah aufbereitet. Die enge Kooperation mit den Vertretern der Mitarbeiterinnen und Mitarbeiter prägt das AVR-Kompendium.</p>
+</div>
+<div style="flex: 1.4 1 560px; min-width: 0; display: flex; flex-wrap: wrap; gap: 0 48px">
+<sc-for list="{{features}}" as="f" hint-placeholder-count="6">
+<div style="flex: 1 1 260px; min-width: 0; padding: 22px 0 24px; border-top: 1px solid #e8e0d4">
+<p style="font-family: 'IBM Plex Serif', Georgia, serif; font-size: 21px; line-height: 1.3; margin: 0 0 6px">{{f.t}}</p>
+<p style="margin: 0; color: #4e4447; font-size: 16px">{{f.d}}</p>
+</div>
+</sc-for>
+</div>
+</section>
+
+<!-- Leseproben -->
+<section id="leseproben" style="background: #f3e4ea">
+<div style="max-width: 1240px; margin: 0 auto; padding: 88px 24px; display: flex; flex-wrap: wrap; gap: 40px 80px">
+<div style="flex: 1 1 360px; min-width: 0">
+<h2 style="font-family: 'IBM Plex Serif', Georgia, serif; font-size: 40px; line-height: 1.15; font-weight: 500; margin: 0 0 18px">Leseproben</h2>
+<p style="margin: 0 0 28px; font-size: 18px; color: #4e4447; max-width: 420px">Wertvolle Einblicke geben unsere aktuellen Leseproben.</p>
+<div style="background: #ffffff; border-radius: 8px; padding: 26px 28px">
+<p style="margin: 0 0 4px; font-size: 15px; color: {{accent}}">AVR aktuell 2/2026 (Juni 2026)</p>
+<p style="font-family: 'IBM Plex Serif', Georgia, serif; font-size: 21px; line-height: 1.3; margin: 0 0 12px">Themen in der AVR aktuell 2/2026</p>
+<ul style="margin: 0; padding: 0 0 0 18px; color: #4e4447; display: flex; flex-direction: column; gap: 4px">
+<li>Wahlzeitraum für die SBV-Wahlen steht vor der Tür</li>
+<li>§§-Übersicht AVR 2027</li>
+<li>AVR 2027: „TÜV“ für den Bereich Arbeitszeit Teil I</li>
+<li>Neues aus der Rechtsprechung</li>
+</ul>
+</div>
+</div>
+<ul style="flex: 1.4 1 560px; min-width: 0; list-style: none; margin: 0; padding: 0">
+<sc-for list="{{samples}}" as="s" hint-placeholder-count="7">
+<li style="border-top: 1px solid #e3c7d3"><a href="#" style="display: flex; justify-content: space-between; align-items: baseline; gap: 20px; padding: 17px 0"><span style="display: flex; gap: 20px; align-items: baseline; min-width: 0"><span style="font-family: 'IBM Plex Serif', serif; font-style: italic; color: {{accent}}; width: 34px; flex: 0 0 34px">{{s.k}}</span><span style="font-size: 18px">{{s.t}}</span></span><span style="font-size: 13px; color: #6b5f63; flex: 0 0 auto">PDF</span></a></li>
+</sc-for>
+</ul>
+</div>
+</section>
+
+<!-- Video und Schriftleitung -->
+<section style="max-width: 1240px; margin: 0 auto; padding: 96px 24px 88px; display: flex; flex-wrap: wrap; gap: 48px 72px; align-items: center">
+<a href="#" style="flex: 1.3 1 520px; min-width: 0; display: block; color: #2a2326">
+<div style="position: relative; aspect-ratio: 16 / 9; border-radius: 8px; background: #d8cbbb; display: flex; align-items: center; justify-content: center">
+<span style="position: absolute; left: 18px; bottom: 14px; font-size: 13px; color: #6b5f63">[Videobild Folge 1]</span>
+<span style="width: 80px; height: 80px; border-radius: 50%; background: {{accent}}; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="#ffffff" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg></span>
+</div>
+</a>
+<div style="flex: 1 1 380px; min-width: 0">
+<p style="margin: 0 0 10px; font-size: 15px; color: {{accent}}">AVR 2027 nachgefragt: Praxiswissen kompakt</p>
+<h2 style="font-family: 'IBM Plex Serif', Georgia, serif; font-size: 36px; line-height: 1.2; font-weight: 500; margin: 0 0 16px">Folge 1: Wie ist die Struktur der neuen AVR 2027?</h2>
+<p style="margin: 0 0 28px; font-size: 17px; color: #4e4447">Mit Rechtsanwalt Marvin Milleschewski, Schriftleiter von „Die AVR von A bis Z“.</p>
+<div style="display: flex; gap: 18px; align-items: center; padding-top: 24px; border-top: 1px solid #e8e0d4">
+<div style="flex: 0 0 64px; height: 64px; border-radius: 50%; background: #e9d9c4; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #6b5f63">[Foto]</div>
+<div><p style="margin: 0; font-weight: 500">Grußwort des neuen Schriftleiters</p><p style="margin: 0; font-size: 15px; color: #6b5f63">Rechtsanwalt Marvin Milleschewski · <a href="#" style="color: {{accent}}">Grußwort (PDF)</a> · <a href="#" style="color: {{accent}}">Pressemeldung</a></p></div>
+</div>
+</div>
+</section>
+
+<!-- Fragen -->
+<section style="background: #ffffff; border-top: 1px solid #ece4d8">
+<div style="max-width: 1240px; margin: 0 auto; padding: 88px 24px 96px; display: flex; flex-wrap: wrap; gap: 40px 80px">
+<h2 style="flex: 1 1 360px; min-width: 0; font-family: 'IBM Plex Serif', Georgia, serif; font-size: 40px; line-height: 1.15; font-weight: 500; margin: 0">Sie haben Anregungen &amp; Feedback zu „Die AVR von A bis Z“?</h2>
+<div style="flex: 1.4 1 560px; min-width: 0">
+<p style="margin: 0 0 22px; font-size: 20px; color: #4e4447">Wir freuen uns auf Ihre Rückmeldung.</p>
+<a href="#" style="display: inline-flex; align-items: center; min-height: 52px; padding: 0 28px; border-radius: 26px; border: 1.5px solid #2a2326; font-weight: 500">kontakt@ketteler-verlag.de</a>
+</div>
+</div>
+</section>
+
+<!-- Fuß -->
+<footer style="background: #f3ece2; font-size: 15px; color: #4e4447">
+<div style="max-width: 1240px; margin: 0 auto; padding: 72px 24px 48px; display: flex; flex-wrap: wrap; gap: 40px 48px">
+<div style="flex: 1.6 1 320px; min-width: 0">
+<p style="font-family: 'IBM Plex Serif', Georgia, serif; font-size: 26px; line-height: 1.3; color: #2a2326; margin: 0 0 16px">Kontakt</p>
+<p style="margin: 0; line-height: 1.75">KETTELER-Verlag GmbH<br>Schloßhof 1, 93449 Waldmünchen<br>Tel: <a href="#" style="color: {{accent}}">09972-9414-51</a> · Fax: 09972-9414-55<br>E-Mail: <a href="#" style="color: {{accent}}">kontakt@ketteler-verlag.de</a></p>
+</div>
+<div style="flex: 1 1 160px; min-width: 0; display: flex; flex-direction: column; gap: 9px">
+<span style="color: #2a2326; font-weight: 600; margin-bottom: 4px">KETTELER-Verlag GmbH</span>
+<a href="#">Verlag</a><a href="#">Links</a><a href="#">Mehrere Lizenzen anfragen</a>
+</div>
+<div style="flex: 1.3 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 9px">
+<span style="color: #2a2326; font-weight: 600; margin-bottom: 4px">Rechtliches &amp; Informationen</span>
+<a href="#">Impressum</a><a href="#">AGB</a><a href="#">Preise ZMV</a><a href="#">AGB für Anzeigen/Beilagen</a><a href="#">Widerrufsbelehrung</a><a href="#">Versand &amp; Lieferung</a><a href="#">Datenschutzerklärung</a><a href="#">Verträge hier kündigen</a>
+</div>
+<div style="flex: 1 1 200px; min-width: 0">
+<span style="color: #2a2326; font-weight: 600">Servicezeiten</span>
+<p style="margin: 13px 0 0; line-height: 1.7">Montag, Dienstag, Donnerstag<br>von 8.00 bis 13.00 Uhr<br>Mittwoch und Freitag<br>von 8.00 bis 12.00 Uhr</p>
+</div>
+</div>
+<div style="max-width: 1240px; margin: 0 auto; padding: 22px 24px 32px; border-top: 1px solid #d9cdbd; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; font-size: 13px; color: #6b5f63">
+<span>© 2026 KETTELER-Verlag GmbH</span>
+<span>Klimafreundlicher Versand · GoGreen Plus</span>
+</div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#b7005c","options":["#b7005c","#9a004e","#8a2c4f"]},"$preview":{"width":1440,"height":4700}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      accent: this.props.accent ?? '#b7005c',
+      features: [
+        { t: 'Für Mitarbeitervertretungen', d: 'Für Mitarbeitervertretungen und Mitarbeitende im Bereich der AVR, mit konkreten Zusammenfassungen und Handlungsempfehlungen für eine praxisgerechte Umsetzung im MAV-Alltag.' },
+        { t: 'Gliederung nach Stichworten', d: 'Schnelles Auffinden der gewünschten leichtverständlichen Informationen mit Verweis auf die jeweiligen Paragrafen der AVR.' },
+        { t: 'Zielführend', d: 'Modulfinder: von der AVR-Vorschrift direkt zu den Modulen, umfangreiches Stichwortverzeichnis.' },
+        { t: 'Praxisbezogen', d: 'Thematischer Aufbau in Modulen, Erläuterungen von A bis Z mit Beispielen samt Lösungen, Checklisten und Übersichten.' },
+        { t: 'Aktuell', d: 'Ständige Rubrik „Aktuelle Information“ mit ausgewählten Meldungen zur Arbeit in der Arbeitsrechtlichen Kommission, zu neuer Rechtsprechung und aktuellen Entwicklungen in der Gesetzgebung.' },
+        { t: 'Vertiefung', d: 'Themengebiete, die für die Mitarbeitenden relevant sind, in den AVR aber bislang noch nicht geregelt wurden, wie zum Beispiel „Gewalt“.' },
+        { t: 'Informativ', d: 'Übersicht zu den AVR (Allgemeiner Teil und Anlagen).' },
+        { t: 'Hilfreich', d: 'Rechts- und Fachbegriffe für AVR-Anwender.' }
+      ],
+      samples: [
+        { k: '', t: 'Wahlzeitraum für die SBV-Wahlen steht vor der Tür' },
+        { k: '', t: 'AVR 2027: „TÜV“ für den Bereich Arbeitszeit Teil I (Ausschnitt)' },
+        { k: '', t: 'Entgeltfortzahlungsanspruch bei Korrektur einer Lifestyle-Operation (Ausschnitt)' },
+        { k: '', t: 'Vorwort' },
+        { k: '', t: 'Erläuterungen von A bis Z' },
+        { k: '', t: 'Ausschnitt aus AVR aktuell 1/2026: Interview zu den AVR 2027' },
+        { k: 'A 4', t: 'Arbeitsbefreiung und Sonderurlaub mit Gliederung' },
+        { k: 'A 11', t: 'Aufhebungs- und Abwicklungsverträge' },
+        { k: 'B 3', t: 'Betriebsübergang' },
+        { k: 'D 4', t: 'Diskriminierungsschutz' },
+        { k: 'E 1', t: 'Eingruppierung mit Gliederung' },
+        { k: 'G 1', t: 'Arbeits- und Gesundheitsschutz mit Gliederung' },
+        { k: 'T 1', t: 'Teilzeitbeschäftigung' },
+        { k: 'Z 2', t: 'Zulagen' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

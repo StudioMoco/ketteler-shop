@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Interviews Autoren und Schriftleiter</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400;1,500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#fbf8f3}
+a{color:#2a2326;text-decoration:none}
+a:hover{color:#b7005c}
+</style>
+</helmet>
+<div style="font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #2a2326; background: #fbf8f3; font-size: 16px; line-height: 1.6">
+
+<!-- Servicezeile -->
+<div style="border-bottom: 1px solid #e8e0d4; font-size: 13px; color: #6b5f63">
+<div style="max-width: 1240px; margin: 0 auto; padding: 9px 24px; display: flex; flex-wrap: wrap; gap: 6px 24px; justify-content: space-between">
+<span>Servicezeiten: Montag, Dienstag, Donnerstag von 8.00 bis 13.00 Uhr, Mittwoch und Freitag von 8.00 bis 12.00 Uhr · Tel. 09972-9414-51</span>
+<span style="display: flex; gap: 22px"><a href="#" style="color: #b7005c">Zur Bibliothek</a><a href="#" style="color: #6b5f63">Kontakt</a></span>
+</div>
+</div>
+
+<!-- Kopf -->
+<header>
+<div style="max-width: 1240px; margin: 0 auto; padding: 26px 24px 18px; display: flex; flex-wrap: wrap; gap: 18px 36px; align-items: center">
+<a href="#" style="display: block; flex: 0 0 auto"><img src="/_blob/0809b0bc01d4d3b6df76e6afcb8c1afc" alt="KETTELER-Verlag, Fachverlag für kirchliches Arbeitsrecht" style="width: 240px; height: 47px; display: block"></a>
+<form style="flex: 1 1 300px; min-width: 0; display: flex; align-items: center; border-bottom: 1.5px solid #2a2326" role="search">
+<label for="suche" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Suche</label>
+<input id="suche" type="search" placeholder="Suchen" style="flex: 1 1 auto; min-width: 0; height: 44px; border: none; background: transparent; font: inherit; font-size: 16px; color: #2a2326">
+<button type="submit" aria-label="Suchen" style="width: 44px; height: 44px; border: none; background: transparent; color: #2a2326; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg></button>
+</form>
+<nav aria-label="Konto" style="display: flex; gap: 26px; align-items: center; font-size: 15px">
+<a href="#">Anmelden</a>
+<a href="#">Merkliste</a>
+<a href="#" style="display: flex; align-items: center; gap: 8px">Warenkorb <span style="min-width: 22px; height: 22px; border-radius: 11px; background: #b7005c; color: #ffffff; font-size: 12px; display: inline-flex; align-items: center; justify-content: center">0</span></a>
+</nav>
+</div>
+<nav aria-label="Hauptnavigation" style="max-width: 1240px; margin: 0 auto; padding: 0 24px; display: flex; flex-wrap: wrap; gap: 0 30px; font-size: 16px">
+<a href="#" style="padding: 10px 0 16px">Zeitschrift ZMV</a>
+<a href="#" style="padding: 10px 0 16px">Eichstätter Kommentar</a>
+<a href="Werk-AVR.dc.html" style="padding: 10px 0 16px">Kompendium AVR Caritas</a>
+<a href="#" style="padding: 10px 0 14px; color: {{accent}}; border-bottom: 2px solid {{accent}}">Praxishandbücher</a>
+<a href="#" style="padding: 10px 0 16px">MAV Einstieg</a>
+<a href="#" style="padding: 10px 0 16px">KAB Service</a>
+<a href="#" style="padding: 10px 0 16px">Verlag</a>
+</nav>
+</header>
+
+<!-- Interviews -->
+<section style="max-width: 1240px; margin: 0 auto; padding: 28px 24px 64px">
+<nav aria-label="Brotkrumen" style="font-size: 14px; color: #6b5f63; margin-bottom: 36px"><a href="Main.dc.html" style="color: #6b5f63">Home</a> <span aria-hidden="true">/</span> Praxishandbücher <span aria-hidden="true">/</span> Interviews Autoren</nav>
+<h1 style="font-family: 'IBM Plex Serif', Georgia, serif; font-size: 52px; line-height: 1.1; font-weight: 500; margin: 0; letter-spacing: -0.01em">Interviews Autoren &amp; Schriftleiter</h1>
+</section>
+
+<section style="max-width: 1240px; margin: 0 auto; padding: 0 24px 96px">
+<sc-for list="{{talks}}" as="i" hint-placeholder-count="5">
+<article style="display: flex; flex-wrap: wrap; gap: 28px 56px; padding: 40px 0; border-top: 1px solid #e8e0d4; align-items: flex-start">
+<div style="flex: 0 0 132px; height: 132px; border-radius: 50%; background: {{i.ground}}; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #6b5f63">[Foto]</div>
+<div style="flex: 1 1 480px; min-width: 0">
+<p style="margin: 0 0 8px; font-size: 15px; color: #6b5f63">{{i.ort}}</p>
+<h2 style="font-family: 'IBM Plex Serif', Georgia, serif; font-size: 28px; line-height: 1.25; font-weight: 500; margin: 0 0 6px">{{i.name}}</h2>
+<p style="font-family: 'IBM Plex Serif', Georgia, serif; font-style: italic; font-size: 19px; color: #4e4447; margin: 0 0 14px">{{i.rolle}}</p>
+<p style="margin: 0 0 18px; font-size: 17px; color: #4e4447; max-width: 680px">{{i.text}}</p>
+<a href="#" style="font-weight: 500; color: {{accent}}; border-bottom: 1.5px solid currentColor; padding-bottom: 2px">Zum Interview</a>
+</div>
+<a href="#" style="flex: 0 0 170px; display: flex; flex-direction: column; gap: 10px; color: #2a2326">
+<div style="width: 104px; height: 146px; border-radius: 2px 4px 4px 2px; background: {{i.cover}}; color: {{i.ink}}; padding: 10px; box-sizing: border-box; font-family: 'IBM Plex Serif', serif; font-size: 13px; line-height: 1.2; box-shadow: inset 4px 0 0 rgba(0,0,0,0.1), 0 10px 20px rgba(60,30,40,0.14)">{{i.buch}}</div>
+<span style="font-size: 15px">{{i.preis}}</span>
+</a>
+</article>
+</sc-for>
+</section>
+
+<!-- Fuß -->
+<footer style="background: #f3ece2; font-size: 15px; color: #4e4447">
+<div style="max-width: 1240px; margin: 0 auto; padding: 72px 24px 48px; display: flex; flex-wrap: wrap; gap: 40px 48px">
+<div style="flex: 1.6 1 320px; min-width: 0">
+<p style="font-family: 'IBM Plex Serif', Georgia, serif; font-size: 26px; line-height: 1.3; color: #2a2326; margin: 0 0 16px">Kontakt</p>
+<p style="margin: 0; line-height: 1.75">KETTELER-Verlag GmbH<br>Schloßhof 1, 93449 Waldmünchen<br>Tel: <a href="#" style="color: {{accent}}">09972-9414-51</a> · Fax: 09972-9414-55<br>E-Mail: <a href="#" style="color: {{accent}}">kontakt@ketteler-verlag.de</a></p>
+</div>
+<div style="flex: 1 1 160px; min-width: 0; display: flex; flex-direction: column; gap: 9px">
+<span style="color: #2a2326; font-weight: 600; margin-bottom: 4px">KETTELER-Verlag GmbH</span>
+<a href="#">Verlag</a><a href="#">Links</a><a href="#">Mehrere Lizenzen anfragen</a>
+</div>
+<div style="flex: 1.3 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 9px">
+<span style="color: #2a2326; font-weight: 600; margin-bottom: 4px">Rechtliches &amp; Informationen</span>
+<a href="#">Impressum</a><a href="#">AGB</a><a href="#">Preise ZMV</a><a href="#">AGB für Anzeigen/Beilagen</a><a href="#">Widerrufsbelehrung</a><a href="#">Versand &amp; Lieferung</a><a href="#">Datenschutzerklärung</a><a href="#">Verträge hier kündigen</a>
+</div>
+<div style="flex: 1 1 200px; min-width: 0">
+<span style="color: #2a2326; font-weight: 600">Servicezeiten</span>
+<p style="margin: 13px 0 0; line-height: 1.7">Montag, Dienstag, Donnerstag<br>von 8.00 bis 13.00 Uhr<br>Mittwoch und Freitag<br>von 8.00 bis 12.00 Uhr</p>
+</div>
+</div>
+<div style="max-width: 1240px; margin: 0 auto; padding: 22px 24px 32px; border-top: 1px solid #d9cdbd; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; font-size: 13px; color: #6b5f63">
+<span>© 2026 KETTELER-Verlag GmbH</span>
+<span>Klimafreundlicher Versand · GoGreen Plus</span>
+</div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#b7005c","options":["#b7005c","#9a004e","#8a2c4f"]},"$preview":{"width":1440,"height":2700}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      accent: this.props.accent ?? '#b7005c',
+      talks: [
+        { ort: 'Waldmünchen/Hanau, 07. November 2024', name: 'Simone Küster', rolle: 'Autorin des neuen Buches „Eingruppierung in Einrichtungen der Caritas“', text: 'Lesen Sie hier das Interview mit Frau Küster und erfahren Sie mehr über die Hintergründe ihrer Tätigkeit und die Entstehung des Buches, das im Oktober 2024 beim KETTELER-Verlag erschienen ist.', buch: 'Eingruppierung in Einrichtungen der Caritas', preis: 'Zum Buch', ground: '#f3e4ea', cover: '#e9d9c4', ink: '#2a2326' },
+        { ort: 'Waldmünchen/Schönebeck, 29. Juni 2022', name: 'Matthias Ullrich', rolle: 'Autor des neuen Buches „Beschäftigtendatenschutz der katholischen Kirche“', text: 'Viele spannende Informationen und Hintergründe hat unsere Redaktion im Interview mit Matthias Ullrich erfahren. Wir wünschen auch Ihnen viel Spaß beim Lesen dieses interessanten Gesprächs.', buch: 'Beschäftigtendatenschutz der katholischen Kirche', preis: 'Zum Buch', ground: '#e9eef1', cover: '#5c4a3f', ink: '#ffffff' },
+        { ort: 'Waldmünchen/Haltern am See, 15. September 2021', name: 'Ulrich Richartz', rolle: 'Autor des Buches „Arbeitszeugnisse in Kirche, Caritas und Diakonie“', text: 'Erfahren Sie im exklusiven Interview mehr zur Person Ulrich Richartz, zur Entstehungsgeschichte seines Buches, zu Hintergründen, Motivation und Zielen.', buch: 'Arbeitszeugnisse in Kirche, Caritas und Diakonie', preis: 'Zum Buch', ground: '#f3ece2', cover: '#c9d3cf', ink: '#2a2326' },
+        { ort: 'Waldmünchen/München, 17. März 2021', name: 'Dr. Sebastian Weber', rolle: 'Autor des Buches „Arbeitszeit und Dienstplanung in Einrichtungen der Caritas“', text: 'Im November 2020 ist das neue Buch des Autors beim KETTELER-Verlag erschienen. Im Interview spricht er über Hintergründe, gibt zusätzliche Sachinformationen und beantwortet Fragen zu Beruf und Freizeit.', buch: 'Arbeitszeit und Dienstplanung in Einrichtungen der Caritas', preis: 'Zum Buch', ground: '#f3e4ea', cover: '#8a2c4f', ink: '#ffffff' },
+        { ort: 'Waldmünchen/Bochum, 1. Dezember 2020', name: 'Prof. Dr. Jacob Joussen', rolle: 'Neu in der Position des verantwortlichen Schriftleiters der ZMV', text: 'Mit der Ausgabe 6/2020 der Zeitschrift „ZMV - DIE MITARBEITERVERTRETUNG“ hat Jacob Joussen die verantwortliche Schriftleitung von Prof. Dr. Renate Oxenknecht-Witzsch übernommen. Wir haben mit ihm über seine Beweggründe, Pläne und mehr gesprochen.', buch: 'ZMV', preis: 'Zur Zeitschrift', ground: '#e9eef1', cover: '#b7005c', ink: '#ffffff' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
